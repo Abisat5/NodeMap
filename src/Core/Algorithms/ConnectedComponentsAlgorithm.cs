@@ -1,2 +1,0 @@
-ConnectedComponentsAlgorithm
-+ FindComponents(Graph)

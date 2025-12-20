@@ -4,15 +4,12 @@ namespace NodeMap.Core.Models
 {
     public class Node
     {
-
         public int Id { get; set; }
         public string Name { get; set; }
-
 
         public double Aktiflik { get; set; }
         public double Etkilesim { get; set; }
         public int BaglantiSayisi { get; set; }
-
 
         public Dictionary<string, object> Metadata { get; set; } = new();
 

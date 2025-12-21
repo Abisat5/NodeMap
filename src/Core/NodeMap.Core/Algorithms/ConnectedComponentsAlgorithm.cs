@@ -5,46 +5,35 @@ namespace NodeMap.Core.Algorithms
 {
     public class ConnectedComponentsAlgorithm
     {
-        public List<List<Node>> FindConnectedComponents(Graph graph)
+        public List<List<Node>> Find(Graph graph)
         {
             var visited = new HashSet<Node>();
             var components = new List<List<Node>>();
 
             foreach (var node in graph.Nodes)
             {
-                if (visited.Contains(node))
-                    continue;
+                if (visited.Contains(node)) continue;
 
                 var component = new List<Node>();
-                BFS(graph, node, visited, component);
+                DFS(graph, node, visited, component);
                 components.Add(component);
             }
-
             return components;
         }
 
-        private void BFS(Graph graph, Node start,
+        private void DFS(Graph graph, Node node,
                          HashSet<Node> visited,
                          List<Node> component)
         {
-            var queue = new Queue<Node>();
-            queue.Enqueue(start);
-            visited.Add(start);
+            visited.Add(node);
+            component.Add(node);
 
-            while (queue.Count > 0)
+            foreach (var n in graph.GetNeighbors(node))
             {
-                var current = queue.Dequeue();
-                component.Add(current);
-
-                foreach (var neighbor in graph.GetNeighbors(current))
-                {
-                    if (!visited.Contains(neighbor))
-                    {
-                        visited.Add(neighbor);
-                        queue.Enqueue(neighbor);
-                    }
-                }
+                if (!visited.Contains(n))
+                    DFS(graph, n, visited, component);
             }
         }
     }
+
 }

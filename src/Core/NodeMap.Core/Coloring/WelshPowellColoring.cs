@@ -10,7 +10,7 @@ namespace NodeMap.Core.Coloring
         {
             var result = new Dictionary<Node, int>();
 
-            // 1️⃣ Düğümleri dereceye göre sırala (azalan)
+            // 1️⃣ Düğümleri dereceye göre sırala
             var sortedNodes = graph.Nodes
                 .OrderByDescending(n => GetDegree(graph, n))
                 .ToList();
@@ -22,17 +22,14 @@ namespace NodeMap.Core.Coloring
                 if (result.ContainsKey(node))
                     continue;
 
-                // 2️⃣ Düğüme yeni renk ata
                 result[node] = currentColor;
 
-                // 3️⃣ Aynı rengi alabilecek diğer düğümler
                 foreach (var otherNode in sortedNodes)
                 {
                     if (result.ContainsKey(otherNode))
                         continue;
 
-                    if (!AreAdjacent(graph, node, otherNode) &&
-                        CanUseColor(graph, result, otherNode, currentColor))
+                    if (CanUseColor(graph, result, otherNode, currentColor))
                     {
                         result[otherNode] = currentColor;
                     }
@@ -44,22 +41,14 @@ namespace NodeMap.Core.Coloring
             return result;
         }
 
-        // 🔹 İki düğüm komşu mu?
-        private bool AreAdjacent(Graph graph, Node a, Node b)
-        {
-            return graph.Edges.Any(e =>
-                (e.Source == a && e.Target == b) ||
-                (e.Source == b && e.Target == a));
-        }
-
-        // 🔹 Düğümün derecesi
+        // Düğüm derecesi
         private int GetDegree(Graph graph, Node node)
         {
             return graph.Edges.Count(e =>
-                e.Source == node || e.Target == node);
+                e.Source.Equals(node) || e.Target.Equals(node));
         }
 
-        // 🔹 Aynı renkte komşu var mı kontrolü
+        // Aynı renkte komşu var mı kontrolü
         private bool CanUseColor(
             Graph graph,
             Dictionary<Node, int> colored,
@@ -70,9 +59,9 @@ namespace NodeMap.Core.Coloring
             {
                 Node neighbor = null;
 
-                if (edge.Source == node)
+                if (edge.Source.Equals(node))
                     neighbor = edge.Target;
-                else if (edge.Target == node)
+                else if (edge.Target.Equals(node))
                     neighbor = edge.Source;
 
                 if (neighbor != null &&

@@ -11,16 +11,22 @@ namespace NodeMap.Core.Models
         public List<Node> GetNeighbors(Node node)
         {
             return Edges
-                .Where(e => e.Source.Equals(node) || e.Target.Equals(node))
-                .Select(e => e.Source.Equals(node) ? e.Target : e.Source)
+                .Where(e => e.Source.Equals(node))
+                .Select(e => e.Target)
+                .Concat(
+                    Edges.Where(e => e.Target.Equals(node))
+                         .Select(e => e.Source)
+                )
+                .Distinct()
                 .ToList();
         }
 
-        public Edge GetEdge(Node a, Node b)
+        public Edge? GetEdge(Node a, Node b)
         {
             return Edges.FirstOrDefault(e =>
                 (e.Source.Equals(a) && e.Target.Equals(b)) ||
                 (e.Source.Equals(b) && e.Target.Equals(a)));
         }
     }
+
 }

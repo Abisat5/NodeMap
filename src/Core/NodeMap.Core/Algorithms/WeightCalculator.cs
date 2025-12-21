@@ -5,18 +5,16 @@ namespace NodeMap.Core.Algorithms
 {
     public static class WeightCalculator
     {
-        public static double Calculate(Node i, Node j)
+        public static double Calculate(Node a, Node b)
         {
-            double aktiflikFark = Math.Abs(i.Aktiflik - j.Aktiflik);
-            double etkilesimFark = Math.Abs(i.Etkilesim - j.Etkilesim);
-            double baglantiFark = Math.Abs(i.BaglantiSayisi - j.BaglantiSayisi);
+            double aktiflikDiff = Math.Abs(a.Aktiflik - b.Aktiflik);
+            double etkilesimDiff = Math.Abs(a.Etkilesim - b.Etkilesim);
+            double baglantiDiff = Math.Abs(a.BaglantiSayisi - b.BaglantiSayisi);
 
-            double weight =
-                (1.0 / (1 + aktiflikFark)) *
-                (2.0 / (2 + etkilesimFark)) *
-                (2.0 / (2 + baglantiFark));
-
-            return weight;
+            return
+                (1.0 / (1.0 + aktiflikDiff)) *
+                (2.0 / (2.0 + etkilesimDiff)) *
+                (2.0 / (2.0 + baglantiDiff));
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Xml.Linq;
+using System.Windows.Forms.VisualStyles;
 
 namespace NodeMap.UI
 {
@@ -36,6 +37,7 @@ namespace NodeMap.UI
 
 
 
+        private ContextMenuStrip _edgeMenu = new();
 
         private Node? _selectedNode;   
         private ContextMenuStrip _nodeMenu = new();
@@ -45,6 +47,8 @@ namespace NodeMap.UI
         private Node? _edgeStartNode; 
         private bool _isDragging;
         private Point _dragOffset;
+
+        private Edge? _selectedEdge = null;
 
 
 
@@ -65,7 +69,21 @@ namespace NodeMap.UI
             this.MouseUp += Form1_MouseUp;
 
             InitNodeContextMenu();
+            InitEdgeContextMenu();
 
+
+        }
+
+        private void InitEdgeContextMenu()
+        {
+            _edgeMenu.Items.Add("Edge Sil", null, (s, e) =>
+            {
+                if (_selectedEdge == null || _graph == null) return;
+
+                _graph.Edges.Remove(_selectedEdge);
+                _selectedEdge = null;
+                Invalidate();
+            });
         }
 
         private Node? GetNodeAt(Point mouse)
@@ -85,6 +103,43 @@ namespace NodeMap.UI
             }
             return null;
         }
+
+        private Edge? GetEdgeAt(Point mouse)
+        {
+            int tolerance = 6;
+
+            foreach (var edge in _graph!.Edges)
+            {
+                var p1 = new Point(
+                    _canvasRect.X + (int)(edge.Source.X * _zoom) + (int)(30 * _zoom),
+                    _canvasRect.Y + (int)(edge.Source.Y * _zoom) + (int)(30 * _zoom)
+                );
+                var p2 = new Point(
+                    _canvasRect.X + (int)(edge.Target.X * _zoom) + (int)(30 * _zoom),
+                    _canvasRect.Y + (int)(edge.Target.Y * _zoom) + (int)(30 * _zoom)
+                );
+
+                float dx = p2.X - p1.X;
+                float dy = p2.Y - p1.Y;
+                float lengthSquared = dx * dx + dy * dy;
+
+                float t = ((mouse.X - p1.X) * dx + (mouse.Y - p1.Y) * dy) / lengthSquared;
+                t = Math.Clamp(t, 0, 1);
+
+                float closestX = p1.X + t * dx;
+                float closestY = p1.Y + t * dy;
+
+                float dist = MathF.Sqrt(
+                    (mouse.X - closestX) * (mouse.X - closestX) +
+                    (mouse.Y - closestY) * (mouse.Y - closestY)
+                );
+
+                if (dist <= tolerance)
+                    return edge;
+            }
+            return null;
+        }
+
 
 
 
@@ -125,6 +180,8 @@ namespace NodeMap.UI
                 }
             });
         }
+
+
 
 
 
@@ -170,41 +227,64 @@ namespace NodeMap.UI
             );
         }
 
-        private void ShowNodeMenu(Point location)
+        private void ShowNodeMenu(Point location, Node node)
         {
             _nodeMenu.Items.Clear();
 
+            // EDGE BAŞLAT
             _nodeMenu.Items.Add("Edge Başlat", null, (s, e) =>
             {
-                _edgeStartNode = _dragNode;
+                _edgeStartNode = node;
             });
 
+            // İSİM DEĞİŞTİR
             _nodeMenu.Items.Add("İsim Değiştir", null, (s, e) =>
             {
                 string? name = Microsoft.VisualBasic.Interaction.InputBox(
                     "Yeni node adı:",
                     "Node İsmi",
-                    _dragNode!.Name);
+                    node.Name
+                );
 
                 if (!string.IsNullOrWhiteSpace(name))
                 {
-                    _dragNode!.Name = name;
+                    node.Name = name;
                     Invalidate();
                 }
             });
 
+            // RENK DEĞİŞTİR
             _nodeMenu.Items.Add("Renk Değiştir", null, (s, e) =>
             {
                 using var dlg = new ColorDialog();
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
-                    _dragNode!.Color = dlg.Color;
+                    node.Color = dlg.Color;
                     Invalidate();
                 }
             });
 
+            // 🔥 SADECE EDGE VARSA → EDGE SİL
+            var edges = _graph!.Edges
+                .Where(e => e.Source == node || e.Target == node)
+                .ToList();
+
+            if (edges.Count > 0)
+            {
+                _nodeMenu.Items.Add(new ToolStripSeparator());
+                _nodeMenu.Items.Add("Edge Sil", null, (s, e) =>
+                {
+                    foreach (var edge in edges)
+                        _graph.Edges.Remove(edge);
+
+                    Invalidate();
+                });
+            }
+
             _nodeMenu.Show(this, location);
         }
+
+
 
 
 
@@ -214,11 +294,11 @@ namespace NodeMap.UI
 
             var node = GetNodeAt(e.Location);
 
-            // SAĞ TIK → MENU
+            // SAĞ TIK → NODE MENÜ
             if (e.Button == MouseButtons.Right && node != null)
             {
                 _contextNode = node;
-                _nodeMenu.Show(this, e.Location);
+                ShowNodeMenu(e.Location, node);
                 return;
             }
 
@@ -252,6 +332,10 @@ namespace NodeMap.UI
                 _dragOffset = new Point(e.X - p.X, e.Y - p.Y);
             }
         }
+
+
+     
+
 
 
 

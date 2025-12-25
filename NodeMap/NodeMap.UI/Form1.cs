@@ -24,7 +24,7 @@ namespace NodeMap.UI
         private bool _drawEdges = true;
 
 
-        private Rectangle _canvasRect = new Rectangle(20, 20, 500, 300);
+        private Rectangle _canvasRect = new Rectangle(10, 10, 900, 600);
 
         private int _nextNodeId = 1;
         private Random _rnd = new Random();
@@ -50,6 +50,7 @@ namespace NodeMap.UI
 
         private Edge? _selectedEdge = null;
 
+        private long _lastAlgorithmTimeMs = 0;
 
 
 
@@ -426,6 +427,7 @@ namespace NodeMap.UI
         private void btnBFS(object sender, EventArgs e)
         {
             if (_graph == null) return;
+
             var sw = Stopwatch.StartNew();
             var bfs = new BFSAlgorithm();
             bfs.Execute(_graph, _graph.Nodes.First());
@@ -433,16 +435,20 @@ namespace NodeMap.UI
 
             _activeNodes = bfs.VisitedNodes;
             _shortestPath.Clear();
-            _degrees.Clear();
-            _activeAlgorithm = "BFS";
+            _topCentralNodes.Clear();
 
-            MessageBox.Show($"BFS süresi: {sw.ElapsedMilliseconds} ms");
+            _activeAlgorithm = "BFS";
+            _lastAlgorithmTimeMs = sw.ElapsedMilliseconds;
+
+            MessageBox.Show($"BFS süresi: {_lastAlgorithmTimeMs} ms");
             Invalidate();
         }
+
 
         private void btnDFS(object sender, EventArgs e)
         {
             if (_graph == null) return;
+
             var sw = Stopwatch.StartNew();
             var dfs = new DFSAlgorithm();
             dfs.Execute(_graph, _graph.Nodes.First());
@@ -450,12 +456,15 @@ namespace NodeMap.UI
 
             _activeNodes = dfs.VisitedNodes;
             _shortestPath.Clear();
-            _degrees.Clear();
-            _activeAlgorithm = "DFS";
+            _topCentralNodes.Clear();
 
-            MessageBox.Show($"DFS süresi: {sw.ElapsedMilliseconds} ms");
+            _activeAlgorithm = "DFS";
+            _lastAlgorithmTimeMs = sw.ElapsedMilliseconds;
+
+            MessageBox.Show($"DFS süresi: {_lastAlgorithmTimeMs} ms");
             Invalidate();
         }
+
 
         private void btnDijkstra_Click(object sender, EventArgs e)
         {
@@ -463,24 +472,28 @@ namespace NodeMap.UI
 
             var start = _graph.Nodes.First();
             var end = _graph.Nodes.Last();
-            var sw = Stopwatch.StartNew();
 
+            var sw = Stopwatch.StartNew();
             var dijkstra = new DijkstraAlgorithm();
             dijkstra.Execute(_graph, start);
             _shortestPath = dijkstra.GetShortestPath(start, end);
-
             sw.Stop();
+
             _activeNodes.Clear();
-            _degrees.Clear();
+            _topCentralNodes.Clear();
+
             _activeAlgorithm = "DIJKSTRA";
+            _lastAlgorithmTimeMs = sw.ElapsedMilliseconds;
 
             MessageBox.Show(
-                "En kisa yol: " +
+                "En kısa yol: " +
                 string.Join(" -> ", _shortestPath.Select(n => n.Name)) +
-                $"\nSüre: {sw.ElapsedMilliseconds} ms"
+                $"\nSüre: {_lastAlgorithmTimeMs} ms"
             );
+
             Invalidate();
         }
+
 
         private void btnCentrality(object sender, EventArgs e)
         {
@@ -491,7 +504,6 @@ namespace NodeMap.UI
             var result = calc.CalculateDegreeCentrality(_graph);
             sw.Stop();
 
-            _centrality = result.ToDictionary(x => x.Node, x => x.Degree);
             _topCentralNodes = result
                 .OrderByDescending(x => x.Degree)
                 .Take(5)
@@ -500,21 +512,14 @@ namespace NodeMap.UI
 
             _activeNodes.Clear();
             _shortestPath.Clear();
+
             _activeAlgorithm = "CENTRALITY";
+            _lastAlgorithmTimeMs = sw.ElapsedMilliseconds;
 
-            string msg =
-                "Top Degree Centrality:\n" +
-                string.Join("\n",
-                    result
-                    .OrderByDescending(x => x.Degree)
-                    .Take(5)
-                    .Select(x => $"{x.Node.Name} → Degree: {x.Degree}")
-                ) +
-                $"\n\nSüre: {sw.ElapsedMilliseconds} ms";
-
-            MessageBox.Show(msg);
+            MessageBox.Show($"Degree Centrality süresi: {_lastAlgorithmTimeMs} ms");
             Invalidate();
         }
+
 
 
 
@@ -525,12 +530,13 @@ namespace NodeMap.UI
             var g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
+            // ===================== CANVAS =====================
             g.DrawRectangle(Pens.DarkGray, _canvasRect);
             g.SetClip(_canvasRect);
 
             int r = (int)(30 * _zoom);
-
             var positions = new Dictionary<Node, Point>();
+
             foreach (var node in _graph.Nodes)
             {
                 positions[node] = new Point(
@@ -539,7 +545,7 @@ namespace NodeMap.UI
                 );
             }
 
-            // EDGES
+            // ===================== EDGES =====================
             if (_drawEdges)
             {
                 foreach (var edge in _graph.Edges)
@@ -552,7 +558,7 @@ namespace NodeMap.UI
 
                     g.DrawLine(Pens.Black, a, b);
 
-                    // WEIGHT YAZISI (ORTA NOKTA)
+                    // WEIGHT (ORTA NOKTA)
                     var mid = new Point(
                         (a.X + b.X) / 2,
                         (a.Y + b.Y) / 2
@@ -569,13 +575,31 @@ namespace NodeMap.UI
                 }
             }
 
-
-            // NODES
+            // ===================== NODES =====================
             foreach (var node in _graph.Nodes)
             {
                 var p = positions[node];
-                using var brush = new SolidBrush(node.Color);
 
+                // 🎯 ALGORİTMAYA GÖRE RENK
+                Color fillColor = node.Color;
+
+                if (_activeAlgorithm == "BFS" || _activeAlgorithm == "DFS")
+                {
+                    if (_activeNodes.Contains(node))
+                        fillColor = Color.LightSkyBlue;
+                }
+                else if (_activeAlgorithm == "DIJKSTRA" || _activeAlgorithm == "ASTAR")
+                {
+                    if (_shortestPath.Contains(node))
+                        fillColor = Color.LightGreen;
+                }
+                else if (_activeAlgorithm == "CENTRALITY")
+                {
+                    if (_topCentralNodes.Contains(node))
+                        fillColor = Color.IndianRed;
+                }
+
+                using var brush = new SolidBrush(fillColor);
                 g.FillEllipse(brush, p.X, p.Y, r * 2, r * 2);
                 g.DrawEllipse(Pens.Black, p.X, p.Y, r * 2, r * 2);
 
@@ -588,8 +612,22 @@ namespace NodeMap.UI
                 );
             }
 
+            // ===================== ALGORİTMA SÜRESİ =====================
+            if (!string.IsNullOrEmpty(_activeAlgorithm))
+            {
+                g.DrawString(
+                    $"{_activeAlgorithm} Süre: {_lastAlgorithmTimeMs} ms",
+                    Font,
+                    Brushes.Black,
+                    _canvasRect.X + 10,
+                    _canvasRect.Y + 10
+                );
+            }
+
             g.ResetClip();
         }
+
+
 
 
 
@@ -612,14 +650,21 @@ namespace NodeMap.UI
             _shortestPath = astar.FindPath(_graph, start, end);
             sw.Stop();
 
+            _activeNodes.Clear();
+            _topCentralNodes.Clear();
+
+            _activeAlgorithm = "ASTAR";
+            _lastAlgorithmTimeMs = sw.ElapsedMilliseconds;
+
             MessageBox.Show(
                 "A* yolu: " +
                 string.Join(" -> ", _shortestPath.Select(n => n.Name)) +
-                $"\nSüre: {sw.ElapsedMilliseconds} ms"
+                $"\nSüre: {_lastAlgorithmTimeMs} ms"
             );
 
             Invalidate();
         }
+
 
         private void btnCloseness_Click(object sender, EventArgs e)
         {

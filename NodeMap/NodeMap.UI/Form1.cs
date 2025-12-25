@@ -59,6 +59,9 @@ namespace NodeMap.UI
 
 
 
+
+
+
         public Form1()
         {
             InitializeComponent();
@@ -76,33 +79,40 @@ namespace NodeMap.UI
 
         private void InitEdgeContextMenu()
         {
+            _edgeMenu.Items.Clear();
+
+            // EDGE WEIGHT DEĞİŞTİR
+            _edgeMenu.Items.Add("Weight Değiştir", null, (s, e) =>
+            {
+                if (_selectedEdge == null) return;
+
+                string input = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Yeni edge weight:",
+                    "Edge Weight",
+                    _selectedEdge.Weight.ToString()
+                );
+
+                if (int.TryParse(input, out int newWeight))
+                {
+                    _selectedEdge.Weight = newWeight;
+                    Invalidate();
+                }
+                else if (!string.IsNullOrWhiteSpace(input))
+                {
+                    MessageBox.Show("Geçerli bir sayı giriniz");
+                }
+            });
+
+            // EDGE SİL
             _edgeMenu.Items.Add("Edge Sil", null, (s, e) =>
             {
                 if (_selectedEdge == null || _graph == null) return;
-
                 _graph.Edges.Remove(_selectedEdge);
                 _selectedEdge = null;
                 Invalidate();
             });
         }
 
-        private Node? GetNodeAt(Point mouse)
-        {
-            int r = (int)(30 * _zoom);
-
-            foreach (var node in _graph!.Nodes)
-            {
-                var p = new Point(
-                    _canvasRect.X + (int)(node.X * _zoom),
-                    _canvasRect.Y + (int)(node.Y * _zoom)
-                );
-
-                var rect = new Rectangle(p.X, p.Y, r * 2, r * 2);
-                if (rect.Contains(mouse))
-                    return node;
-            }
-            return null;
-        }
 
         private Edge? GetEdgeAt(Point mouse)
         {
@@ -227,6 +237,25 @@ namespace NodeMap.UI
             );
         }
 
+        private Node? GetNodeAt(Point mouse)
+        {
+            int r = (int)(30 * _zoom);
+
+            foreach (var node in _graph!.Nodes)
+            {
+                var p = new Point(
+                    _canvasRect.X + (int)(node.X * _zoom),
+                    _canvasRect.Y + (int)(node.Y * _zoom)
+                );
+
+                var rect = new Rectangle(p.X, p.Y, r * 2, r * 2);
+                if (rect.Contains(mouse))
+                    return node;
+            }
+
+            return null;
+        }
+
         private void ShowNodeMenu(Point location, Node node)
         {
             _nodeMenu.Items.Clear();
@@ -293,8 +322,17 @@ namespace NodeMap.UI
             if (_graph == null) return;
 
             var node = GetNodeAt(e.Location);
+            var edge = GetEdgeAt(e.Location);
 
-            // SAĞ TIK → NODE MENÜ
+            // SAĞ TIK → EDGE
+            if (e.Button == MouseButtons.Right && edge != null)
+            {
+                _selectedEdge = edge;
+                _edgeMenu.Show(this, e.Location);
+                return;
+            }
+
+            // SAĞ TIK → NODE
             if (e.Button == MouseButtons.Right && node != null)
             {
                 _contextNode = node;
@@ -314,7 +352,6 @@ namespace NodeMap.UI
                         Target = node,
                         Weight = 1
                     });
-
                     _edgeStartNode = null;
                     Invalidate();
                     return;
@@ -328,13 +365,13 @@ namespace NodeMap.UI
                     _canvasRect.X + (int)(node.X * _zoom),
                     _canvasRect.Y + (int)(node.Y * _zoom)
                 );
-
                 _dragOffset = new Point(e.X - p.X, e.Y - p.Y);
             }
         }
 
 
-     
+
+
 
 
 
@@ -510,11 +547,28 @@ namespace NodeMap.UI
                     var p1 = positions[edge.Source];
                     var p2 = positions[edge.Target];
 
-                    g.DrawLine(Pens.Black,
-                        p1.X + r, p1.Y + r,
-                        p2.X + r, p2.Y + r);
+                    Point a = new Point(p1.X + r, p1.Y + r);
+                    Point b = new Point(p2.X + r, p2.Y + r);
+
+                    g.DrawLine(Pens.Black, a, b);
+
+                    // WEIGHT YAZISI (ORTA NOKTA)
+                    var mid = new Point(
+                        (a.X + b.X) / 2,
+                        (a.Y + b.Y) / 2
+                    );
+
+                    g.FillRectangle(Brushes.White, mid.X - 10, mid.Y - 8, 20, 16);
+                    g.DrawString(
+                        edge.Weight.ToString(),
+                        Font,
+                        Brushes.Black,
+                        mid.X - 8,
+                        mid.Y - 8
+                    );
                 }
             }
+
 
             // NODES
             foreach (var node in _graph.Nodes)

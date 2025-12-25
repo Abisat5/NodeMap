@@ -1,3 +1,5 @@
+using System.Drawing;
+
 namespace NodeMap.Core.Models
 {
     public class Node
@@ -10,5 +12,7 @@ namespace NodeMap.Core.Models
         public double Aktiflik { get; set; }
         public double Etkilesim { get; set; }
         public int BaglantiSayisi { get; set; }
+
+        public Color Color { get; set; } = Color.LightBlue;
     }
 }

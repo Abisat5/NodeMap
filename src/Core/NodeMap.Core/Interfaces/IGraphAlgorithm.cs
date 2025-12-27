@@ -4,6 +4,7 @@ namespace NodeMap.Core.Interfaces
 {
     public interface IGraphAlgorithm
     {
-        void Execute(Graph graph, Node startNode);
+        long ElapsedMilliseconds { get; }
+        void Execute(Graph graph, Node start);
     }
 }

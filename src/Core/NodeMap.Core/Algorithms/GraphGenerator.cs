@@ -1,6 +1,5 @@
 ﻿using NodeMap.Core.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace NodeMap.Core.Algorithms
@@ -16,19 +15,32 @@ namespace NodeMap.Core.Algorithms
             var rand = new Random();
             var graph = new Graph();
 
-            // -------- Nodes --------
+            // ================= NODE YERLEŞİMİ (GRID) =================
+            int cols = (int)Math.Ceiling(Math.Sqrt(nodeCount));
+            int rows = (int)Math.Ceiling((double)nodeCount / cols);
+
+            int padding = 80;
+            int cellWidth = (width - padding * 2) / cols;
+            int cellHeight = (height - padding * 2) / rows;
+
             for (int i = 0; i < nodeCount; i++)
             {
+                int row = i / cols;
+                int col = i % cols;
+
+                int x = padding + col * cellWidth + rand.Next(-15, 15);
+                int y = padding + row * cellHeight + rand.Next(-15, 15);
+
                 graph.Nodes.Add(new Node
                 {
                     Id = i,
                     Name = ((char)('A' + (i % 26))).ToString() + i,
-                    X = rand.Next(50, width - 50),
-                    Y = rand.Next(50, height - 50)
+                    X = x,
+                    Y = y
                 });
             }
 
-            // -------- Connectivity (chain) --------
+            // ================= ZORUNLU BAĞLANTI (CHAIN) =================
             for (int i = 0; i < nodeCount - 1; i++)
             {
                 graph.Edges.Add(new Edge
@@ -39,7 +51,7 @@ namespace NodeMap.Core.Algorithms
                 });
             }
 
-            // -------- Random edges --------
+            // ================= EK RANDOM EDGE =================
             int extraEdges = edgeCount - (nodeCount - 1);
             for (int i = 0; i < extraEdges; i++)
             {
@@ -49,7 +61,8 @@ namespace NodeMap.Core.Algorithms
                 if (from == to) continue;
 
                 if (!graph.Edges.Any(e =>
-                    e.Source == from && e.Target == to))
+                    (e.Source == from && e.Target == to) ||
+                    (e.Source == to && e.Target == from)))
                 {
                     graph.Edges.Add(new Edge
                     {

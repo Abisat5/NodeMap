@@ -2,6 +2,7 @@ using NodeMap.Core.Interfaces;
 using NodeMap.Core.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace NodeMap.Core.Algorithms
@@ -12,13 +13,22 @@ namespace NodeMap.Core.Algorithms
         private Dictionary<Node, double> _gScore = new();
         private Dictionary<Node, double> _fScore = new();
 
+        public long ElapsedMilliseconds { get; private set; }
+
         public void Execute(Graph graph, Node start)
         {
+            // A* için Execute boþ kalabilir
         }
 
         public List<Node> FindPath(Graph graph, Node start, Node goal)
         {
+            var sw = Stopwatch.StartNew();
+
             var openSet = new List<Node> { start };
+
+            _cameFrom.Clear();
+            _gScore.Clear();
+            _fScore.Clear();
 
             foreach (var node in graph.Nodes)
             {
@@ -34,7 +44,11 @@ namespace NodeMap.Core.Algorithms
                 var current = openSet.OrderBy(n => _fScore[n]).First();
 
                 if (current == goal)
+                {
+                    sw.Stop();
+                    ElapsedMilliseconds = sw.ElapsedMilliseconds;
                     return ReconstructPath(current);
+                }
 
                 openSet.Remove(current);
 
@@ -43,8 +57,7 @@ namespace NodeMap.Core.Algorithms
                     var edge = graph.GetEdge(current, neighbor);
                     if (edge == null) continue;
 
-                    double tentativeG =
-                        _gScore[current] + edge.Weight;
+                    double tentativeG = _gScore[current] + edge.Weight;
 
                     if (tentativeG < _gScore[neighbor])
                     {
@@ -58,6 +71,9 @@ namespace NodeMap.Core.Algorithms
                     }
                 }
             }
+
+            sw.Stop();
+            ElapsedMilliseconds = sw.ElapsedMilliseconds;
             return new List<Node>();
         }
 

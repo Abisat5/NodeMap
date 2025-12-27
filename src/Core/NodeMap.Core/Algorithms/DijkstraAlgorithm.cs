@@ -1,6 +1,7 @@
 using NodeMap.Core.Interfaces;
 using NodeMap.Core.Models;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace NodeMap.Core.Algorithms
@@ -9,13 +10,16 @@ namespace NodeMap.Core.Algorithms
     {
         public Dictionary<Node, double> Distances { get; private set; } = new();
         private Dictionary<Node, Node> _previous = new();
+        public long ElapsedMilliseconds { get; private set; }
 
         public void Execute(Graph graph, Node start)
         {
-            Distances = graph.Nodes.ToDictionary(n => n, n => double.MaxValue);
-            _previous = new Dictionary<Node, Node>();
+            var sw = Stopwatch.StartNew();
 
+            Distances = graph.Nodes.ToDictionary(n => n, n => double.MaxValue);
+            _previous.Clear();
             Distances[start] = 0;
+
             var visited = new HashSet<Node>();
 
             while (visited.Count < graph.Nodes.Count)
@@ -33,7 +37,6 @@ namespace NodeMap.Core.Algorithms
                     if (edge == null) continue;
 
                     double newDist = Distances[current] + edge.Weight;
-
                     if (newDist < Distances[neighbor])
                     {
                         Distances[neighbor] = newDist;
@@ -41,6 +44,9 @@ namespace NodeMap.Core.Algorithms
                     }
                 }
             }
+
+            sw.Stop();
+            ElapsedMilliseconds = sw.ElapsedMilliseconds;
         }
 
         public List<Node> GetShortestPath(Node start, Node end)
@@ -53,7 +59,6 @@ namespace NodeMap.Core.Algorithms
                 path.Add(current);
                 if (!_previous.ContainsKey(current))
                     return new List<Node>();
-
                 current = _previous[current];
             }
 

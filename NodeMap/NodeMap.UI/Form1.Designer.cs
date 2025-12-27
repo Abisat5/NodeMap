@@ -49,9 +49,9 @@
             // 
             // btnTest
             // 
-            btnTest.Location = new Point(885, 21);
+            btnTest.Location = new Point(1113, 28);
             btnTest.Name = "btnTest";
-            btnTest.Size = new Size(85, 46);
+            btnTest.Size = new Size(123, 83);
             btnTest.TabIndex = 0;
             btnTest.Text = "Test Graph";
             btnTest.UseVisualStyleBackColor = true;
@@ -59,9 +59,9 @@
             // 
             // button1
             // 
-            button1.Location = new Point(1054, 269);
+            button1.Location = new Point(1113, 211);
             button1.Name = "button1";
-            button1.Size = new Size(106, 70);
+            button1.Size = new Size(106, 40);
             button1.TabIndex = 1;
             button1.Text = "BFS Çalıştır";
             button1.UseVisualStyleBackColor = true;
@@ -69,9 +69,9 @@
             // 
             // button2
             // 
-            button2.Location = new Point(1054, 355);
+            button2.Location = new Point(1113, 332);
             button2.Name = "button2";
-            button2.Size = new Size(106, 61);
+            button2.Size = new Size(106, 40);
             button2.TabIndex = 2;
             button2.Text = "DFS Çalıştır";
             button2.UseVisualStyleBackColor = true;
@@ -79,9 +79,9 @@
             // 
             // button3
             // 
-            button3.Location = new Point(1054, 422);
+            button3.Location = new Point(1113, 271);
             button3.Name = "button3";
-            button3.Size = new Size(106, 69);
+            button3.Size = new Size(106, 40);
             button3.TabIndex = 3;
             button3.Text = "Dijkstra Çalıştır";
             button3.UseVisualStyleBackColor = true;
@@ -89,9 +89,9 @@
             // 
             // button4
             // 
-            button4.Location = new Point(1287, 378);
+            button4.Location = new Point(1113, 389);
             button4.Name = "button4";
-            button4.Size = new Size(126, 71);
+            button4.Size = new Size(106, 40);
             button4.TabIndex = 4;
             button4.Text = "Degree Centrality";
             button4.UseVisualStyleBackColor = true;
@@ -99,9 +99,9 @@
             // 
             // button5
             // 
-            button5.Location = new Point(1054, 511);
+            button5.Location = new Point(1113, 154);
             button5.Name = "button5";
-            button5.Size = new Size(122, 58);
+            button5.Size = new Size(106, 40);
             button5.TabIndex = 5;
             button5.Text = "AStar Çalıştır";
             button5.UseVisualStyleBackColor = true;
@@ -109,9 +109,9 @@
             // 
             // button6
             // 
-            button6.Location = new Point(1274, 281);
+            button6.Location = new Point(1113, 505);
             button6.Name = "button6";
-            button6.Size = new Size(172, 74);
+            button6.Size = new Size(106, 40);
             button6.TabIndex = 6;
             button6.Text = "Closeness ";
             button6.UseVisualStyleBackColor = true;
@@ -119,9 +119,9 @@
             // 
             // button7
             // 
-            button7.Location = new Point(1297, 203);
+            button7.Location = new Point(1113, 561);
             button7.Name = "button7";
-            button7.Size = new Size(131, 55);
+            button7.Size = new Size(106, 40);
             button7.TabIndex = 7;
             button7.Text = "btnBetweenness_Click";
             button7.UseVisualStyleBackColor = true;
@@ -129,9 +129,9 @@
             // 
             // button8
             // 
-            button8.Location = new Point(1301, 480);
+            button8.Location = new Point(1113, 453);
             button8.Name = "button8";
-            button8.Size = new Size(127, 71);
+            button8.Size = new Size(106, 40);
             button8.TabIndex = 8;
             button8.Text = "Random Graph";
             button8.UseVisualStyleBackColor = true;
@@ -139,9 +139,9 @@
             // 
             // button9
             // 
-            button9.Location = new Point(1297, 137);
+            button9.Location = new Point(1291, 154);
             button9.Name = "button9";
-            button9.Size = new Size(127, 60);
+            button9.Size = new Size(106, 40);
             button9.TabIndex = 9;
             button9.Text = "Edge Aç/Kapat";
             button9.UseVisualStyleBackColor = true;
@@ -149,9 +149,9 @@
             // 
             // button10
             // 
-            button10.Location = new Point(1067, 219);
+            button10.Location = new Point(1291, 211);
             button10.Name = "button10";
-            button10.Size = new Size(75, 23);
+            button10.Size = new Size(106, 40);
             button10.TabIndex = 10;
             button10.Text = "Auto node ekle";
             button10.UseVisualStyleBackColor = true;
@@ -159,7 +159,7 @@
             // 
             // button11
             // 
-            button11.Location = new Point(1088, 12);
+            button11.Location = new Point(12, 496);
             button11.Name = "button11";
             button11.Size = new Size(88, 38);
             button11.TabIndex = 11;
@@ -169,9 +169,9 @@
             // 
             // button12
             // 
-            button12.Location = new Point(1088, 78);
+            button12.Location = new Point(12, 571);
             button12.Name = "button12";
-            button12.Size = new Size(88, 23);
+            button12.Size = new Size(88, 58);
             button12.TabIndex = 12;
             button12.Text = "Manuel Edge";
             button12.UseVisualStyleBackColor = true;
@@ -179,7 +179,7 @@
             // 
             // txtNodeId
             // 
-            txtNodeId.Location = new Point(1287, 21);
+            txtNodeId.Location = new Point(263, 505);
             txtNodeId.Name = "txtNodeId";
             txtNodeId.PlaceholderText = "ID";
             txtNodeId.Size = new Size(50, 23);
@@ -187,7 +187,7 @@
             // 
             // txtNodeName
             // 
-            txtNodeName.Location = new Point(1202, 21);
+            txtNodeName.Location = new Point(149, 505);
             txtNodeName.Name = "txtNodeName";
             txtNodeName.PlaceholderText = "Name";
             txtNodeName.Size = new Size(60, 23);
@@ -195,7 +195,7 @@
             // 
             // txtEdgeFrom
             // 
-            txtEdgeFrom.Location = new Point(1202, 79);
+            txtEdgeFrom.Location = new Point(149, 590);
             txtEdgeFrom.Name = "txtEdgeFrom";
             txtEdgeFrom.PlaceholderText = "From";
             txtEdgeFrom.Size = new Size(50, 23);
@@ -203,7 +203,7 @@
             // 
             // txtEdgeTo
             // 
-            txtEdgeTo.Location = new Point(1287, 79);
+            txtEdgeTo.Location = new Point(263, 590);
             txtEdgeTo.Name = "txtEdgeTo";
             txtEdgeTo.PlaceholderText = "To";
             txtEdgeTo.Size = new Size(50, 23);
@@ -259,7 +259,6 @@
         private TextBox txtNodeName;
         private TextBox txtEdgeFrom;
         private TextBox txtEdgeTo;
-
     }
 
 

@@ -39,20 +39,33 @@ namespace NodeMap.UI
 
         private ContextMenuStrip _edgeMenu = new();
 
-        private Node? _selectedNode;   
+        private Node? _selectedNode;
         private ContextMenuStrip _nodeMenu = new();
 
-        private Node? _contextNode;   
-        private Node? _dragNode;      
-        private Node? _edgeStartNode; 
+        private Node? _contextNode;
+        private Node? _dragNode;
+        private Node? _edgeStartNode;
         private bool _isDragging;
         private Point _dragOffset;
 
         private Edge? _selectedEdge = null;
 
-        private long _lastAlgorithmTimeMs = 0;
+        private double _lastAlgorithmTimeMs = 0;
 
 
+
+        private bool _manualNodeMode = false;
+        private Node? _lastCreatedNode = null;
+
+
+
+        // ================= NODE INFO PANEL =================
+        private Panel pnlNodeInfo;
+        private TextBox txtNodeSearchId;
+        private Label lblNodeName;
+        private Label lblNodeDegree;
+        private Label lblNodeStatus;
+        private Label lblNodeActivity;
 
 
 
@@ -65,6 +78,7 @@ namespace NodeMap.UI
 
         public Form1()
         {
+
             InitializeComponent();
             this.Paint += Form1_Paint;
             this.MouseWheel += Form1_MouseWheel;
@@ -75,8 +89,178 @@ namespace NodeMap.UI
             InitNodeContextMenu();
             InitEdgeContextMenu();
 
+            btnManualNodeMode = new Button();
+            btnManualNodeMode.Location = new Point(1291, 271);
+            btnManualNodeMode.Size = new Size(140, 40);
+            btnManualNodeMode.Text = "Manuel Node Modu";
+            btnManualNodeMode.Click += btnManualNodeMode_Click;
+            Controls.Add(btnManualNodeMode);
+            InitNodeInfoPanel();
+
+
+
 
         }
+
+
+
+        private void FillNodeInfo(Node node)
+        {
+            if (_graph == null) return;
+
+            txtNodeSearchId.Text = node.Id.ToString();
+
+            int degree = _graph.Edges.Count(e =>
+                e.Source == node || e.Target == node);
+
+            lblNodeName.Text = $"İsim: {node.Name}";
+            lblNodeDegree.Text = $"Bağlantı: {degree}";
+
+            // Durum
+            if (_shortestPath.Contains(node))
+                lblNodeStatus.Text = "Durum: Shortest Path";
+            else if (_topCentralNodes.Contains(node))
+                lblNodeStatus.Text = "Durum: Central";
+            else if (_activeNodes.Contains(node))
+                lblNodeStatus.Text = "Durum: Aktif";
+            else
+                lblNodeStatus.Text = "Durum: Normal";
+
+            lblNodeActivity.Text = $"Aktivite: {_activeAlgorithm}";
+        }
+
+
+
+
+
+        private void InitNodeInfoPanel()
+        {
+            pnlNodeInfo = new Panel();
+            pnlNodeInfo.Location = new Point(1291, 350);
+            pnlNodeInfo.Size = new Size(230, 230);
+            pnlNodeInfo.BackColor = Color.FromArgb(245, 247, 250);
+            pnlNodeInfo.BorderStyle = BorderStyle.FixedSingle;
+            Controls.Add(pnlNodeInfo);
+
+            var title = new Label
+            {
+                Text = "Node Bilgi Paneli",
+                Font = new Font(Font, FontStyle.Bold),
+                Location = new Point(10, 10),
+                AutoSize = true
+            };
+            pnlNodeInfo.Controls.Add(title);
+
+            pnlNodeInfo.Controls.Add(new Label
+            {
+                Text = "Node ID:",
+                Location = new Point(10, 45),
+                AutoSize = true
+            });
+
+            txtNodeSearchId = new TextBox
+            {
+                Location = new Point(80, 42),
+                Width = 60
+            };
+            pnlNodeInfo.Controls.Add(txtNodeSearchId);
+
+            var btnFind = new Button
+            {
+                Text = "Getir",
+                Location = new Point(150, 40),
+                Width = 70
+            };
+            btnFind.Click += BtnFindNode_Click;
+            pnlNodeInfo.Controls.Add(btnFind);
+
+            lblNodeName = CreateInfoLabel("İsim:", 80);
+            lblNodeDegree = CreateInfoLabel("Bağlantı:", 105);
+            lblNodeStatus = CreateInfoLabel("Durum:", 130);
+            lblNodeActivity = CreateInfoLabel("Aktivite:", 155);
+        }
+
+
+        private void BtnFindNode_Click(object? sender, EventArgs e)
+        {
+            if (_graph == null) return;
+
+            if (!int.TryParse(txtNodeSearchId.Text, out int id))
+                return;
+
+            var node = _graph.Nodes.FirstOrDefault(n => n.Id == id);
+            if (node == null)
+            {
+                MessageBox.Show("Node bulunamadı");
+                return;
+            }
+
+            FillNodeInfo(node);
+        }
+
+
+
+        private Label CreateInfoLabel(string text, int y)
+        {
+            var lbl = new Label
+            {
+                Text = text,
+                Location = new Point(10, y),
+                AutoSize = true
+            };
+            pnlNodeInfo.Controls.Add(lbl);
+            return lbl;
+        }
+
+
+
+
+
+
+
+
+
+
+        private Button btnManualNodeMode;
+
+        private void btnManualNodeMode_Click(object sender, EventArgs e)
+        {
+            _manualNodeMode = !_manualNodeMode;
+            btnManualNodeMode.BackColor =
+                _manualNodeMode ? Color.LightGreen : SystemColors.Control;
+        }
+
+        private string GetNextNodeName()
+        {
+            int index = _graph.Nodes.Count;
+            return ((char)('A' + index)).ToString();
+        }
+
+
+        private Color GetGradientColor(int index, int total, bool isDFS)
+        {
+            if (total <= 1) return Color.LightSkyBlue;
+
+            float t = index / (float)(total - 1);
+
+            if (isDFS)
+            {
+                // DFS → mor tonları
+                int r = (int)(180 + 50 * t);
+                int g = (int)(120 * (1 - t));
+                int b = 220;
+                return Color.FromArgb(r, g, b);
+            }
+            else
+            {
+                // BFS → mavi-yeşil geçiş
+                int r = (int)(100 * (1 - t));
+                int g = (int)(180 + 40 * t);
+                int b = 255;
+                return Color.FromArgb(r, g, b);
+            }
+        }
+
 
         private void InitEdgeContextMenu()
         {
@@ -312,6 +496,27 @@ namespace NodeMap.UI
             }
 
             _nodeMenu.Show(this, location);
+
+            // ===================== NODE SİL =====================
+            _nodeMenu.Items.Add(new ToolStripSeparator());
+            _nodeMenu.Items.Add("Node Sil", null, (s, e) =>
+            {
+                if (_graph == null) return;
+
+                // Node'a bağlı tüm edge'leri sil
+                _graph.Edges.RemoveAll(edge =>
+                    edge.Source == node || edge.Target == node);
+
+                // Node'u sil
+                _graph.Nodes.Remove(node);
+
+                // Eğer edge başlatma durumundaysa temizle
+                if (_edgeStartNode == node)
+                    _edgeStartNode = null;
+
+                Invalidate();
+            });
+
         }
 
 
@@ -325,7 +530,43 @@ namespace NodeMap.UI
             var node = GetNodeAt(e.Location);
             var edge = GetEdgeAt(e.Location);
 
-            // SAĞ TIK → EDGE
+            // ==================================================
+            // MANUEL NODE EKLEME (SOL TIK + BOŞ ALAN)
+            // ==================================================
+            if (_manualNodeMode &&
+                e.Button == MouseButtons.Left &&
+                _canvasRect.Contains(e.Location) &&
+                node == null)
+            {
+                var newNode = new Node
+                {
+                    Id = _nextNodeId++,
+                    Name = GetNextNodeName(),
+                    X = (int)((e.X - _canvasRect.X) / _zoom),
+                    Y = (int)((e.Y - _canvasRect.Y) / _zoom),
+                    Color = Color.LightGray
+                };
+
+                _graph.Nodes.Add(newNode);
+
+                if (_lastCreatedNode != null)
+                {
+                    _graph.Edges.Add(new Edge
+                    {
+                        Source = _lastCreatedNode,
+                        Target = newNode,
+                        Weight = 1
+                    });
+                }
+
+                _lastCreatedNode = newNode;
+                Invalidate();
+                return;
+            }
+
+            // ==================================================
+            // SAĞ TIK → EDGE MENÜ
+            // ==================================================
             if (e.Button == MouseButtons.Right && edge != null)
             {
                 _selectedEdge = edge;
@@ -333,7 +574,9 @@ namespace NodeMap.UI
                 return;
             }
 
-            // SAĞ TIK → NODE
+            // ==================================================
+            // SAĞ TIK → NODE MENÜ
+            // ==================================================
             if (e.Button == MouseButtons.Right && node != null)
             {
                 _contextNode = node;
@@ -341,10 +584,18 @@ namespace NodeMap.UI
                 return;
             }
 
-            // SOL TIK
+            // ==================================================
+            // SOL TIK → NODE SEÇİM / GLOW / DRAG
+            // ==================================================
             if (e.Button == MouseButtons.Left && node != null)
             {
-                // EDGE BİTİR
+                // 🔥 GLOW İÇİN SEÇİLEN NODE
+                _selectedNode = node;
+
+                // 🔹 Node info paneli doldur
+                FillNodeInfo(node);
+
+                // 🔹 Edge tamamlama
                 if (_edgeStartNode != null && _edgeStartNode != node)
                 {
                     _graph.Edges.Add(new Edge
@@ -358,7 +609,7 @@ namespace NodeMap.UI
                     return;
                 }
 
-                // DRAG BAŞLAT
+                // 🔹 Drag başlat
                 _dragNode = node;
                 _isDragging = true;
 
@@ -366,9 +617,29 @@ namespace NodeMap.UI
                     _canvasRect.X + (int)(node.X * _zoom),
                     _canvasRect.Y + (int)(node.Y * _zoom)
                 );
-                _dragOffset = new Point(e.X - p.X, e.Y - p.Y);
+
+                _dragOffset = new Point(
+                    e.X - p.X,
+                    e.Y - p.Y
+                );
+
+                Invalidate();
+                return;
+            }
+
+            // ==================================================
+            // SOL TIK → BOŞ ALAN (SEÇİM TEMİZLE)
+            // ==================================================
+            if (e.Button == MouseButtons.Left)
+            {
+                _selectedNode = null;
+                Invalidate();
             }
         }
+
+
+
+
 
 
 
@@ -438,7 +709,8 @@ namespace NodeMap.UI
             _topCentralNodes.Clear();
 
             _activeAlgorithm = "BFS";
-            _lastAlgorithmTimeMs = sw.ElapsedMilliseconds;
+            _lastAlgorithmTimeMs = sw.Elapsed.TotalMilliseconds;
+
 
             MessageBox.Show($"BFS süresi: {_lastAlgorithmTimeMs} ms");
             Invalidate();
@@ -459,7 +731,8 @@ namespace NodeMap.UI
             _topCentralNodes.Clear();
 
             _activeAlgorithm = "DFS";
-            _lastAlgorithmTimeMs = sw.ElapsedMilliseconds;
+            _lastAlgorithmTimeMs = sw.Elapsed.TotalMilliseconds;
+;
 
             MessageBox.Show($"DFS süresi: {_lastAlgorithmTimeMs} ms");
             Invalidate();
@@ -483,7 +756,8 @@ namespace NodeMap.UI
             _topCentralNodes.Clear();
 
             _activeAlgorithm = "DIJKSTRA";
-            _lastAlgorithmTimeMs = sw.ElapsedMilliseconds;
+            _lastAlgorithmTimeMs = sw.Elapsed.TotalMilliseconds;
+
 
             MessageBox.Show(
                 "En kısa yol: " +
@@ -514,7 +788,8 @@ namespace NodeMap.UI
             _shortestPath.Clear();
 
             _activeAlgorithm = "CENTRALITY";
-            _lastAlgorithmTimeMs = sw.ElapsedMilliseconds;
+            _lastAlgorithmTimeMs = sw.Elapsed.TotalMilliseconds;
+;
 
             MessageBox.Show($"Degree Centrality süresi: {_lastAlgorithmTimeMs} ms");
             Invalidate();
@@ -531,12 +806,17 @@ namespace NodeMap.UI
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
             // ===================== CANVAS =====================
-            g.DrawRectangle(Pens.DarkGray, _canvasRect);
+            using (var bgBrush = new SolidBrush(Color.FromArgb(245, 247, 250)))
+                g.FillRectangle(bgBrush, _canvasRect);
+
+            using (var canvasPen = new Pen(Color.Gray, 2))
+                g.DrawRectangle(canvasPen, _canvasRect);
+
             g.SetClip(_canvasRect);
 
-            int r = (int)(30 * _zoom);
-            var positions = new Dictionary<Node, Point>();
+            int r = (int)(28 * _zoom);
 
+            var positions = new Dictionary<Node, Point>();
             foreach (var node in _graph.Nodes)
             {
                 positions[node] = new Point(
@@ -556,22 +836,32 @@ namespace NodeMap.UI
                     Point a = new Point(p1.X + r, p1.Y + r);
                     Point b = new Point(p2.X + r, p2.Y + r);
 
-                    g.DrawLine(Pens.Black, a, b);
+                    Pen edgePen = new Pen(Color.DimGray, 2);
 
-                    // WEIGHT (ORTA NOKTA)
-                    var mid = new Point(
-                        (a.X + b.X) / 2,
-                        (a.Y + b.Y) / 2
-                    );
+                    // Dijkstra / A* vurgusu
+                    if ((_activeAlgorithm == "DIJKSTRA" || _activeAlgorithm == "ASTAR") &&
+                        _shortestPath.Count > 1)
+                    {
+                        for (int i = 0; i < _shortestPath.Count - 1; i++)
+                        {
+                            if (
+                                (_shortestPath[i] == edge.Source && _shortestPath[i + 1] == edge.Target) ||
+                                (_shortestPath[i] == edge.Target && _shortestPath[i + 1] == edge.Source)
+                            )
+                            {
+                                edgePen = new Pen(Color.DarkGreen, 4);
+                                break;
+                            }
+                        }
+                    }
 
-                    g.FillRectangle(Brushes.White, mid.X - 10, mid.Y - 8, 20, 16);
-                    g.DrawString(
-                        edge.Weight.ToString(),
-                        Font,
-                        Brushes.Black,
-                        mid.X - 8,
-                        mid.Y - 8
-                    );
+                    g.DrawLine(edgePen, a, b);
+
+                    // Edge weight balonu
+                    var mid = new Point((a.X + b.X) / 2, (a.Y + b.Y) / 2);
+                    g.FillEllipse(Brushes.White, mid.X - 12, mid.Y - 10, 24, 20);
+                    g.DrawEllipse(Pens.Black, mid.X - 12, mid.Y - 10, 24, 20);
+                    g.DrawString(edge.Weight.ToString(), Font, Brushes.Black, mid.X - 6, mid.Y - 7);
                 }
             }
 
@@ -579,53 +869,134 @@ namespace NodeMap.UI
             foreach (var node in _graph.Nodes)
             {
                 var p = positions[node];
-
-                // 🎯 ALGORİTMAYA GÖRE RENK
                 Color fillColor = node.Color;
+                Pen borderPen = new Pen(Color.Black, 2);
 
-                if (_activeAlgorithm == "BFS" || _activeAlgorithm == "DFS")
+                // ================= ALGORITHM STATES =================
+                if ((_activeAlgorithm == "BFS" || _activeAlgorithm == "DFS") &&
+                    _activeNodes.Contains(node))
                 {
-                    if (_activeNodes.Contains(node))
-                        fillColor = Color.LightSkyBlue;
+                    int index = _activeNodes.IndexOf(node);
+                    int total = Math.Max(1, _activeNodes.Count);
+                    int blue = 180 + (int)(70.0 * index / total);
+                    fillColor = Color.FromArgb(90, 140, blue);
+                    borderPen = new Pen(Color.DarkBlue, 3);
                 }
-                else if (_activeAlgorithm == "DIJKSTRA" || _activeAlgorithm == "ASTAR")
+                else if ((_activeAlgorithm == "DIJKSTRA" || _activeAlgorithm == "ASTAR") &&
+                         _shortestPath.Contains(node))
                 {
-                    if (_shortestPath.Contains(node))
-                        fillColor = Color.LightGreen;
+                    fillColor = Color.LightGreen;
+                    borderPen = new Pen(Color.DarkGreen, 3);
                 }
-                else if (_activeAlgorithm == "CENTRALITY")
+                else if (_activeAlgorithm == "CENTRALITY" &&
+                         _topCentralNodes.Contains(node))
                 {
-                    if (_topCentralNodes.Contains(node))
-                        fillColor = Color.IndianRed;
+                    fillColor = Color.IndianRed;
+                    borderPen = new Pen(Color.DarkRed, 3);
                 }
 
-                using var brush = new SolidBrush(fillColor);
-                g.FillEllipse(brush, p.X, p.Y, r * 2, r * 2);
-                g.DrawEllipse(Pens.Black, p.X, p.Y, r * 2, r * 2);
+                // ================= 🔥 GOLD GLOW (SELECTED NODE) =================
+                if (_selectedNode == node)
+                {
+                    using (var glowBrush = new SolidBrush(Color.FromArgb(80, 255, 215, 0)))
+                        g.FillEllipse(
+                            glowBrush,
+                            p.X - 10,
+                            p.Y - 10,
+                            r * 2 + 20,
+                            r * 2 + 20
+                        );
 
+                    using (var glowPen = new Pen(Color.Gold, 4))
+                        g.DrawEllipse(
+                            glowPen,
+                            p.X - 6,
+                            p.Y - 6,
+                            r * 2 + 12,
+                            r * 2 + 12
+                        );
+                }
+
+                // ================= SHADOW =================
+                using (var shadowBrush = new SolidBrush(Color.FromArgb(60, Color.Black)))
+                    g.FillEllipse(shadowBrush, p.X + 4, p.Y + 4, r * 2, r * 2);
+
+                // ================= NODE BODY =================
+                using (var brush = new SolidBrush(fillColor))
+                    g.FillEllipse(brush, p.X, p.Y, r * 2, r * 2);
+
+                g.DrawEllipse(borderPen, p.X, p.Y, r * 2, r * 2);
+
+                // ================= NODE TEXT =================
+                var textSize = g.MeasureString(node.Name, Font);
                 g.DrawString(
-                    $"{node.Name}\nID:{node.Id}",
+                    node.Name,
                     Font,
                     Brushes.Black,
-                    p.X + r - 18,
-                    p.Y + r - 12
+                    p.X + r - textSize.Width / 2,
+                    p.Y + r - textSize.Height / 2
                 );
             }
 
-            // ===================== ALGORİTMA SÜRESİ =====================
+
+            // ===================== ALGORITHM INFO PANEL =====================
             if (!string.IsNullOrEmpty(_activeAlgorithm))
             {
+                Rectangle panel = new Rectangle(
+                    _canvasRect.X + 10,
+                    _canvasRect.Y + 10,
+                    240,
+                    45
+                );
+
+                using (var panelBrush = new SolidBrush(Color.FromArgb(230, 255, 255, 255)))
+                    g.FillRectangle(panelBrush, panel);
+
+                g.DrawRectangle(Pens.Gray, panel);
+
                 g.DrawString(
-                    $"{_activeAlgorithm} Süre: {_lastAlgorithmTimeMs} ms",
+                    $"{_activeAlgorithm} • {_lastAlgorithmTimeMs:F4} ms",
                     Font,
                     Brushes.Black,
-                    _canvasRect.X + 10,
-                    _canvasRect.Y + 10
+                    panel.X + 10,
+                    panel.Y + 12
                 );
             }
+
+            // ===================== LEGEND PANEL =====================
+            Rectangle legend = new Rectangle(
+                _canvasRect.Right - 200,
+                _canvasRect.Y + 10,
+                190,
+                120
+            );
+
+            using (var legendBrush = new SolidBrush(Color.FromArgb(235, 255, 255, 255)))
+                g.FillRectangle(legendBrush, legend);
+
+            g.DrawRectangle(Pens.Gray, legend);
+
+            int ly = legend.Y + 10;
+
+            void LegendItem(Color c, string text)
+            {
+                g.FillEllipse(new SolidBrush(c), legend.X + 10, ly, 16, 16);
+                g.DrawEllipse(Pens.Black, legend.X + 10, ly, 16, 16);
+                g.DrawString(text, Font, Brushes.Black, legend.X + 35, ly - 1);
+                ly += 22;
+            }
+
+            LegendItem(Color.LightGray, "Normal Node");
+            LegendItem(Color.LightSkyBlue, "BFS / DFS");
+            LegendItem(Color.LightGreen, "Shortest Path");
+            LegendItem(Color.IndianRed, "Central Node");
 
             g.ResetClip();
         }
+
+
+
+
 
 
 
@@ -654,7 +1025,8 @@ namespace NodeMap.UI
             _topCentralNodes.Clear();
 
             _activeAlgorithm = "ASTAR";
-            _lastAlgorithmTimeMs = sw.ElapsedMilliseconds;
+            _lastAlgorithmTimeMs = sw.Elapsed.TotalMilliseconds;
+
 
             MessageBox.Show(
                 "A* yolu: " +
@@ -685,7 +1057,7 @@ namespace NodeMap.UI
                         .OrderByDescending(x => x.Value)
                         .Select(x => $"{x.Node.Name} → {x.Value:F3}")
                 ) +
-                $"\n\nSüre: {sw.ElapsedMilliseconds} ms"
+                $"\n\nSüre: {sw.Elapsed.TotalMilliseconds} ms"
             );
 
             Invalidate();
@@ -710,7 +1082,7 @@ namespace NodeMap.UI
                         .OrderByDescending(x => x.Value)
                         .Select(x => $"{x.Node.Name} → {x.Value}")
                 ) +
-                $"\n\nSüre: {sw.ElapsedMilliseconds} ms"
+                $"\n\nSüre: {sw.Elapsed.TotalMilliseconds} ms"
             );
 
             Invalidate();
@@ -718,14 +1090,14 @@ namespace NodeMap.UI
 
         private void btnRandomGraph_Click(object sender, EventArgs e)
         {
-            int nodeCount = 10;
-            int edgeCount = 20;
+            int nodeCount = 15;
+            int edgeCount = 25;
 
             _graph = GraphGenerator.GenerateRandomGraph(
                 nodeCount,
                 edgeCount,
-                ClientSize.Width,
-                ClientSize.Height
+                _canvasRect.Width,
+                _canvasRect.Height
             );
 
             _activeNodes.Clear();
@@ -735,6 +1107,7 @@ namespace NodeMap.UI
 
             Invalidate();
         }
+
 
         private void btnToggleEdges_Click(object sender, EventArgs e)
         {
@@ -820,7 +1193,6 @@ namespace NodeMap.UI
 
             AddEdge(from, to);
         }
-
 
     }
 }

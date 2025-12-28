@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Linq;
 using System.Xml.Linq;
 using System.Windows.Forms.VisualStyles;
+using NodeMap.Core.IO;
+using NodeMap.Core.Utils;
 
 namespace NodeMap.UI
 {
@@ -34,6 +36,8 @@ namespace NodeMap.UI
         private Node? _rightClickedNode;
 
 
+        
+        private bool _highlightShortestPath = false;
 
 
 
@@ -732,7 +736,7 @@ namespace NodeMap.UI
 
             _activeAlgorithm = "DFS";
             _lastAlgorithmTimeMs = sw.Elapsed.TotalMilliseconds;
-;
+            ;
 
             MessageBox.Show($"DFS süresi: {_lastAlgorithmTimeMs} ms");
             Invalidate();
@@ -789,7 +793,7 @@ namespace NodeMap.UI
 
             _activeAlgorithm = "CENTRALITY";
             _lastAlgorithmTimeMs = sw.Elapsed.TotalMilliseconds;
-;
+            ;
 
             MessageBox.Show($"Degree Centrality süresi: {_lastAlgorithmTimeMs} ms");
             Invalidate();
@@ -838,8 +842,9 @@ namespace NodeMap.UI
 
                     Pen edgePen = new Pen(Color.DimGray, 2);
 
-                    // Dijkstra / A* vurgusu
-                    if ((_activeAlgorithm == "DIJKSTRA" || _activeAlgorithm == "ASTAR") &&
+                    // 🔥 SADECE kullanıcı isterse ve uygun algoritma ise vurgula
+                    if (_highlightShortestPath &&
+                        (_activeAlgorithm == "DIJKSTRA" || _activeAlgorithm == "ASTAR") &&
                         _shortestPath.Count > 1)
                     {
                         for (int i = 0; i < _shortestPath.Count - 1; i++)
@@ -856,14 +861,9 @@ namespace NodeMap.UI
                     }
 
                     g.DrawLine(edgePen, a, b);
-
-                    // Edge weight balonu
-                    var mid = new Point((a.X + b.X) / 2, (a.Y + b.Y) / 2);
-                    g.FillEllipse(Brushes.White, mid.X - 12, mid.Y - 10, 24, 20);
-                    g.DrawEllipse(Pens.Black, mid.X - 12, mid.Y - 10, 24, 20);
-                    g.DrawString(edge.Weight.ToString(), Font, Brushes.Black, mid.X - 6, mid.Y - 7);
                 }
             }
+
 
             // ===================== NODES =====================
             foreach (var node in _graph.Nodes)
@@ -1192,6 +1192,70 @@ namespace NodeMap.UI
             int to = int.Parse(txtEdgeTo.Text);
 
             AddEdge(from, to);
+        }
+
+        private void btnExportCsv_Click(object sender, EventArgs e)
+        {
+            var sfd = new SaveFileDialog { Filter = "CSV|*.csv" };
+            if (sfd.ShowDialog() != DialogResult.OK) return;
+
+            var exporter = new CsvGraphExporter();
+            exporter.Export(_graph, sfd.FileName);
+        }
+
+        private void btnExportJson_Click(object sender, EventArgs e)
+        {
+            var sfd = new SaveFileDialog { Filter = "JSON|*.json" };
+            if (sfd.ShowDialog() != DialogResult.OK) return;
+
+            var exporter = new JsonGraphExporter();
+            exporter.Export(_graph, sfd.FileName);
+        }
+
+        private void btnAdjList_Click(object sender, EventArgs e)
+        {
+            var sfd = new SaveFileDialog { Filter = "CSV|*.csv" };
+            if (sfd.ShowDialog() != DialogResult.OK) return;
+
+            var exporter = new CsvAdjacencyListExporter();
+            exporter.Export(_graph, sfd.FileName);
+        }
+
+        private void btnAdjMatrix_Click(object sender, EventArgs e)
+        {
+            var sfd = new SaveFileDialog { Filter = "CSV|*.csv" };
+            if (sfd.ShowDialog() != DialogResult.OK) return;
+
+            var exporter = new CsvAdjacencyMatrixExporter();
+            exporter.Export(_graph, sfd.FileName);
+        }
+
+        private void btnImportCsv_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog { Filter = "CSV|*.csv" };
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+
+            var importer = new CsvGraphImporter();
+            _graph = importer.Import(ofd.FileName);
+
+            Invalidate(); // yeniden çiz
+        }
+
+        private void btnImportJson_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog { Filter = "JSON|*.json" };
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+
+            var importer = new JsonGraphImporter();
+            _graph = importer.Import(ofd.FileName);
+
+            Invalidate();
+        }
+
+        private void btnRestore_Click(object sender, EventArgs e)
+        {
+            _graph = GraphSnapshot.Restore();
+            Invalidate();
         }
 
     }

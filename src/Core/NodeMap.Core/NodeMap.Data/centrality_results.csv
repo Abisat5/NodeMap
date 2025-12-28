@@ -1,0 +1,4 @@
+Algorithm,NodeId,NodeName,Value
+Degree,A,3
+Closeness,A,0.333
+Betweenness,A,2

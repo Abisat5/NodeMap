@@ -38,7 +38,7 @@ namespace NodeMap.Core.Algorithms
         public List<CentralityResult> CalculateCloseness(Graph graph)
         {
             var results = new List<CentralityResult>();
-            int n = graph.Nodes.Count;
+            int nodeCount = graph.Nodes.Count;
 
             foreach (var node in graph.Nodes)
             {
@@ -46,18 +46,20 @@ namespace NodeMap.Core.Algorithms
 
                 foreach (var target in graph.Nodes)
                 {
-                    if (node == target) continue;
+                    if (node == target)
+                        continue;
 
-                    double dist = DijkstraDistance(graph, node, target);
-                    if (dist > 0)
-                        totalDistance += dist;
+                    double distance = DijkstraDistance(graph, node, target);
+
+                    if (distance > 0)
+                        totalDistance += distance;
                 }
 
                 results.Add(new CentralityResult
                 {
                     Node = node,
                     Value = totalDistance > 0
-                        ? (n - 1) / totalDistance
+                        ? (nodeCount - 1) / totalDistance
                         : 0
                 });
             }
@@ -70,21 +72,24 @@ namespace NodeMap.Core.Algorithms
         // ======================================================
         public List<CentralityResult> CalculateBetweenness(Graph graph)
         {
-            var scores = graph.Nodes.ToDictionary(n => n, _ => 0.0);
-            var nodes = graph.Nodes;
+            var scores = graph.Nodes.ToDictionary(n => n, n => 0.0);
 
-            for (int i = 0; i < nodes.Count; i++)
+            foreach (var source in graph.Nodes)
             {
-                for (int j = i + 1; j < nodes.Count; j++)
+                foreach (var target in graph.Nodes)
                 {
-                    var s = nodes[i];
-                    var t = nodes[j];
+                    if (source == target)
+                        continue;
 
-                    var path = DijkstraPath(graph, s, t);
-                    if (path.Count < 3) continue;
+                    var path = DijkstraPath(graph, source, target);
 
-                    foreach (var v in path.Skip(1).Take(path.Count - 2))
-                        scores[v]++;
+                    if (path.Count < 3)
+                        continue;
+
+                    foreach (var middleNode in path.Skip(1).Take(path.Count - 2))
+                    {
+                        scores[middleNode]++;
+                    }
                 }
             }
 
@@ -96,18 +101,18 @@ namespace NodeMap.Core.Algorithms
         }
 
         // ======================================================
-        // DIJKSTRA – SADECE MESAFE
+        // DIJKSTRA – SADECE MESAFE (WEIGHT KULLANIR)
         // ======================================================
         private double DijkstraDistance(Graph graph, Node start, Node end)
         {
-            var dist = graph.Nodes.ToDictionary(n => n, _ => double.PositiveInfinity);
+            var distances = graph.Nodes.ToDictionary(n => n, n => double.PositiveInfinity);
             var visited = new HashSet<Node>();
 
-            dist[start] = 0;
+            distances[start] = 0;
 
             while (visited.Count < graph.Nodes.Count)
             {
-                var current = dist
+                var current = distances
                     .Where(x => !visited.Contains(x.Key))
                     .OrderBy(x => x.Value)
                     .FirstOrDefault().Key;
@@ -117,36 +122,43 @@ namespace NodeMap.Core.Algorithms
 
                 visited.Add(current);
 
-                foreach (var edge in graph.Edges
-                    .Where(e => e.Source == current || e.Target == current))
+                foreach (var edge in graph.Edges)
                 {
-                    var neighbor = edge.Source == current ? edge.Target : edge.Source;
-                    if (visited.Contains(neighbor)) continue;
+                    Node neighbor = null;
 
-                    double alt = dist[current] + edge.Weight;
-                    if (alt < dist[neighbor])
-                        dist[neighbor] = alt;
+                    if (edge.Source == current)
+                        neighbor = edge.Target;
+                    else if (edge.Target == current)
+                        neighbor = edge.Source;
+
+                    if (neighbor == null || visited.Contains(neighbor))
+                        continue;
+
+                    double alternative = distances[current] + edge.Weight;
+
+                    if (alternative < distances[neighbor])
+                        distances[neighbor] = alternative;
                 }
             }
 
-            return dist[end] == double.PositiveInfinity ? 0 : dist[end];
+            return distances[end] == double.PositiveInfinity ? 0 : distances[end];
         }
 
         // ======================================================
-        // DIJKSTRA – YOLU DÖNDÜRÜR
+        // DIJKSTRA – YOLU DÖNDÜRÜR (WEIGHT KULLANIR)
         // ======================================================
         private List<Node> DijkstraPath(Graph graph, Node start, Node end)
         {
-            var dist = graph.Nodes.ToDictionary(n => n, _ => double.PositiveInfinity);
-            var prev = new Dictionary<Node, Node?>();
+            var distances = graph.Nodes.ToDictionary(n => n, n => double.PositiveInfinity);
+            var previous = new Dictionary<Node, Node?>();
             var visited = new HashSet<Node>();
 
-            dist[start] = 0;
-            prev[start] = null;
+            distances[start] = 0;
+            previous[start] = null;
 
             while (visited.Count < graph.Nodes.Count)
             {
-                var current = dist
+                var current = distances
                     .Where(x => !visited.Contains(x.Key))
                     .OrderBy(x => x.Value)
                     .FirstOrDefault().Key;
@@ -155,29 +167,37 @@ namespace NodeMap.Core.Algorithms
                     break;
 
                 visited.Add(current);
+
                 if (current == end)
                     break;
 
-                foreach (var edge in graph.Edges
-                    .Where(e => e.Source == current || e.Target == current))
+                foreach (var edge in graph.Edges)
                 {
-                    var neighbor = edge.Source == current ? edge.Target : edge.Source;
-                    if (visited.Contains(neighbor)) continue;
+                    Node neighbor = null;
 
-                    double alt = dist[current] + edge.Weight;
-                    if (alt < dist[neighbor])
+                    if (edge.Source == current)
+                        neighbor = edge.Target;
+                    else if (edge.Target == current)
+                        neighbor = edge.Source;
+
+                    if (neighbor == null || visited.Contains(neighbor))
+                        continue;
+
+                    double alternative = distances[current] + edge.Weight;
+
+                    if (alternative < distances[neighbor])
                     {
-                        dist[neighbor] = alt;
-                        prev[neighbor] = current;
+                        distances[neighbor] = alternative;
+                        previous[neighbor] = current;
                     }
                 }
             }
 
-            if (!prev.ContainsKey(end))
+            if (!previous.ContainsKey(end))
                 return new List<Node>();
 
             var path = new List<Node>();
-            for (var at = end; at != null; at = prev[at])
+            for (var at = end; at != null; at = previous[at])
                 path.Add(at);
 
             path.Reverse();

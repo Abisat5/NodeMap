@@ -8,7 +8,26 @@ namespace NodeMap.Core.IO
     {
         public void Export(Graph graph, string filePath)
         {
-            var json = JsonSerializer.Serialize(graph, new JsonSerializerOptions
+            var dto = new GraphDto
+            {
+                Nodes = graph.Nodes.Select(n => new NodeDto
+                {
+                    Id = n.Id,
+                    Name = n.Name,
+                    X = (double)n.X,   // 🔥 AÇIK CAST
+                    Y = (double)n.Y,   // 🔥 AÇIK CAST
+                    ColorArgb = n.Color.ToArgb()
+                }).ToList(),
+
+                Edges = graph.Edges.Select(e => new EdgeDto
+                {
+                    SourceId = e.Source.Id,
+                    TargetId = e.Target.Id,
+                    Weight = e.Weight
+                }).ToList()
+            };
+
+            var json = JsonSerializer.Serialize(dto, new JsonSerializerOptions
             {
                 WriteIndented = true
             });

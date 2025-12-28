@@ -5,19 +5,16 @@ using System.Text;
 
 namespace NodeMap.Core.IO
 {
-    public class CsvGraphExporter : IGraphExporter
+    public class CsvEdgeExporter : IGraphExporter
     {
         public void Export(Graph graph, string filePath)
         {
-            if (graph == null)
-                throw new ArgumentNullException(nameof(graph));
-
             var sb = new StringBuilder();
             sb.AppendLine("Source,Target,Weight");
 
-            foreach (var edge in graph.Edges)
+            foreach (var e in graph.Edges)
             {
-                sb.AppendLine($"{edge.Source.Id},{edge.Target.Id},{edge.Weight}");
+                sb.AppendLine($"{e.Source.Id},{e.Target.Id},{e.Weight}");
             }
 
             File.WriteAllText(filePath, sb.ToString());

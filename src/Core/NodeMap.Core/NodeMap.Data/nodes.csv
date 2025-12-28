@@ -1,3 +1,4 @@
-DugumId,Name,Aktiflik,Etkilesim,BaglantiSayisi,Komsular
-1,A,0.8,0.4,2,"2;3"
-2,B,0.6,0.9,3,"1;3;4"
+Id,Name,X,Y,ColorArgb
+1,A,100,150,-986895
+2,B,250,150,-986895
+3,C,400,150,-986895

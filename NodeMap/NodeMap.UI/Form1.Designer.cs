@@ -239,7 +239,7 @@
             button13.Name = "button13";
             button13.Size = new Size(94, 29);
             button13.TabIndex = 17;
-            button13.Text = "JSON Dışa Aktar";
+            button13.Text = "CSV Dışa Aktar";
             button13.UseVisualStyleBackColor = true;
             button13.Click += btnExportCsv_Click;
             // 
@@ -249,7 +249,7 @@
             button14.Name = "button14";
             button14.Size = new Size(94, 29);
             button14.TabIndex = 18;
-            button14.Text = "CSV Dışa Aktar";
+            button14.Text = "JSON Dışa Aktar";
             button14.UseVisualStyleBackColor = true;
             button14.Click += btnExportJson_Click;
             // 

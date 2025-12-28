@@ -7,6 +7,9 @@ using System.Xml.Linq;
 using System.Windows.Forms.VisualStyles;
 using NodeMap.Core.IO;
 using NodeMap.Core.Utils;
+using NodeMap.Core.Interfaces;
+
+
 
 namespace NodeMap.UI
 {
@@ -1232,25 +1235,66 @@ namespace NodeMap.UI
 
         private void btnImportCsv_Click(object sender, EventArgs e)
         {
-            var ofd = new OpenFileDialog { Filter = "CSV|*.csv" };
-            if (ofd.ShowDialog() != DialogResult.OK) return;
+            // 🔹 Nodes CSV
+            var ofdNodes = new OpenFileDialog
+            {
+                Title = "Nodes CSV seç",
+                Filter = "CSV|*.csv"
+            };
+
+            if (ofdNodes.ShowDialog() != DialogResult.OK)
+                return;
+
+            // 🔹 Edges CSV
+            var ofdEdges = new OpenFileDialog
+            {
+                Title = "Edges CSV seç",
+                Filter = "CSV|*.csv"
+            };
+
+            if (ofdEdges.ShowDialog() != DialogResult.OK)
+                return;
 
             var importer = new CsvGraphImporter();
-            _graph = importer.Import(ofd.FileName);
+            _graph = importer.Import(ofdNodes.FileName, ofdEdges.FileName);
 
-            Invalidate(); // yeniden çiz
+            // 🔥 GÜVENLİK: canvas içine çek
+            NormalizeGraphToCanvas();
+
+            Invalidate();
         }
+
+        private void NormalizeGraphToCanvas()
+        {
+            if (_graph == null || !_graph.Nodes.Any()) return;
+
+            int minX = _graph.Nodes.Min(n => n.X);
+            int minY = _graph.Nodes.Min(n => n.Y);
+
+            int offsetX = _canvasRect.X + 20 - minX;
+            int offsetY = _canvasRect.Y + 20 - minY;
+
+            foreach (var node in _graph.Nodes)
+            {
+                node.X += offsetX;
+                node.Y += offsetY;
+            }
+        }
+
+
+
 
         private void btnImportJson_Click(object sender, EventArgs e)
         {
             var ofd = new OpenFileDialog { Filter = "JSON|*.json" };
             if (ofd.ShowDialog() != DialogResult.OK) return;
 
-            var importer = new JsonGraphImporter();
+            IGraphImporter importer = new JsonGraphImporter();
             _graph = importer.Import(ofd.FileName);
 
             Invalidate();
         }
+
 
         private void btnRestore_Click(object sender, EventArgs e)
         {

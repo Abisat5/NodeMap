@@ -1,23 +1,21 @@
 ﻿using NodeMap.Core.Models;
 using NodeMap.Core.Interfaces;
+using System.Drawing;
 using System.IO;
 using System.Text;
 
 namespace NodeMap.Core.IO
 {
-    public class CsvGraphExporter : IGraphExporter
+    public class CsvNodeExporter
     {
         public void Export(Graph graph, string filePath)
         {
-            if (graph == null)
-                throw new ArgumentNullException(nameof(graph));
-
             var sb = new StringBuilder();
-            sb.AppendLine("Source,Target,Weight");
+            sb.AppendLine("Id,Name,X,Y,ColorArgb");
 
-            foreach (var edge in graph.Edges)
+            foreach (var n in graph.Nodes)
             {
-                sb.AppendLine($"{edge.Source.Id},{edge.Target.Id},{edge.Weight}");
+                sb.AppendLine($"{n.Id},{n.Name},{n.X},{n.Y},{n.Color.ToArgb()}");
             }
 
             File.WriteAllText(filePath, sb.ToString());

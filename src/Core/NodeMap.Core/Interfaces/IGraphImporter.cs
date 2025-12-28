@@ -1,6 +1,6 @@
 ﻿using NodeMap.Core.Models;
 
-namespace NodeMap.Core.IO
+namespace NodeMap.Core.Interfaces
 {
     public interface IGraphImporter
     {

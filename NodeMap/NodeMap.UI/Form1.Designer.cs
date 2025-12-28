@@ -129,9 +129,9 @@
             // 
             // button8
             // 
-            button8.Location = new Point(1113, 453);
+            button8.Location = new Point(1403, 169);
             button8.Name = "button8";
-            button8.Size = new Size(106, 40);
+            button8.Size = new Size(106, 25);
             button8.TabIndex = 8;
             button8.Text = "Random Graph";
             button8.UseVisualStyleBackColor = true;
@@ -141,7 +141,7 @@
             // 
             button9.Location = new Point(1291, 154);
             button9.Name = "button9";
-            button9.Size = new Size(106, 40);
+            button9.Size = new Size(106, 24);
             button9.TabIndex = 9;
             button9.Text = "Edge Aç/Kapat";
             button9.UseVisualStyleBackColor = true;
@@ -149,9 +149,9 @@
             // 
             // button10
             // 
-            button10.Location = new Point(1291, 211);
+            button10.Location = new Point(1291, 194);
             button10.Name = "button10";
-            button10.Size = new Size(106, 40);
+            button10.Size = new Size(106, 24);
             button10.TabIndex = 10;
             button10.Text = "Auto node ekle";
             button10.UseVisualStyleBackColor = true;
@@ -159,9 +159,9 @@
             // 
             // button11
             // 
-            button11.Location = new Point(12, 496);
+            button11.Location = new Point(1263, 46);
             button11.Name = "button11";
-            button11.Size = new Size(88, 38);
+            button11.Size = new Size(88, 23);
             button11.TabIndex = 11;
             button11.Text = "Manuel Node ekle";
             button11.UseVisualStyleBackColor = true;
@@ -169,9 +169,9 @@
             // 
             // button12
             // 
-            button12.Location = new Point(12, 571);
+            button12.Location = new Point(1263, 75);
             button12.Name = "button12";
-            button12.Size = new Size(88, 58);
+            button12.Size = new Size(88, 23);
             button12.TabIndex = 12;
             button12.Text = "Manuel Edge";
             button12.UseVisualStyleBackColor = true;
@@ -179,7 +179,7 @@
             // 
             // txtNodeId
             // 
-            txtNodeId.Location = new Point(263, 505);
+            txtNodeId.Location = new Point(1459, 46);
             txtNodeId.Name = "txtNodeId";
             txtNodeId.PlaceholderText = "ID";
             txtNodeId.Size = new Size(50, 23);
@@ -187,7 +187,7 @@
             // 
             // txtNodeName
             // 
-            txtNodeName.Location = new Point(149, 505);
+            txtNodeName.Location = new Point(1376, 46);
             txtNodeName.Name = "txtNodeName";
             txtNodeName.PlaceholderText = "Name";
             txtNodeName.Size = new Size(60, 23);
@@ -195,7 +195,7 @@
             // 
             // txtEdgeFrom
             // 
-            txtEdgeFrom.Location = new Point(149, 590);
+            txtEdgeFrom.Location = new Point(1376, 76);
             txtEdgeFrom.Name = "txtEdgeFrom";
             txtEdgeFrom.PlaceholderText = "From";
             txtEdgeFrom.Size = new Size(50, 23);
@@ -203,7 +203,7 @@
             // 
             // txtEdgeTo
             // 
-            txtEdgeTo.Location = new Point(263, 590);
+            txtEdgeTo.Location = new Point(1459, 76);
             txtEdgeTo.Name = "txtEdgeTo";
             txtEdgeTo.PlaceholderText = "To";
             txtEdgeTo.Size = new Size(50, 23);

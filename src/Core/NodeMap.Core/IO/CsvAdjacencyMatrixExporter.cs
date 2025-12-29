@@ -1,6 +1,4 @@
 ﻿using NodeMap.Core.Models;
-using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace NodeMap.Core.IO
@@ -9,28 +7,35 @@ namespace NodeMap.Core.IO
     {
         public void Export(Graph graph, string filePath)
         {
+            if (graph == null || graph.Nodes.Count == 0)
+                return;
+
+            var nodes = graph.Nodes.OrderBy(n => n.Id).ToList();
             var sb = new StringBuilder();
-            var nodes = graph.Nodes;
 
-            sb.Append(",");
-            sb.AppendLine(string.Join(",", nodes.Select(n => n.Id)));
+            // HEADER
+            sb.Append("Id");
+            foreach (var n in nodes)
+                sb.Append($",{n.Id}");
+            sb.AppendLine();
 
-            foreach (var row in nodes)
+            foreach (var rowNode in nodes)
             {
-                sb.Append(row.Id);
+                sb.Append(rowNode.Id);
 
-                foreach (var col in nodes)
+                foreach (var colNode in nodes)
                 {
-                    bool connected = graph.Edges.Any(e =>
-                        (e.Source == row && e.Target == col) ||
-                        (e.Source == col && e.Target == row));
+                    var edge = graph.Edges.FirstOrDefault(e =>
+                        (e.Source == rowNode && e.Target == colNode) ||
+                        (e.Source == colNode && e.Target == rowNode));
 
-                    sb.Append("," + (connected ? "1" : "0"));
+                    sb.Append(edge != null ? $",{edge.Weight}" : ",0");
                 }
+
                 sb.AppendLine();
             }
 
-            File.WriteAllText(filePath, sb.ToString());
+            File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
         }
     }
 }

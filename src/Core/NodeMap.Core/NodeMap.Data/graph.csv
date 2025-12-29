@@ -1,0 +1,11 @@
+[NODES]
+Id,Name,X,Y,ColorArgb
+0,A,100,150,-986895
+1,B,250,150,-986895
+2,C,400,150,-986895
+
+[EDGES]
+Source,Target,Weight
+0,1,5
+1,2,7
+2,0,3

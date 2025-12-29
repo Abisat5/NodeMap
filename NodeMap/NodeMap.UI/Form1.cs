@@ -39,7 +39,7 @@ namespace NodeMap.UI
         private Node? _rightClickedNode;
 
 
-        
+
         private bool _highlightShortestPath = false;
 
 
@@ -73,6 +73,9 @@ namespace NodeMap.UI
         private Label lblNodeDegree;
         private Label lblNodeStatus;
         private Label lblNodeActivity;
+
+
+        Dictionary<Node, Point> positions = new();
 
 
 
@@ -807,7 +810,8 @@ namespace NodeMap.UI
 
         private void Form1_Paint(object? sender, PaintEventArgs e)
         {
-            if (_graph == null) return;
+            if (_graph == null || !_graph.Nodes.Any())
+                return;
 
             var g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
@@ -823,7 +827,9 @@ namespace NodeMap.UI
 
             int r = (int)(28 * _zoom);
 
-            var positions = new Dictionary<Node, Point>();
+            // ===================== NODE POSITIONS (🔥 EN KRİTİK KISIM) =====================
+            Dictionary<Node, Point> positions = new();
+
             foreach (var node in _graph.Nodes)
             {
                 positions[node] = new Point(
@@ -837,15 +843,18 @@ namespace NodeMap.UI
             {
                 foreach (var edge in _graph.Edges)
                 {
+                    if (!positions.ContainsKey(edge.Source) ||
+                        !positions.ContainsKey(edge.Target))
+                        continue;
+
                     var p1 = positions[edge.Source];
                     var p2 = positions[edge.Target];
 
                     Point a = new Point(p1.X + r, p1.Y + r);
                     Point b = new Point(p2.X + r, p2.Y + r);
 
-                    Pen edgePen = new Pen(Color.DimGray, 2);
+                    using Pen edgePen = new Pen(Color.DimGray, 2);
 
-                    // 🔥 SADECE kullanıcı isterse ve uygun algoritma ise vurgula
                     if (_highlightShortestPath &&
                         (_activeAlgorithm == "DIJKSTRA" || _activeAlgorithm == "ASTAR") &&
                         _shortestPath.Count > 1)
@@ -857,7 +866,8 @@ namespace NodeMap.UI
                                 (_shortestPath[i] == edge.Target && _shortestPath[i + 1] == edge.Source)
                             )
                             {
-                                edgePen = new Pen(Color.DarkGreen, 4);
+                                edgePen.Color = Color.DarkGreen;
+                                edgePen.Width = 4;
                                 break;
                             }
                         }
@@ -867,26 +877,16 @@ namespace NodeMap.UI
                 }
             }
 
-
             // ===================== NODES =====================
             foreach (var node in _graph.Nodes)
             {
                 var p = positions[node];
+
                 Color fillColor = node.Color;
                 Pen borderPen = new Pen(Color.Black, 2);
 
-                // ================= ALGORITHM STATES =================
-                if ((_activeAlgorithm == "BFS" || _activeAlgorithm == "DFS") &&
-                    _activeNodes.Contains(node))
-                {
-                    int index = _activeNodes.IndexOf(node);
-                    int total = Math.Max(1, _activeNodes.Count);
-                    int blue = 180 + (int)(70.0 * index / total);
-                    fillColor = Color.FromArgb(90, 140, blue);
-                    borderPen = new Pen(Color.DarkBlue, 3);
-                }
-                else if ((_activeAlgorithm == "DIJKSTRA" || _activeAlgorithm == "ASTAR") &&
-                         _shortestPath.Contains(node))
+                if ((_activeAlgorithm == "DIJKSTRA" || _activeAlgorithm == "ASTAR") &&
+                    _shortestPath.Contains(node))
                 {
                     fillColor = Color.LightGreen;
                     borderPen = new Pen(Color.DarkGreen, 3);
@@ -898,39 +898,24 @@ namespace NodeMap.UI
                     borderPen = new Pen(Color.DarkRed, 3);
                 }
 
-                // ================= 🔥 GOLD GLOW (SELECTED NODE) =================
+                // Glow
                 if (_selectedNode == node)
                 {
-                    using (var glowBrush = new SolidBrush(Color.FromArgb(80, 255, 215, 0)))
-                        g.FillEllipse(
-                            glowBrush,
-                            p.X - 10,
-                            p.Y - 10,
-                            r * 2 + 20,
-                            r * 2 + 20
-                        );
-
-                    using (var glowPen = new Pen(Color.Gold, 4))
-                        g.DrawEllipse(
-                            glowPen,
-                            p.X - 6,
-                            p.Y - 6,
-                            r * 2 + 12,
-                            r * 2 + 12
-                        );
+                    using var glowBrush = new SolidBrush(Color.FromArgb(80, 255, 215, 0));
+                    g.FillEllipse(glowBrush, p.X - 10, p.Y - 10, r * 2 + 20, r * 2 + 20);
                 }
 
-                // ================= SHADOW =================
+                // Shadow
                 using (var shadowBrush = new SolidBrush(Color.FromArgb(60, Color.Black)))
                     g.FillEllipse(shadowBrush, p.X + 4, p.Y + 4, r * 2, r * 2);
 
-                // ================= NODE BODY =================
+                // Body
                 using (var brush = new SolidBrush(fillColor))
                     g.FillEllipse(brush, p.X, p.Y, r * 2, r * 2);
 
                 g.DrawEllipse(borderPen, p.X, p.Y, r * 2, r * 2);
 
-                // ================= NODE TEXT =================
+                // Text
                 var textSize = g.MeasureString(node.Name, Font);
                 g.DrawString(
                     node.Name,
@@ -941,8 +926,7 @@ namespace NodeMap.UI
                 );
             }
 
-
-            // ===================== ALGORITHM INFO PANEL =====================
+            // ===================== INFO PANEL =====================
             if (!string.IsNullOrEmpty(_activeAlgorithm))
             {
                 Rectangle panel = new Rectangle(
@@ -965,7 +949,6 @@ namespace NodeMap.UI
                     panel.Y + 12
                 );
             }
-
             // ===================== LEGEND PANEL =====================
             Rectangle legend = new Rectangle(
                 _canvasRect.Right - 200,
@@ -973,14 +956,10 @@ namespace NodeMap.UI
                 190,
                 120
             );
-
             using (var legendBrush = new SolidBrush(Color.FromArgb(235, 255, 255, 255)))
                 g.FillRectangle(legendBrush, legend);
-
             g.DrawRectangle(Pens.Gray, legend);
-
             int ly = legend.Y + 10;
-
             void LegendItem(Color c, string text)
             {
                 g.FillEllipse(new SolidBrush(c), legend.X + 10, ly, 16, 16);
@@ -988,14 +967,15 @@ namespace NodeMap.UI
                 g.DrawString(text, Font, Brushes.Black, legend.X + 35, ly - 1);
                 ly += 22;
             }
-
             LegendItem(Color.LightGray, "Normal Node");
             LegendItem(Color.LightSkyBlue, "BFS / DFS");
             LegendItem(Color.LightGreen, "Shortest Path");
             LegendItem(Color.IndianRed, "Central Node");
-
             g.ResetClip();
         }
+
+
+
 
 
 
@@ -1206,63 +1186,100 @@ namespace NodeMap.UI
             exporter.Export(_graph, sfd.FileName);
         }
 
-        private void btnExportJson_Click(object sender, EventArgs e)
+        private void btnImportJson_Click(object sender, EventArgs e)
         {
-            var sfd = new SaveFileDialog { Filter = "JSON|*.json" };
-            if (sfd.ShowDialog() != DialogResult.OK) return;
+            var ofd = new OpenFileDialog
+            {
+                Filter = "JSON|*.json"
+            };
 
-            var exporter = new JsonGraphExporter();
-            exporter.Export(_graph, sfd.FileName);
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+
+            var importer = new JsonGraphImporter();
+            _graph = importer.Import(ofd.FileName);
+
+            // 🔥 SADECE CANVAS İÇİNE ÇEK
+            NormalizeGraphToCanvas();
+
+            // 🔥 ID senkron
+            _nextNodeId = _graph.Nodes.Any()
+                ? _graph.Nodes.Max(n => n.Id) + 1
+                : 0;
+
+            Invalidate();
         }
+
+
+
+
+
+
 
         private void btnAdjList_Click(object sender, EventArgs e)
         {
-            var sfd = new SaveFileDialog { Filter = "CSV|*.csv" };
+            if (_graph == null) return;
+
+            var sfd = new SaveFileDialog
+            {
+                Filter = "CSV Files (*.csv)|*.csv",
+                FileName = "adjacency_list.csv"
+            };
+
             if (sfd.ShowDialog() != DialogResult.OK) return;
 
             var exporter = new CsvAdjacencyListExporter();
             exporter.Export(_graph, sfd.FileName);
+
+            MessageBox.Show("Adjacency List CSV oluşturuldu");
         }
+
 
         private void btnAdjMatrix_Click(object sender, EventArgs e)
         {
-            var sfd = new SaveFileDialog { Filter = "CSV|*.csv" };
+            if (_graph == null) return;
+
+            var sfd = new SaveFileDialog
+            {
+                Filter = "CSV Files (*.csv)|*.csv",
+                FileName = "adjacency_matrix.csv"
+            };
+
             if (sfd.ShowDialog() != DialogResult.OK) return;
 
             var exporter = new CsvAdjacencyMatrixExporter();
             exporter.Export(_graph, sfd.FileName);
+
+            MessageBox.Show("Adjacency Matrix CSV oluşturuldu");
         }
+
 
         private void btnImportCsv_Click(object sender, EventArgs e)
         {
-            // 🔹 Nodes CSV
-            var ofdNodes = new OpenFileDialog
-            {
-                Title = "Nodes CSV seç",
-                Filter = "CSV|*.csv"
-            };
-
-            if (ofdNodes.ShowDialog() != DialogResult.OK)
-                return;
-
-            // 🔹 Edges CSV
-            var ofdEdges = new OpenFileDialog
-            {
-                Title = "Edges CSV seç",
-                Filter = "CSV|*.csv"
-            };
-
-            if (ofdEdges.ShowDialog() != DialogResult.OK)
-                return;
+            var ofd = new OpenFileDialog { Filter = "CSV|*.csv" };
+            if (ofd.ShowDialog() != DialogResult.OK) return;
 
             var importer = new CsvGraphImporter();
-            _graph = importer.Import(ofdNodes.FileName, ofdEdges.FileName);
+            _graph = importer.Import(ofd.FileName);
 
-            // 🔥 GÜVENLİK: canvas içine çek
+            // Konumları olduğu gibi kullanmak istiyorsan BU SATIRI KALDIR
+            // AutoLayoutImportedGraph();
+
             NormalizeGraphToCanvas();
+
+            _nextNodeId = _graph.Nodes.Any()
+                ? _graph.Nodes.Max(n => n.Id) + 1
+                : 0;
 
             Invalidate();
         }
+
+
+
+
+
+
+
+
 
         private void NormalizeGraphToCanvas()
         {
@@ -1271,34 +1288,101 @@ namespace NodeMap.UI
             int minX = _graph.Nodes.Min(n => n.X);
             int minY = _graph.Nodes.Min(n => n.Y);
 
-            int offsetX = _canvasRect.X + 20 - minX;
-            int offsetY = _canvasRect.Y + 20 - minY;
-
             foreach (var node in _graph.Nodes)
             {
-                node.X += offsetX;
-                node.Y += offsetY;
+                node.X = node.X - minX + 20;
+                node.Y = node.Y - minY + 20;
             }
         }
 
 
 
 
-        private void btnImportJson_Click(object sender, EventArgs e)
+
+        private void btnExportJson_Click(object sender, EventArgs e)
         {
-            var ofd = new OpenFileDialog { Filter = "JSON|*.json" };
-            if (ofd.ShowDialog() != DialogResult.OK) return;
+            if (_graph == null) return;
 
-            IGraphImporter importer = new JsonGraphImporter();
-            _graph = importer.Import(ofd.FileName);
+            var sfd = new SaveFileDialog
+            {
+                Filter = "JSON|*.json"
+            };
 
-            Invalidate();
+            if (sfd.ShowDialog() != DialogResult.OK) return;
+
+            var exporter = new JsonGraphExporter();
+            exporter.Export(_graph, sfd.FileName);
         }
 
 
-        private void btnRestore_Click(object sender, EventArgs e)
+
+
+
+
+
+        private void RebuildPositions()
         {
-            _graph = GraphSnapshot.Restore();
+            if (_graph == null) return;
+
+            positions.Clear();
+
+            foreach (var node in _graph.Nodes)
+            {
+                positions[node] = new Point(
+                    _canvasRect.X + (int)(node.X * _zoom),
+                    _canvasRect.Y + (int)(node.Y * _zoom)
+                );
+            }
+        }
+
+        private void AutoLayoutImportedGraph()
+        {
+            if (_graph == null || !_graph.Nodes.Any())
+                return;
+
+            int cols = (int)Math.Ceiling(Math.Sqrt(_graph.Nodes.Count));
+            int spacing = 80;
+
+            int x = 0, y = 0;
+            foreach (var node in _graph.Nodes)
+            {
+                node.X = x * spacing + 40;
+                node.Y = y * spacing + 40;
+
+                x++;
+                if (x >= cols)
+                {
+                    x = 0;
+                    y++;
+                }
+            }
+        }
+
+        private void btnImportAdjList_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog { Filter = "CSV|*.csv" };
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+
+            var importer = new CsvAdjacencyListImporter();
+            _graph = importer.Import(ofd.FileName);
+
+            AutoLayoutImportedGraph();
+            NormalizeGraphToCanvas();
+            _nextNodeId = _graph.Nodes.Max(n => n.Id) + 1;
+            Invalidate();
+        }
+
+        private void btnImportAdjMatrix_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog { Filter = "CSV|*.csv" };
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+
+            var importer = new CsvAdjacencyMatrixImporter();
+            _graph = importer.Import(ofd.FileName);
+
+            AutoLayoutImportedGraph();
+            NormalizeGraphToCanvas();
+            _nextNodeId = _graph.Nodes.Max(n => n.Id) + 1;
             Invalidate();
         }
 

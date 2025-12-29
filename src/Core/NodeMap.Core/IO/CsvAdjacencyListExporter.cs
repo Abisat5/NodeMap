@@ -1,6 +1,4 @@
 ﻿using NodeMap.Core.Models;
-using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace NodeMap.Core.IO
@@ -9,19 +7,26 @@ namespace NodeMap.Core.IO
     {
         public void Export(Graph graph, string filePath)
         {
-            var sb = new StringBuilder();
-            sb.AppendLine("Node,Neighbors");
+            if (graph == null || graph.Nodes.Count == 0)
+                return;
 
-            foreach (var node in graph.Nodes)
+            var sb = new StringBuilder();
+
+            // HEADER
+            sb.AppendLine("NodeId,Neighbors");
+
+            foreach (var node in graph.Nodes.OrderBy(n => n.Id))
             {
                 var neighbors = graph.Edges
                     .Where(e => e.Source == node || e.Target == node)
-                    .Select(e => e.Source == node ? e.Target.Id : e.Source.Id);
+                    .Select(e => e.Source == node ? e.Target.Id : e.Source.Id)
+                    .Distinct()
+                    .OrderBy(id => id);
 
                 sb.AppendLine($"{node.Id},{string.Join(";", neighbors)}");
             }
 
-            File.WriteAllText(filePath, sb.ToString());
+            File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
         }
     }
 }

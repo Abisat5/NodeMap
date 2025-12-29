@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Graph\" />
-    <Folder Include="NodeMap.Data\" />
   </ItemGroup>
 
 </Project>

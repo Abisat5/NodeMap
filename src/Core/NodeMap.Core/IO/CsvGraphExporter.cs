@@ -1,26 +1,30 @@
 ﻿using NodeMap.Core.Models;
-using NodeMap.Core.Interfaces;
-using System.IO;
 using System.Text;
 
 namespace NodeMap.Core.IO
 {
-    public class CsvGraphExporter : IGraphExporter
+    public class CsvGraphExporter
     {
-        public void Export(Graph graph, string filePath)
+        public void Export(Graph graph, string path)
         {
-            if (graph == null)
-                throw new ArgumentNullException(nameof(graph));
-
             var sb = new StringBuilder();
-            sb.AppendLine("Source,Target,Weight");
 
-            foreach (var edge in graph.Edges)
+            sb.AppendLine("[NODES]");
+            sb.AppendLine("Id,Name,X,Y,ColorArgb");
+            foreach (var n in graph.Nodes)
             {
-                sb.AppendLine($"{edge.Source.Id},{edge.Target.Id},{edge.Weight}");
+                sb.AppendLine($"{n.Id},{n.Name},{n.X},{n.Y},{n.Color.ToArgb()}");
             }
 
-            File.WriteAllText(filePath, sb.ToString());
+            sb.AppendLine();
+            sb.AppendLine("[EDGES]");
+            sb.AppendLine("Source,Target,Weight");
+            foreach (var e in graph.Edges)
+            {
+                sb.AppendLine($"{e.Source.Id},{e.Target.Id},{e.Weight}");
+            }
+
+            File.WriteAllText(path, sb.ToString(), Encoding.UTF8);
         }
     }
 }

@@ -1,37 +1,38 @@
 ﻿using NodeMap.Core.Models;
-using System.IO;
 using System.Text.Json;
 
 namespace NodeMap.Core.IO
 {
-    public class JsonGraphExporter : IGraphExporter
+    public class JsonGraphExporter
     {
         public void Export(Graph graph, string filePath)
         {
-            var dto = new GraphDto
-            {
-                Nodes = graph.Nodes.Select(n => new NodeDto
-                {
-                    Id = n.Id,
-                    Name = n.Name,
-                    X = (double)n.X,   // 🔥 AÇIK CAST
-                    Y = (double)n.Y,   // 🔥 AÇIK CAST
-                    ColorArgb = n.Color.ToArgb()
-                }).ToList(),
+            if (graph == null) return;
 
-                Edges = graph.Edges.Select(e => new EdgeDto
+            var dto = new
+            {
+                nodes = graph.Nodes.Select(n => new
                 {
-                    SourceId = e.Source.Id,
-                    TargetId = e.Target.Id,
-                    Weight = e.Weight
-                }).ToList()
+                    id = n.Id,
+                    name = n.Name,
+                    x = n.X,
+                    y = n.Y,
+                    colorArgb = n.Color.ToArgb()
+                }),
+                edges = graph.Edges.Select(e => new
+                {
+                    source = e.Source.Id,
+                    target = e.Target.Id,
+                    weight = e.Weight
+                })
             };
 
-            var json = JsonSerializer.Serialize(dto, new JsonSerializerOptions
+            var options = new JsonSerializerOptions
             {
                 WriteIndented = true
-            });
+            };
 
+            string json = JsonSerializer.Serialize(dto, options);
             File.WriteAllText(filePath, json);
         }
     }

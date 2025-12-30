@@ -57,137 +57,152 @@
             // 
             // btnTest
             // 
-            btnTest.Location = new Point(1113, 28);
+            btnTest.BackColor = Color.GreenYellow;
+            btnTest.ForeColor = SystemColors.ActiveCaptionText;
+            btnTest.Location = new Point(1082, 26);
             btnTest.Name = "btnTest";
-            btnTest.Size = new Size(123, 83);
+            btnTest.Size = new Size(123, 82);
             btnTest.TabIndex = 0;
-            btnTest.Text = "Test Graph";
-            btnTest.UseVisualStyleBackColor = true;
+            btnTest.Text = "Grafik Testini Başlat";
+            btnTest.UseVisualStyleBackColor = false;
             btnTest.Click += btnCreateGraph;
             // 
             // button1
             // 
-            button1.Location = new Point(1113, 211);
+            button1.BackColor = SystemColors.ActiveCaption;
+            button1.Location = new Point(1082, 169);
             button1.Name = "button1";
             button1.Size = new Size(106, 40);
             button1.TabIndex = 1;
             button1.Text = "BFS Çalıştır";
-            button1.UseVisualStyleBackColor = true;
+            button1.UseVisualStyleBackColor = false;
             button1.Click += btnBFS;
             // 
             // button2
             // 
-            button2.Location = new Point(1113, 332);
+            button2.BackColor = SystemColors.ActiveCaption;
+            button2.Location = new Point(1082, 261);
             button2.Name = "button2";
             button2.Size = new Size(106, 40);
             button2.TabIndex = 2;
             button2.Text = "DFS Çalıştır";
-            button2.UseVisualStyleBackColor = true;
+            button2.UseVisualStyleBackColor = false;
             button2.Click += btnDFS;
             // 
             // button3
             // 
-            button3.Location = new Point(1113, 271);
+            button3.BackColor = SystemColors.ActiveCaption;
+            button3.Location = new Point(1082, 215);
             button3.Name = "button3";
             button3.Size = new Size(106, 40);
             button3.TabIndex = 3;
             button3.Text = "Dijkstra Çalıştır";
-            button3.UseVisualStyleBackColor = true;
+            button3.UseVisualStyleBackColor = false;
             button3.Click += btnDijkstra_Click;
             // 
             // button4
             // 
-            button4.Location = new Point(1113, 389);
+            button4.BackColor = SystemColors.ActiveCaption;
+            button4.Location = new Point(1082, 307);
             button4.Name = "button4";
             button4.Size = new Size(106, 40);
             button4.TabIndex = 4;
-            button4.Text = "Degree Centrality";
-            button4.UseVisualStyleBackColor = true;
+            button4.Text = "Derece Merkeziyeti";
+            button4.UseVisualStyleBackColor = false;
             button4.Click += btnCentrality;
             // 
             // button5
             // 
-            button5.Location = new Point(1113, 154);
+            button5.BackColor = SystemColors.ActiveCaption;
+            button5.Location = new Point(1082, 114);
             button5.Name = "button5";
             button5.Size = new Size(106, 40);
             button5.TabIndex = 5;
             button5.Text = "AStar Çalıştır";
-            button5.UseVisualStyleBackColor = true;
+            button5.UseVisualStyleBackColor = false;
             button5.Click += btnAStar_Click;
             // 
             // button6
             // 
-            button6.Location = new Point(1113, 505);
+            button6.BackColor = SystemColors.ActiveCaption;
+            button6.Location = new Point(1082, 353);
             button6.Name = "button6";
             button6.Size = new Size(106, 40);
             button6.TabIndex = 6;
-            button6.Text = "Closeness ";
-            button6.UseVisualStyleBackColor = true;
+            button6.Text = "Yakınlık Merkeziyeti";
+            button6.UseVisualStyleBackColor = false;
             button6.Click += btnCloseness_Click;
             // 
             // button7
             // 
-            button7.Location = new Point(1113, 561);
+            button7.BackColor = SystemColors.ActiveCaption;
+            button7.Location = new Point(1082, 399);
             button7.Name = "button7";
             button7.Size = new Size(106, 40);
             button7.TabIndex = 7;
-            button7.Text = "btnBetweenness_Click";
-            button7.UseVisualStyleBackColor = true;
+            button7.Text = "Arasındalık Merkeziyeti";
+            button7.UseVisualStyleBackColor = false;
             button7.Click += btnBetweenness_Click;
             // 
             // button8
             // 
-            button8.Location = new Point(1403, 169);
+            button8.BackColor = Color.BlanchedAlmond;
+            button8.Location = new Point(1316, 114);
             button8.Name = "button8";
-            button8.Size = new Size(106, 25);
+            button8.Size = new Size(106, 40);
             button8.TabIndex = 8;
-            button8.Text = "Random Graph";
-            button8.UseVisualStyleBackColor = true;
+            button8.Text = "Rastgele Grafik Oluştur";
+            button8.UseVisualStyleBackColor = false;
             button8.Click += btnRandomGraph_Click;
             // 
             // button9
             // 
-            button9.Location = new Point(1291, 154);
+            button9.BackColor = Color.BlanchedAlmond;
+            button9.Location = new Point(1194, 114);
             button9.Name = "button9";
-            button9.Size = new Size(106, 24);
+            button9.Size = new Size(106, 40);
             button9.TabIndex = 9;
             button9.Text = "Edge Aç/Kapat";
-            button9.UseVisualStyleBackColor = true;
+            button9.UseVisualStyleBackColor = false;
             button9.Click += btnToggleEdges_Click;
             // 
             // button10
             // 
-            button10.Location = new Point(1291, 194);
+            button10.BackColor = Color.BlanchedAlmond;
+            button10.Location = new Point(1194, 169);
             button10.Name = "button10";
-            button10.Size = new Size(106, 24);
+            button10.Size = new Size(106, 40);
             button10.TabIndex = 10;
             button10.Text = "Auto node ekle";
-            button10.UseVisualStyleBackColor = true;
+            button10.UseVisualStyleBackColor = false;
             button10.Click += btnAddNode_Click;
             // 
             // button11
             // 
-            button11.Location = new Point(1263, 46);
+            button11.BackColor = Color.BlanchedAlmond;
+            button11.Location = new Point(1212, 26);
             button11.Name = "button11";
             button11.Size = new Size(88, 23);
             button11.TabIndex = 11;
             button11.Text = "Manuel Node ekle";
-            button11.UseVisualStyleBackColor = true;
+            button11.UseVisualStyleBackColor = false;
             button11.Click += btnAddNodeWithId_Click;
             // 
             // button12
             // 
-            button12.Location = new Point(1263, 75);
+            button12.BackColor = Color.BlanchedAlmond;
+            button12.Location = new Point(1212, 76);
             button12.Name = "button12";
             button12.Size = new Size(88, 23);
             button12.TabIndex = 12;
             button12.Text = "Manuel Edge";
-            button12.UseVisualStyleBackColor = true;
+            button12.UseVisualStyleBackColor = false;
             button12.Click += btnAddEdge_Click;
             // 
             // txtNodeId
             // 
-            txtNodeId.Location = new Point(1459, 46);
+            txtNodeId.BackColor = Color.BlanchedAlmond;
+            txtNodeId.Location = new Point(1429, 27);
             txtNodeId.Name = "txtNodeId";
             txtNodeId.PlaceholderText = "ID";
             txtNodeId.Size = new Size(50, 23);
@@ -195,15 +210,17 @@
             // 
             // txtNodeName
             // 
-            txtNodeName.Location = new Point(1376, 46);
+            txtNodeName.BackColor = Color.BlanchedAlmond;
+            txtNodeName.Location = new Point(1341, 27);
             txtNodeName.Name = "txtNodeName";
-            txtNodeName.PlaceholderText = "Name";
+            txtNodeName.PlaceholderText = "Node";
             txtNodeName.Size = new Size(60, 23);
             txtNodeName.TabIndex = 14;
             // 
             // txtEdgeFrom
             // 
-            txtEdgeFrom.Location = new Point(1376, 76);
+            txtEdgeFrom.BackColor = Color.BlanchedAlmond;
+            txtEdgeFrom.Location = new Point(1351, 75);
             txtEdgeFrom.Name = "txtEdgeFrom";
             txtEdgeFrom.PlaceholderText = "From";
             txtEdgeFrom.Size = new Size(50, 23);
@@ -211,7 +228,8 @@
             // 
             // txtEdgeTo
             // 
-            txtEdgeTo.Location = new Point(1459, 76);
+            txtEdgeTo.BackColor = Color.BlanchedAlmond;
+            txtEdgeTo.Location = new Point(1429, 76);
             txtEdgeTo.Name = "txtEdgeTo";
             txtEdgeTo.PlaceholderText = "To";
             txtEdgeTo.Size = new Size(50, 23);
@@ -219,94 +237,103 @@
             // 
             // button13
             // 
-            button13.Location = new Point(972, 481);
+            button13.BackColor = Color.LemonChiffon;
+            button13.Location = new Point(1351, 460);
             button13.Margin = new Padding(3, 2, 3, 2);
             button13.Name = "button13";
-            button13.Size = new Size(103, 37);
+            button13.Size = new Size(106, 37);
             button13.TabIndex = 17;
             button13.Text = "CSV Dışa Aktar";
-            button13.UseVisualStyleBackColor = true;
+            button13.UseVisualStyleBackColor = false;
             button13.Click += btnExportCsv_Click;
             // 
             // button14
             // 
-            button14.Location = new Point(830, 481);
+            button14.BackColor = Color.LemonChiffon;
+            button14.Location = new Point(1088, 460);
             button14.Margin = new Padding(3, 2, 3, 2);
             button14.Name = "button14";
-            button14.Size = new Size(109, 37);
+            button14.Size = new Size(106, 37);
             button14.TabIndex = 18;
             button14.Text = "JSON Dışa Aktar";
-            button14.UseVisualStyleBackColor = true;
+            button14.UseVisualStyleBackColor = false;
             button14.Click += btnExportJson_Click;
             // 
             // button15
             // 
-            button15.Location = new Point(830, 561);
+            button15.BackColor = Color.LemonChiffon;
+            button15.Location = new Point(1085, 551);
             button15.Margin = new Padding(3, 2, 3, 2);
             button15.Name = "button15";
-            button15.Size = new Size(109, 31);
+            button15.Size = new Size(177, 41);
             button15.TabIndex = 19;
-            button15.Text = "Komşuluk Listesi CSV";
-            button15.UseVisualStyleBackColor = true;
+            button15.Text = "Komşuluk Listesi Dışarı Aktar";
+            button15.UseVisualStyleBackColor = false;
             button15.Click += btnAdjList_Click;
             // 
             // button16
             // 
-            button16.Location = new Point(972, 564);
+            button16.BackColor = Color.LemonChiffon;
+            button16.Location = new Point(1316, 551);
             button16.Margin = new Padding(3, 2, 3, 2);
             button16.Name = "button16";
-            button16.Size = new Size(113, 35);
+            button16.Size = new Size(173, 37);
             button16.TabIndex = 20;
-            button16.Text = "Komşuluk Matrisi CSV";
-            button16.UseVisualStyleBackColor = true;
+            button16.Text = "Komşul Matrisi Dışarı Aktar";
+            button16.UseVisualStyleBackColor = false;
             button16.Click += btnAdjMatrix_Click;
             // 
             // button17
             // 
-            button17.Location = new Point(972, 522);
+            button17.BackColor = Color.LemonChiffon;
+            button17.Location = new Point(1351, 501);
             button17.Margin = new Padding(3, 2, 3, 2);
             button17.Name = "button17";
-            button17.Size = new Size(103, 37);
+            button17.Size = new Size(106, 37);
             button17.TabIndex = 21;
             button17.Text = "CSV İçe Aktar";
-            button17.UseVisualStyleBackColor = true;
+            button17.UseVisualStyleBackColor = false;
             button17.Click += btnImportCsv_Click;
             // 
             // button18
             // 
-            button18.Location = new Point(830, 522);
+            button18.BackColor = Color.LemonChiffon;
+            button18.Location = new Point(1085, 501);
             button18.Margin = new Padding(3, 2, 3, 2);
             button18.Name = "button18";
             button18.Size = new Size(109, 37);
             button18.TabIndex = 22;
             button18.Text = "JSON İçe Aktar";
-            button18.UseVisualStyleBackColor = true;
+            button18.UseVisualStyleBackColor = false;
             button18.Click += btnImportJson_Click;
             // 
             // button20
             // 
-            button20.Location = new Point(833, 603);
+            button20.BackColor = Color.LemonChiffon;
+            button20.Location = new Point(1082, 592);
             button20.Name = "button20";
-            button20.Size = new Size(117, 26);
+            button20.Size = new Size(180, 37);
             button20.TabIndex = 24;
             button20.Text = "Komşuluk Listesi İçeri Aktar";
-            button20.UseVisualStyleBackColor = true;
+            button20.UseVisualStyleBackColor = false;
             button20.Click += btnImportAdjList_Click;
             // 
             // button21
             // 
-            button21.Location = new Point(991, 606);
+            button21.BackColor = Color.LemonChiffon;
+            button21.Location = new Point(1316, 595);
             button21.Name = "button21";
-            button21.Size = new Size(75, 23);
+            button21.Size = new Size(173, 34);
             button21.TabIndex = 25;
             button21.Text = "Komşuluk Matrisi İçeri Aktar";
-            button21.UseVisualStyleBackColor = true;
+            button21.UseVisualStyleBackColor = false;
             button21.Click += btnImportAdjMatrix_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = SystemColors.ButtonHighlight;
             ClientSize = new Size(1530, 641);
             Controls.Add(button21);
             Controls.Add(button20);

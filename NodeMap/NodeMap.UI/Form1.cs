@@ -100,10 +100,11 @@ namespace NodeMap.UI
             InitEdgeContextMenu();
 
             btnManualNodeMode = new Button();
-            btnManualNodeMode.Location = new Point(1291, 271);
-            btnManualNodeMode.Size = new Size(140, 40);
+            btnManualNodeMode.Location = new Point(1316, 169);
+            btnManualNodeMode.Size = new Size(105, 40);
             btnManualNodeMode.Text = "Manuel Node Modu";
             btnManualNodeMode.Click += btnManualNodeMode_Click;
+            btnManualNodeMode.BackColor = Color.BlanchedAlmond;
             Controls.Add(btnManualNodeMode);
             InitNodeInfoPanel();
 
@@ -146,7 +147,7 @@ namespace NodeMap.UI
         private void InitNodeInfoPanel()
         {
             pnlNodeInfo = new Panel();
-            pnlNodeInfo.Location = new Point(1291, 350);
+            pnlNodeInfo.Location = new Point(1194, 215);
             pnlNodeInfo.Size = new Size(230, 230);
             pnlNodeInfo.BackColor = Color.FromArgb(245, 247, 250);
             pnlNodeInfo.BorderStyle = BorderStyle.FixedSingle;

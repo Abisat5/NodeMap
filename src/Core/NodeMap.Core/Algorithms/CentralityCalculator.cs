@@ -5,23 +5,24 @@ using System.Linq;
 
 namespace NodeMap.Core.Algorithms
 {
+    // degree centrality sonucu için düğüm ve derece bilgisini tutar
     public class DegreeCentralityResult
     {
         public Node Node { get; set; } = null!;
         public int Degree { get; set; }
     }
 
+    // genel merkeziyet sonuçları için düğüm ve hesaplanan değeri tutar
     public class CentralityResult
     {
         public Node Node { get; set; } = null!;
         public double Value { get; set; }
     }
 
+    // graf üzerinde farklı merkeziyet ölçümlerini hesaplar
     public class CentralityCalculator
     {
-
-
-        // degree centrality
+        // degree centrality hesaplaması
         public List<DegreeCentralityResult> CalculateDegreeCentrality(Graph graph)
         {
             return graph.Nodes.Select(n => new DegreeCentralityResult
@@ -32,9 +33,7 @@ namespace NodeMap.Core.Algorithms
             }).ToList();
         }
 
-        
-        // closeness centrality (DIJKSTRA ve WEIGHT)
-         
+        // closeness centrality hesaplaması (dijkstra ve ağırlık kullanır)
         public List<CentralityResult> CalculateCloseness(Graph graph)
         {
             var results = new List<CentralityResult>();
@@ -50,7 +49,6 @@ namespace NodeMap.Core.Algorithms
                         continue;
 
                     double distance = DijkstraDistance(graph, node, target);
-
                     if (distance > 0)
                         totalDistance += distance;
                 }
@@ -67,9 +65,7 @@ namespace NodeMap.Core.Algorithms
             return results;
         }
 
-        
-        // betweenness centrality (DIJKSTRA PATH ve WEIGHT)
-         
+        // betweenness centrality hesaplaması (dijkstra path kullanır)
         public List<CentralityResult> CalculateBetweenness(Graph graph)
         {
             var scores = graph.Nodes.ToDictionary(n => n, n => 0.0);
@@ -82,7 +78,6 @@ namespace NodeMap.Core.Algorithms
                         continue;
 
                     var path = DijkstraPath(graph, source, target);
-
                     if (path.Count < 3)
                         continue;
 
@@ -100,9 +95,7 @@ namespace NodeMap.Core.Algorithms
             }).ToList();
         }
 
-         
-        // DIJKSTRA sadece mesafe (WEIGHT)
-         
+        // iki düğüm arasındaki en kısa mesafeyi döndüren dijkstra
         private double DijkstraDistance(Graph graph, Node start, Node end)
         {
             var distances = graph.Nodes.ToDictionary(n => n, n => double.PositiveInfinity);
@@ -135,7 +128,6 @@ namespace NodeMap.Core.Algorithms
                         continue;
 
                     double alternative = distances[current] + edge.Weight;
-
                     if (alternative < distances[neighbor])
                         distances[neighbor] = alternative;
                 }
@@ -144,9 +136,7 @@ namespace NodeMap.Core.Algorithms
             return distances[end] == double.PositiveInfinity ? 0 : distances[end];
         }
 
-         
-        // DIJKSTRA – yolu döndürür (WEIGHT)
-         
+        // iki düğüm arasındaki en kısa yolu döndüren dijkstra
         private List<Node> DijkstraPath(Graph graph, Node start, Node end)
         {
             var distances = graph.Nodes.ToDictionary(n => n, n => double.PositiveInfinity);
@@ -184,7 +174,6 @@ namespace NodeMap.Core.Algorithms
                         continue;
 
                     double alternative = distances[current] + edge.Weight;
-
                     if (alternative < distances[neighbor])
                     {
                         distances[neighbor] = alternative;
@@ -197,6 +186,7 @@ namespace NodeMap.Core.Algorithms
                 return new List<Node>();
 
             var path = new List<Node>();
+
             for (var at = end; at != null; at = previous[at])
                 path.Add(at);
 

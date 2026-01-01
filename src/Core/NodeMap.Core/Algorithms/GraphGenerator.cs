@@ -6,6 +6,7 @@ namespace NodeMap.Core.Algorithms
 {
     public static class GraphGenerator
     {
+        // rastgele bir grafik üretir
         public static Graph GenerateRandomGraph(
             int nodeCount,
             int edgeCount,
@@ -15,19 +16,18 @@ namespace NodeMap.Core.Algorithms
             var rand = new Random();
             var graph = new Graph();
 
-            // node yerleşimi (grid)
+            // grid hesapları
             int cols = (int)Math.Ceiling(Math.Sqrt(nodeCount));
             int rows = (int)Math.Ceiling((double)nodeCount / cols);
-
             int padding = 80;
             int cellWidth = (width - padding * 2) / cols;
             int cellHeight = (height - padding * 2) / rows;
 
+            // düğümlerin oluşturulması ve konumlandırılması
             for (int i = 0; i < nodeCount; i++)
             {
                 int row = i / cols;
                 int col = i % cols;
-
                 int x = padding + col * cellWidth + rand.Next(-15, 15);
                 int y = padding + row * cellHeight + rand.Next(-15, 15);
 
@@ -40,7 +40,7 @@ namespace NodeMap.Core.Algorithms
                 });
             }
 
-            // zorunlu bağlantı (chain)
+            // zincir şeklinde temel bağlantılar
             for (int i = 0; i < nodeCount - 1; i++)
             {
                 graph.Edges.Add(new Edge
@@ -51,15 +51,17 @@ namespace NodeMap.Core.Algorithms
                 });
             }
 
-            // rastgele edge ekleme
+            // istenen kenar sayısına ulaşmak için rastgele bağlantılar
             int extraEdges = edgeCount - (nodeCount - 1);
             for (int i = 0; i < extraEdges; i++)
             {
                 var from = graph.Nodes[rand.Next(nodeCount)];
                 var to = graph.Nodes[rand.Next(nodeCount)];
 
+                // self-loop engellenir
                 if (from == to) continue;
 
+                // aynı edge tekrar eklenmez
                 if (!graph.Edges.Any(e =>
                     (e.Source == from && e.Target == to) ||
                     (e.Source == to && e.Target == from)))
@@ -73,6 +75,7 @@ namespace NodeMap.Core.Algorithms
                 }
             }
 
+            
             return graph;
         }
     }

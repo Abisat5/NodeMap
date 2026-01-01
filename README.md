@@ -145,13 +145,9 @@ A* algoritması, 1968 yılında Peter Hart, Nils Nilsson ve Bertram Raphael tara
 
 **Temel Kaynaklar:**
 
-1. **Hart, P. E., Nilsson, N. J., & Raphael, B. (1968).** "A Formal Basis for the Heuristic Determination of Minimum Cost Paths." *IEEE Transactions on Systems Science and Cybernetics*, 4(2), 100-107. A* algoritmasının ilk formal tanımı ve matematiksel temelleri bu makalede yer almaktadır.
+1. **Cormen, T. H., Leiserson, C. E., Rivest, R. L., & Stein, C. (2022).** *Introduction to Algorithms* (4th ed.). MIT Press. Graf algoritmaları bölümünde A* algoritması hakkında bilgiler bulunmaktadır.
 
-2. **Russell, S., & Norvig, P. (2020).** *Artificial Intelligence: A Modern Approach* (4th ed.). Prentice Hall. Bu kaynakta A* algoritması detaylı olarak ele alınmış ve farklı varyasyonları açıklanmıştır.
 
-3. **Cormen, T. H., Leiserson, C. E., Rivest, R. L., & Stein, C. (2022).** *Introduction to Algorithms* (4th ed.). MIT Press. Graf algoritmaları bölümünde A* algoritması hakkında bilgiler bulunmaktadır.
-
-4. **Dechter, R., & Pearl, J. (1985).** "Generalized Best-First Search Strategies and the Optimality of A*." *Journal of the ACM*, 32(3), 505-536. Bu çalışmada A* algoritmasının optimalite koşulları ve heuristik fonksiyonların karakteristikleri araştırılmıştır.
 
 **Algoritmanın Özellikleri:**
 - **Optimalite:** Uygun ve tutarlı heuristik kullanımı durumunda optimal çözümü garanti eder
@@ -240,15 +236,9 @@ BFS algoritması, graf teorisinin temel algoritmalarından biridir ve 1950'li y�
 
 **Temel Kaynaklar:**
 
-1. **Moore, E. F. (1959).** "The Shortest Path Through a Maze." *Proceedings of an International Symposium on the Theory of Switching*, 285-292. Harvard University Press. Bu çalışmada BFS algoritmasının ilk formal tanımı yer alıyor.
+1. **Skiena, S. S. (2020).** *The Algorithm Design Manual* (3rd ed.). Springer. Bu kitapta BFS algoritmasının pratik uygulamaları ve problem çözme teknikleri anlatılıyor.
 
-2. **Lee, C. Y. (1961).** "An Algorithm for Path Connections and Its Applications." *IRE Transactions on Electronic Computers*, EC-10(3), 346-365. Bu makalede BFS algoritmasının genelleştirilmiş versiyonu ve uygulama alanları anlatılıyor.
 
-3. **Cormen, T. H., Leiserson, C. E., Rivest, R. L., & Stein, C. (2022).** *Introduction to Algorithms* (4th ed.). MIT Press. Bu kitapta BFS algoritmasının detaylı analizi, karmaşıklık analizi ve uygulama örnekleri var.
-
-4. **Sedgewick, R., & Wayne, K. (2011).** *Algorithms* (4th ed.). Addison-Wesley Professional. Bu kitapta graf algoritmaları bölümünde BFS'in implementasyonu ve varyasyonları ele alınmış.
-
-5. **Skiena, S. S. (2020).** *The Algorithm Design Manual* (3rd ed.). Springer. Bu kitapta BFS algoritmasının pratik uygulamaları ve problem çözme teknikleri anlatılıyor.
 
 **Algoritmanın Özellikleri:**
 - **Tamlık:** Başlangıç düğümünden erişilebilir tüm düğümleri buluyor
@@ -393,17 +383,9 @@ Merkeziyet analizi, sosyal ağ analizi ve graf teorisinin temel kavramlarından 
 
 **Temel Kaynaklar:**
 
-1. **Freeman, L. C. (1978).** "Centrality in Social Networks Conceptual Clarification." *Social Networks*, 1(3), 215-239. Bu makalede merkeziyet kavramının ilk formal tanımları ve derece, yakınlık, aradalık merkeziyetleri yer alıyor.
+1. **Newman, M. E. J. (2010).** *Networks: An Introduction*. Oxford University Press. Bu kitapta merkeziyet metriklerinin detaylı matematiksel açıklamaları, uygulamaları ve varyasyonları anlatılıyor.
 
-2. **Freeman, L. C. (1979).** "Centrality in Networks: I. Conceptual Clarification." *Social Networks*, 1(3), 215-239. Bu çalışmada merkeziyet metriklerinin sosyal ağ analizindeki önemi ve uygulama alanları detaylandırılmış.
 
-3. **Brandes, U. (2001).** "A Faster Algorithm for Betweenness Centrality." *Journal of Mathematical Sociology*, 25(2), 163-177. Bu makalede aradalık merkeziyetinin daha verimli hesaplanması için geliştirilmiş algoritmalar var.
-
-4. **Newman, M. E. J. (2010).** *Networks: An Introduction*. Oxford University Press. Bu kitapta merkeziyet metriklerinin detaylı matematiksel açıklamaları, uygulamaları ve varyasyonları anlatılıyor.
-
-5. **Wasserman, S., & Faust, K. (1994).** *Social Network Analysis: Methods and Applications*. Cambridge University Press. Bu kitapta sosyal ağ analizinde merkeziyet metriklerinin kullanımı ve yorumlanması ele alınmış.
-
-6. **Borgatti, S. P., & Everett, M. G. (2006).** "A Graph-theoretic Perspective on Centrality." *Social Networks*, 28(4), 466-484. Bu çalışmada merkeziyet kavramı graf teorisi perspektifinden incelenmiş.
 
 **Merkeziyet Metriklerinin Özellikleri:**
 - **Derece Merkeziyeti:** Yerel önemi ölçüyor, hesaplaması hızlı, doğrudan bağlantıları vurguluyor
@@ -500,17 +482,9 @@ Bağlı bileşenler problemi, graf teorisinin temel problemlerinden biridir ve 2
 
 **Temel Kaynaklar:**
 
-1. **Hopcroft, J., & Tarjan, R. (1973).** "Algorithm 447: Efficient Algorithms for Graph Manipulation." *Communications of the ACM*, 16(6), 372-378. Bu makalede bağlı bileşenler ve diğer graf problemleri için verimli algoritmalar yer alıyor.
+1. **Sedgewick, R., & Wayne, K. (2011).** *Algorithms* (4th ed.). Addison-Wesley Professional. Bu kitapta graf algoritmaları bölümünde bağlı bileşenler algoritmasının implementasyonu ve varyasyonları ele alınmış.
 
-2. **Cormen, T. H., Leiserson, C. E., Rivest, R. L., & Stein, C. (2022).** *Introduction to Algorithms* (4th ed.). MIT Press. Bu kitapta bağlı bileşenler algoritmasının detaylı analizi, DFS ve BFS kullanımı anlatılıyor.
 
-3. **Sedgewick, R., & Wayne, K. (2011).** *Algorithms* (4th ed.). Addison-Wesley Professional. Bu kitapta graf algoritmaları bölümünde bağlı bileşenler algoritmasının implementasyonu ve varyasyonları ele alınmış.
-
-4. **Newman, M. E. J. (2010).** *Networks: An Introduction*. Oxford University Press. Bu kitapta ağlarda bağlı bileşenlerin önemi, topluluk tespiti ile ilişkisi ve sosyal ağ analizindeki uygulamaları anlatılıyor.
-
-5. **Skiena, S. S. (2020).** *The Algorithm Design Manual* (3rd ed.). Springer. Bu kitapta bağlı bileşenler algoritmasının pratik uygulamaları ve problem çözme teknikleri var.
-
-6. **Tarjan, R. (1972).** "Depth-First Search and Linear Graph Algorithms." *SIAM Journal on Computing*, 1(2), 146-160. Bu klasik makalede DFS'in çeşitli graf problemlerindeki kullanımı, bağlı bileşenler dahil, detaylandırılmış.
 
 **Algoritmanın Özellikleri:**
 - **Tamlık:** Graf içindeki tüm bağlı bileşenleri buluyor
@@ -604,17 +578,9 @@ DFS algoritması, graf teorisinin en temel algoritmalarından biridir ve 19. yü
 
 **Temel Kaynaklar:**
 
-1. **Tarjan, R. (1972).** "Depth-First Search and Linear Graph Algorithms." *SIAM Journal on Computing*, 1(2), 146-160. Bu klasik makalede DFS'in çeşitli graf problemlerindeki kullanımı detaylandırılmış ve algoritmanın modern bilgisayar bilimlerindeki temelini oluşturuyor.
+1. **Even, S. (2011).** *Graph Algorithms* (2nd ed.). Cambridge University Press. Bu kitapta DFS'in teorik temelleri ve çeşitli graf problemlerindeki kullanımı detaylandırılmış.
 
-2. **Hopcroft, J., & Tarjan, R. (1973).** "Algorithm 447: Efficient Algorithms for Graph Manipulation." *Communications of the ACM*, 16(6), 372-378. Bu makalede DFS'in bağlı bileşenler, topolojik sıralama ve diğer graf problemlerindeki uygulamaları anlatılıyor.
 
-3. **Cormen, T. H., Leiserson, C. E., Rivest, R. L., & Stein, C. (2022).** *Introduction to Algorithms* (4th ed.). MIT Press. Bu kitapta DFS algoritmasının detaylı analizi, implementasyonu ve uygulama alanları yer alıyor.
-
-4. **Sedgewick, R., & Wayne, K. (2011).** *Algorithms* (4th ed.). Addison-Wesley Professional. Bu kitapta graf algoritmaları bölümünde DFS'in rekürsif ve iteratif versiyonları, çeşitli uygulamaları ele alınmış.
-
-5. **Skiena, S. S. (2020).** *The Algorithm Design Manual* (3rd ed.). Springer. Bu kitapta DFS algoritmasının pratik uygulamaları, problem çözme teknikleri ve BFS ile karşılaştırması var.
-
-6. **Even, S. (2011).** *Graph Algorithms* (2nd ed.). Cambridge University Press. Bu kitapta DFS'in teorik temelleri ve çeşitli graf problemlerindeki kullanımı detaylandırılmış.
 
 **Algoritmanın Özellikleri:**
 - **Tamlık:** Başlangıç düğümünden erişilebilir tüm düğümleri buluyor
@@ -721,17 +687,9 @@ Dijkstra algoritması, 1956 yılında Hollandalı bilgisayar bilimci Edsger W. D
 
 **Temel Kaynaklar:**
 
-1. **Dijkstra, E. W. (1959).** "A Note on Two Problems in Connexion with Graphs." *Numerische Mathematik*, 1(1), 269-271. Bu makale, Dijkstra algoritmasının orijinal tanımını ve matematiksel temellerini sunmaktadır. Algoritma, iki problem için çözüm olarak önerilmiştir: en kısa yol ve minimum spanning tree.
+1. **Cormen, T. H., Leiserson, C. E., Rivest, R. L., & Stein, C. (2022).** *Introduction to Algorithms* (4th ed.). MIT Press. Bu kitap, Dijkstra algoritmasının detaylı analizini, karmaşıklık analizini, çeşitli implementasyonlarını ve uygulama örneklerini içermektedir.
 
-2. **Cormen, T. H., Leiserson, C. E., Rivest, R. L., & Stein, C. (2022).** *Introduction to Algorithms* (4th ed.). MIT Press. Bu kitap, Dijkstra algoritmasının detaylı analizini, karmaşıklık analizini, çeşitli implementasyonlarını ve uygulama örneklerini içermektedir.
 
-3. **Fredman, M. L., & Tarjan, R. E. (1987).** "Fibonacci Heaps and Their Uses in Improved Network Optimization Algorithms." *Journal of the ACM*, 34(3), 596-615. Bu makale, Fibonacci heap kullanılarak Dijkstra algoritmasının performansını artıran optimizasyonları sunmaktadır.
-
-4. **Sedgewick, R., & Wayne, K. (2011).** *Algorithms* (4th ed.). Addison-Wesley Professional. Graf algoritmaları bölümünde Dijkstra algoritmasının implementasyonu, öncelik kuyruğu kullanımı ve pratik uygulamaları ele alınmaktadır.
-
-5. **Skiena, S. S. (2020).** *The Algorithm Design Manual* (3rd ed.). Springer. Bu kitap, Dijkstra algoritmasının pratik uygulamalarını, problem çözme tekniklerini ve diğer en kısa yol algoritmaları ile karşılaştırmasını içermektedir.
-
-6. **Ahuja, R. K., Magnanti, T. L., & Orlin, J. B. (1993).** *Network Flows: Theory, Algorithms, and Applications*. Prentice Hall. Bu kitap, ağ akış problemlerinde Dijkstra algoritmasının kullanımını ve varyasyonlarını detaylandırmaktadır.
 
 **Algoritmanın Özellikleri:**
 - **Optimalite:** Negatif ağırlık yoksa optimal çözümü garanti eder
@@ -862,17 +820,9 @@ Kuvvet yönelimli yerleşim algoritmaları, 1980'li yıllardan itibaren graf gö
 
 **Temel Kaynaklar:**
 
-1. **Eades, P. (1984).** "A Heuristic for Graph Drawing." *Congressus Numerantium*, 42, 149-160. Bu makale, kuvvet yönelimli yerleşim algoritmalarının temelini oluşturan spring-embedder yaklaşımını sunmaktadır.
+1. **Kobourov, S. G. (2012).** "Force-Directed Drawing Algorithms." In *Handbook of Graph Drawing and Visualization* (pp. 383-408). CRC Press. Bu bölüm, kuvvet yönelimli algoritmaların kapsamlı bir incelemesini ve karşılaştırmasını içermektedir.
 
-2. **Fruchterman, T. M. J., & Reingold, E. M. (1991).** "Graph Drawing by Force-Directed Placement." *Software: Practice and Experience*, 21(11), 1129-1164. Bu klasik makale, modern kuvvet yönelimli algoritmaların temelini oluşturur ve sıcaklık azaltma (cooling) mekanizmasını tanıtır.
 
-3. **Kamada, T., & Kawai, S. (1989).** "An Algorithm for Drawing General Undirected Graphs." *Information Processing Letters*, 31(1), 7-15. Bu çalışma, ideal düğüm mesafelerini kullanarak daha iyi yerleşimler üreten bir algoritma sunmaktadır.
-
-4. **Kobourov, S. G. (2012).** "Force-Directed Drawing Algorithms." In *Handbook of Graph Drawing and Visualization* (pp. 383-408). CRC Press. Bu bölüm, kuvvet yönelimli algoritmaların kapsamlı bir incelemesini ve karşılaştırmasını içermektedir.
-
-5. **Herman, I., Melançon, G., & Marshall, M. S. (2000).** "Graph Visualization and Navigation in Information Visualization: A Survey." *IEEE Transactions on Visualization and Computer Graphics*, 6(1), 24-43. Bu makale, graf görselleştirme yöntemlerini, kuvvet yönelimli algoritmalar dahil, kapsamlı bir şekilde ele almaktadır.
-
-6. **Purchase, H. C. (2002).** "Metrics for Graph Drawing Aesthetics." *Journal of Visual Languages & Computing*, 13(5), 501-516. Bu çalışma, graf görselleştirmelerinin estetik kalitesini ölçmek için metrikler sunmaktadır.
 
 **Algoritmanın Özellikleri:**
 - **Estetik Kalite:** Bağlı düğümler yakın, bağlı olmayanlar uzak yerleşir
@@ -989,17 +939,9 @@ Rastgele graf üretimi, graf teorisi ve algoritma testlerinde yaygın olarak kul
 
 **Temel Kaynaklar:**
 
-1. **Erdős, P., & Rényi, A. (1959).** "On Random Graphs." *Publicationes Mathematicae*, 6, 290-297. Bu klasik makale, rastgele graf teorisinin temelini oluşturur ve Erdős-Rényi modelini tanıtır.
+1. **Newman, M. E. J. (2010).** *Networks: An Introduction*. Oxford University Press. Bu kitap, rastgele graf modellerini, özelliklerini ve uygulamalarını kapsamlı bir şekilde ele almaktadır.
 
-2. **Erdős, P., & Rényi, A. (1960).** "On the Evolution of Random Graphs." *Publications of the Mathematical Institute of the Hungarian Academy of Sciences*, 5, 17-61. Bu çalışma, rastgele grafların evrimini ve özelliklerini detaylandırmaktadır.
 
-3. **Newman, M. E. J. (2010).** *Networks: An Introduction*. Oxford University Press. Bu kitap, rastgele graf modellerini, özelliklerini ve uygulamalarını kapsamlı bir şekilde ele almaktadır.
-
-4. **Bollobás, B. (2001).** *Random Graphs* (2nd ed.). Cambridge University Press. Bu kitap, rastgele graf teorisinin matematiksel temellerini ve çeşitli modelleri detaylandırmaktadır.
-
-5. **Watts, D. J., & Strogatz, S. H. (1998).** "Collective Dynamics of 'Small-World' Networks." *Nature*, 393(6684), 440-442. Bu makale, küçük dünya (small-world) ağlarını ve rastgele graf modellerini incelemektedir.
-
-6. **Barabási, A. L., & Albert, R. (1999).** "Emergence of Scaling in Random Networks." *Science*, 286(5439), 509-512. Bu çalışma, ölçeklenebilir (scale-free) ağların rastgele oluşumunu incelemektedir.
 
 **Rastgele Graf Modelleri:**
 - **Erdős-Rényi Modeli:** Her kenarın bağımsız olarak eklenme olasılığına sahip olduğu model
@@ -1100,17 +1042,9 @@ Dinamik ağırlık hesaplama, sosyal ağ analizi ve benzerlik ölçümlerinde ya
 
 **Temel Kaynaklar:**
 
-1. **Euclid (c. 300 BCE).** *Elements*. Öklidyen mesafe kavramının matematiksel temelleri, Öklid'in geometri çalışmalarında ortaya çıkmıştır.
+1. **Borgatti, S. P., Everett, M. G., & Johnson, J. C. (2018).** *Analyzing Social Networks* (2nd ed.). SAGE Publications. Bu kitap, sosyal ağ analizinde ağırlıklı grafların kullanımını ve ağırlık hesaplama tekniklerini içermektedir.
 
-2. **Deza, E., & Deza, M. M. (2009).** *Encyclopedia of Distances*. Springer. Bu kaynak, çeşitli mesafe ölçümlerini, Öklidyen mesafe dahil, kapsamlı bir şekilde ele almaktadır.
 
-3. **Jain, A. K., Murty, M. N., & Flynn, P. J. (1999).** "Data Clustering: A Review." *ACM Computing Surveys*, 31(3), 264-323. Bu makale, kümeleme algoritmalarında mesafe ölçümlerinin kullanımını, Öklidyen mesafe dahil, incelemektedir.
-
-4. **Wasserman, S., & Faust, K. (1994).** *Social Network Analysis: Methods and Applications*. Cambridge University Press. Bu kitap, sosyal ağ analizinde benzerlik ölçümlerini ve ağırlık hesaplama yöntemlerini ele almaktadır.
-
-5. **Newman, M. E. J. (2010).** *Networks: An Introduction*. Oxford University Press. Bu kitap, ağlarda kenar ağırlıklarının önemini ve hesaplama yöntemlerini detaylandırmaktadır.
-
-6. **Borgatti, S. P., Everett, M. G., & Johnson, J. C. (2018).** *Analyzing Social Networks* (2nd ed.). SAGE Publications. Bu kitap, sosyal ağ analizinde ağırlıklı grafların kullanımını ve ağırlık hesaplama tekniklerini içermektedir.
 
 **Mesafe Ölçümleri:**
 - **Öklidyen Mesafe:** En yaygın kullanılan mesafe ölçümü, geometrik mesafeyi yansıtır
@@ -1229,17 +1163,9 @@ Welsh–Powell algoritması, 1967 yılında D. J. A. Welsh ve M. B. Powell taraf
 
 **Temel Kaynaklar:**
 
-1. **Welsh, D. J. A., & Powell, M. B. (1967).** "An Upper Bound for the Chromatic Number of a Graph and Its Application to Timetabling Problems." *The Computer Journal*, 10(1), 85-86. Bu makale, Welsh–Powell algoritmasının orijinal tanımını ve matematiksel temellerini sunmaktadır.
+1. **Kubale, M. (2004).** *Graph Colorings*. American Mathematical Society. Bu kitap, graf renklendirme teorisinin matematiksel temellerini ve çeşitli algoritmaları detaylandırmaktadır.
 
-2. **Appel, K., & Haken, W. (1977).** "Every Planar Map is Four Colorable. Part I: Discharging." *Illinois Journal of Mathematics*, 21(3), 429-490. Bu çalışma, dört renk teoremini kanıtlamış ve graf renklendirme teorisine önemli katkılar sağlamıştır.
 
-3. **Jensen, T. R., & Toft, B. (1995).** *Graph Coloring Problems*. Wiley-Interscience. Bu kitap, graf renklendirme problemlerinin kapsamlı bir incelemesini, Welsh–Powell algoritması dahil, içermektedir.
-
-4. **Cormen, T. H., Leiserson, C. E., Rivest, R. L., & Stein, C. (2022).** *Introduction to Algorithms* (4th ed.). MIT Press. Bu kitap, graf renklendirme algoritmalarını, greedy yaklaşımları ve karmaşıklık analizini içermektedir.
-
-5. **Kubale, M. (2004).** *Graph Colorings*. American Mathematical Society. Bu kitap, graf renklendirme teorisinin matematiksel temellerini ve çeşitli algoritmaları detaylandırmaktadır.
-
-6. **Garey, M. R., & Johnson, D. S. (1979).** *Computers and Intractability: A Guide to the Theory of NP-Completeness*. W. H. Freeman. Bu klasik kitap, graf renklendirme probleminin NP-tam olduğunu ve optimal çözümün zorluğunu açıklamaktadır.
 
 **Graf Renklendirme Problemleri:**
 - **Kromatik Sayı:** Bir grafı renklendirmek için gereken minimum renk sayısı

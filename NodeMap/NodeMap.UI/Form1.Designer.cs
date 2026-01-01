@@ -53,6 +53,7 @@
             button18 = new Button();
             button20 = new Button();
             button21 = new Button();
+            button19 = new Button();
             SuspendLayout();
             // 
             // btnTest
@@ -70,7 +71,7 @@
             // button1
             // 
             button1.BackColor = SystemColors.ActiveCaption;
-            button1.Location = new Point(1082, 169);
+            button1.Location = new Point(1082, 160);
             button1.Name = "button1";
             button1.Size = new Size(106, 40);
             button1.TabIndex = 1;
@@ -81,7 +82,7 @@
             // button2
             // 
             button2.BackColor = SystemColors.ActiveCaption;
-            button2.Location = new Point(1082, 261);
+            button2.Location = new Point(1082, 252);
             button2.Name = "button2";
             button2.Size = new Size(106, 40);
             button2.TabIndex = 2;
@@ -92,7 +93,7 @@
             // button3
             // 
             button3.BackColor = SystemColors.ActiveCaption;
-            button3.Location = new Point(1082, 215);
+            button3.Location = new Point(1082, 206);
             button3.Name = "button3";
             button3.Size = new Size(106, 40);
             button3.TabIndex = 3;
@@ -103,7 +104,7 @@
             // button4
             // 
             button4.BackColor = SystemColors.ActiveCaption;
-            button4.Location = new Point(1082, 307);
+            button4.Location = new Point(1082, 298);
             button4.Name = "button4";
             button4.Size = new Size(106, 40);
             button4.TabIndex = 4;
@@ -125,7 +126,7 @@
             // button6
             // 
             button6.BackColor = SystemColors.ActiveCaption;
-            button6.Location = new Point(1082, 353);
+            button6.Location = new Point(1082, 344);
             button6.Name = "button6";
             button6.Size = new Size(106, 40);
             button6.TabIndex = 6;
@@ -136,7 +137,7 @@
             // button7
             // 
             button7.BackColor = SystemColors.ActiveCaption;
-            button7.Location = new Point(1082, 399);
+            button7.Location = new Point(1082, 390);
             button7.Name = "button7";
             button7.Size = new Size(106, 40);
             button7.TabIndex = 7;
@@ -238,7 +239,7 @@
             // button13
             // 
             button13.BackColor = Color.LemonChiffon;
-            button13.Location = new Point(1351, 460);
+            button13.Location = new Point(1351, 479);
             button13.Margin = new Padding(3, 2, 3, 2);
             button13.Name = "button13";
             button13.Size = new Size(106, 37);
@@ -250,7 +251,7 @@
             // button14
             // 
             button14.BackColor = Color.LemonChiffon;
-            button14.Location = new Point(1088, 460);
+            button14.Location = new Point(1088, 479);
             button14.Margin = new Padding(3, 2, 3, 2);
             button14.Name = "button14";
             button14.Size = new Size(106, 37);
@@ -262,10 +263,10 @@
             // button15
             // 
             button15.BackColor = Color.LemonChiffon;
-            button15.Location = new Point(1085, 551);
+            button15.Location = new Point(1088, 563);
             button15.Margin = new Padding(3, 2, 3, 2);
             button15.Name = "button15";
-            button15.Size = new Size(177, 41);
+            button15.Size = new Size(177, 33);
             button15.TabIndex = 19;
             button15.Text = "Komşuluk Listesi Dışarı Aktar";
             button15.UseVisualStyleBackColor = false;
@@ -274,10 +275,10 @@
             // button16
             // 
             button16.BackColor = Color.LemonChiffon;
-            button16.Location = new Point(1316, 551);
+            button16.Location = new Point(1316, 563);
             button16.Margin = new Padding(3, 2, 3, 2);
             button16.Name = "button16";
-            button16.Size = new Size(173, 37);
+            button16.Size = new Size(173, 33);
             button16.TabIndex = 20;
             button16.Text = "Komşul Matrisi Dışarı Aktar";
             button16.UseVisualStyleBackColor = false;
@@ -286,7 +287,7 @@
             // button17
             // 
             button17.BackColor = Color.LemonChiffon;
-            button17.Location = new Point(1351, 501);
+            button17.Location = new Point(1351, 520);
             button17.Margin = new Padding(3, 2, 3, 2);
             button17.Name = "button17";
             button17.Size = new Size(106, 37);
@@ -298,7 +299,7 @@
             // button18
             // 
             button18.BackColor = Color.LemonChiffon;
-            button18.Location = new Point(1085, 501);
+            button18.Location = new Point(1085, 520);
             button18.Margin = new Padding(3, 2, 3, 2);
             button18.Name = "button18";
             button18.Size = new Size(109, 37);
@@ -310,9 +311,9 @@
             // button20
             // 
             button20.BackColor = Color.LemonChiffon;
-            button20.Location = new Point(1082, 592);
+            button20.Location = new Point(1088, 601);
             button20.Name = "button20";
-            button20.Size = new Size(180, 37);
+            button20.Size = new Size(180, 31);
             button20.TabIndex = 24;
             button20.Text = "Komşuluk Listesi İçeri Aktar";
             button20.UseVisualStyleBackColor = false;
@@ -321,13 +322,24 @@
             // button21
             // 
             button21.BackColor = Color.LemonChiffon;
-            button21.Location = new Point(1316, 595);
+            button21.Location = new Point(1316, 601);
             button21.Name = "button21";
-            button21.Size = new Size(173, 34);
+            button21.Size = new Size(173, 31);
             button21.TabIndex = 25;
             button21.Text = "Komşuluk Matrisi İçeri Aktar";
             button21.UseVisualStyleBackColor = false;
             button21.Click += btnImportAdjMatrix_Click;
+            // 
+            // button19
+            // 
+            button19.BackColor = SystemColors.ActiveCaption;
+            button19.Location = new Point(1085, 434);
+            button19.Name = "button19";
+            button19.Size = new Size(103, 40);
+            button19.TabIndex = 26;
+            button19.Text = " Dinamik Ağırlık Hesaplama ";
+            button19.UseVisualStyleBackColor = false;
+            button19.Click += Dinamik_Click;
             // 
             // Form1
             // 
@@ -335,6 +347,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ButtonHighlight;
             ClientSize = new Size(1530, 641);
+            Controls.Add(button19);
             Controls.Add(button21);
             Controls.Add(button20);
             Controls.Add(button18);
@@ -396,6 +409,7 @@
         private Button button18;
         private Button button20;
         private Button button21;
+        private Button button19;
     }
 
 

@@ -1387,5 +1387,23 @@ namespace NodeMap.UI
             Invalidate();
         }
 
+        private void Dinamik_Click(object sender, EventArgs e)
+        {
+            if (_graph == null || _graph.Edges.Count == 0)
+            {
+                MessageBox.Show("Graf yok veya edge bulunamadı!");
+                return;
+            }
+
+            // Tüm edge'lerin ağırlıklarını yeniden hesapla
+            foreach (var edge in _graph.Edges)
+            {
+                double yeniAgirlik = WeightCalculator.Calculate(edge.Source, edge.Target);
+                edge.Weight = yeniAgirlik;
+            }
+
+            MessageBox.Show($"Tüm edge ağırlıkları güncellendi! (Toplam {_graph.Edges.Count} edge)");
+            Invalidate(); // Ekranı yenile
+        }
     }
 }

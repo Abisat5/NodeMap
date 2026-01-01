@@ -6,13 +6,13 @@ namespace NodeMap.Core.Utils
     {
         private static Graph? _initial;
 
-        // 🔹 İlk graph'ı kaydet
+        // ilk graph'ı kaydet
         public static void Save(Graph graph)
         {
             _initial = graph.Clone();
         }
 
-        // 🔹 Kaydedilen ilk graph'a dön
+        // kaydedilen ilk graph'a dön
         public static Graph Restore()
         {
             if (_initial == null)
@@ -21,7 +21,7 @@ namespace NodeMap.Core.Utils
             return _initial.Clone();
         }
 
-        // (Opsiyonel) resetlemek istersen
+        // resetleme
         public static void Clear()
         {
             _initial = null;

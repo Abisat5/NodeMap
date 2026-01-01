@@ -10,7 +10,7 @@ namespace NodeMap.Core.IO
             var graph = new Graph();
             var lines = File.ReadAllLines(path, Encoding.UTF8);
 
-            // HEADER: ,0,1,2,3
+            
             var headers = lines[0].Split(',').Skip(1).Select(int.Parse).ToList();
 
             foreach (var id in headers)

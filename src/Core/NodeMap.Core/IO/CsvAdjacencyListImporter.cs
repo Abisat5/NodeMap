@@ -10,7 +10,7 @@ namespace NodeMap.Core.IO
             var graph = new Graph();
             var lines = File.ReadAllLines(path, Encoding.UTF8);
 
-            // HEADER: NodeId,Neighbors
+            // header (NodeId,Neighbors)
             foreach (var line in lines.Skip(1))
             {
                 if (string.IsNullOrWhiteSpace(line)) continue;

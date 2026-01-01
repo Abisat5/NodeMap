@@ -13,7 +13,7 @@ namespace NodeMap.Core.IO
             var nodes = graph.Nodes.OrderBy(n => n.Id).ToList();
             var sb = new StringBuilder();
 
-            // HEADER
+            
             sb.Append("Id");
             foreach (var n in nodes)
                 sb.Append($",{n.Id}");

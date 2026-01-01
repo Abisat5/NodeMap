@@ -12,7 +12,7 @@ namespace NodeMap.Core.IO
 
             var sb = new StringBuilder();
 
-            // HEADER
+            
             sb.AppendLine("NodeId,Neighbors");
 
             foreach (var node in graph.Nodes.OrderBy(n => n.Id))

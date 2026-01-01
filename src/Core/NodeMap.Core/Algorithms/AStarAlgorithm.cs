@@ -17,7 +17,7 @@ namespace NodeMap.Core.Algorithms
 
         public void Execute(Graph graph, Node start)
         {
-            // A* için Execute boþ kalabilir
+           
         }
 
         public List<Node> FindPath(Graph graph, Node start, Node goal)

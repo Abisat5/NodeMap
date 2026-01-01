@@ -40,14 +40,12 @@ namespace NodeMap.Core.Models
                 .ToList();
         }
 
-        // ======================================================
-        // 🔁 DEEP CLONE (UNDO / BAŞLANGIÇ GRAFA DÖN)
-        // ======================================================
+           // başlangıç graph'ına dönüş (Clone)
         public Graph Clone()
         {
             var cloneGraph = new Graph();
 
-            // 1️⃣ Node'ları kopyala
+            // node kopyalama
             var nodeMap = new Dictionary<Node, Node>();
 
             foreach (var node in Nodes)
@@ -68,7 +66,7 @@ namespace NodeMap.Core.Models
                 cloneGraph.Nodes.Add(newNode);
             }
 
-            // 2️⃣ Edge'leri kopyala
+            // edge kopyalama
             foreach (var edge in Edges)
             {
                 var newEdge = new Edge

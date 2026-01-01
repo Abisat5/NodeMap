@@ -10,7 +10,7 @@ namespace NodeMap.Core.Coloring
         {
             var result = new Dictionary<Node, int>();
 
-            // 1️⃣ Düğümleri dereceye göre sırala
+            // düğümleri dereceye göre sıralama
             var sortedNodes = graph.Nodes
                 .OrderByDescending(n => GetDegree(graph, n))
                 .ToList();
@@ -41,14 +41,14 @@ namespace NodeMap.Core.Coloring
             return result;
         }
 
-        // Düğüm derecesi
+        // düğüm derecesi gösterme
         private int GetDegree(Graph graph, Node node)
         {
             return graph.Edges.Count(e =>
                 e.Source.Equals(node) || e.Target.Equals(node));
         }
 
-        // Aynı renkte komşu var mı kontrolü
+        // aynı renkte komşuluk kontrolü
         private bool CanUseColor(
             Graph graph,
             Dictionary<Node, int> colored,

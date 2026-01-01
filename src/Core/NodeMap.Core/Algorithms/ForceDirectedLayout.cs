@@ -17,7 +17,7 @@ namespace NodeMap.Core.Algorithms
             double temperature = width / 10.0;
             var rand = new Random();
 
-            // Başlangıçta hafif random dağıt
+            // başlangıçta hafif random dağıtma
             foreach (var n in graph.Nodes)
             {
                 n.X = rand.Next(50, width - 50);
@@ -31,7 +31,7 @@ namespace NodeMap.Core.Algorithms
                 foreach (var v in graph.Nodes)
                     disp[v] = (0, 0);
 
-                // 🔴 Node-node itme
+                // node-node itme
                 foreach (var v in graph.Nodes)
                 {
                     foreach (var u in graph.Nodes)
@@ -51,7 +51,7 @@ namespace NodeMap.Core.Algorithms
                     }
                 }
 
-                // 🟢 Edge çekme
+                // edge çekme
                 foreach (var e in graph.Edges)
                 {
                     var v = e.Source;
@@ -70,7 +70,7 @@ namespace NodeMap.Core.Algorithms
                     disp[u] = (disp[u].x + fx, disp[u].y + fy);
                 }
 
-                // 📍 Konum güncelle
+                // konum güncelleme
                 foreach (var v in graph.Nodes)
                 {
                     double dx = disp[v].x;
@@ -83,12 +83,12 @@ namespace NodeMap.Core.Algorithms
                         v.Y += (int)((dy / dispLength) * Math.Min(dispLength, temperature));
                     }
 
-                    // Canvas dışına çıkmasın
+                    // canvas ölçüsü ayarları
                     v.X = Math.Clamp(v.X, 30, width - 60);
                     v.Y = Math.Clamp(v.Y, 30, height - 60);
                 }
 
-                temperature *= 0.95; // soğut
+                temperature *= 0.95; 
             }
         }
     }

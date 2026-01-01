@@ -15,7 +15,7 @@ namespace NodeMap.Core.Algorithms
             var rand = new Random();
             var graph = new Graph();
 
-            // ================= NODE YERLEŞİMİ (GRID) =================
+            // node yerleşimi (grid)
             int cols = (int)Math.Ceiling(Math.Sqrt(nodeCount));
             int rows = (int)Math.Ceiling((double)nodeCount / cols);
 
@@ -40,7 +40,7 @@ namespace NodeMap.Core.Algorithms
                 });
             }
 
-            // ================= ZORUNLU BAĞLANTI (CHAIN) =================
+            // zorunlu bağlantı (chain)
             for (int i = 0; i < nodeCount - 1; i++)
             {
                 graph.Edges.Add(new Edge
@@ -51,7 +51,7 @@ namespace NodeMap.Core.Algorithms
                 });
             }
 
-            // ================= EK RANDOM EDGE =================
+            // rastgele edge ekleme
             int extraEdges = edgeCount - (nodeCount - 1);
             for (int i = 0; i < extraEdges; i++)
             {

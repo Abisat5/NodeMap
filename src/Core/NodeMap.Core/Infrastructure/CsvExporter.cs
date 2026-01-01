@@ -7,9 +7,10 @@ namespace NodeMap.Core.Infrastructure
 {
     public static class CsvExporter
     {
-        // =====================================================
-        // 🔹 NODE CSV
-        // =====================================================
+       
+        
+
+        // node csv
         public static void ExportNodes(Graph graph, string path)
         {
             var sb = new StringBuilder();
@@ -33,9 +34,7 @@ namespace NodeMap.Core.Infrastructure
             File.WriteAllText(path, sb.ToString());
         }
 
-        // =====================================================
-        // 🔹 EDGE CSV (DİNAMİK AĞIRLIKLI)
-        // =====================================================
+         // edge csv
         public static void ExportEdges(Graph graph, string path)
         {
             var sb = new StringBuilder();
@@ -53,9 +52,7 @@ namespace NodeMap.Core.Infrastructure
             File.WriteAllText(path, sb.ToString());
         }
 
-        // =====================================================
-        // 🔹 CENTRALITY CSV
-        // =====================================================
+        // centrality csv
         public static void ExportCentrality(
             string algorithmName,
             IEnumerable<(Node node, double value)> results,

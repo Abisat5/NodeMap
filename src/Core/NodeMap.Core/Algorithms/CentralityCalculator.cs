@@ -19,9 +19,9 @@ namespace NodeMap.Core.Algorithms
 
     public class CentralityCalculator
     {
-        // ======================================================
-        // DEGREE CENTRALITY
-        // ======================================================
+
+
+        // degree centrality
         public List<DegreeCentralityResult> CalculateDegreeCentrality(Graph graph)
         {
             return graph.Nodes.Select(n => new DegreeCentralityResult
@@ -32,9 +32,9 @@ namespace NodeMap.Core.Algorithms
             }).ToList();
         }
 
-        // ======================================================
-        // CLOSENESS CENTRALITY (WEIGHTED – DIJKSTRA)
-        // ======================================================
+        
+        // closeness centrality (DIJKSTRA ve WEIGHT)
+         
         public List<CentralityResult> CalculateCloseness(Graph graph)
         {
             var results = new List<CentralityResult>();
@@ -67,9 +67,9 @@ namespace NodeMap.Core.Algorithms
             return results;
         }
 
-        // ======================================================
-        // BETWEENNESS CENTRALITY (WEIGHTED – DIJKSTRA PATH)
-        // ======================================================
+        
+        // betweenness centrality (DIJKSTRA PATH ve WEIGHT)
+         
         public List<CentralityResult> CalculateBetweenness(Graph graph)
         {
             var scores = graph.Nodes.ToDictionary(n => n, n => 0.0);
@@ -100,9 +100,9 @@ namespace NodeMap.Core.Algorithms
             }).ToList();
         }
 
-        // ======================================================
-        // DIJKSTRA – SADECE MESAFE (WEIGHT KULLANIR)
-        // ======================================================
+         
+        // DIJKSTRA sadece mesafe (WEIGHT)
+         
         private double DijkstraDistance(Graph graph, Node start, Node end)
         {
             var distances = graph.Nodes.ToDictionary(n => n, n => double.PositiveInfinity);
@@ -144,9 +144,9 @@ namespace NodeMap.Core.Algorithms
             return distances[end] == double.PositiveInfinity ? 0 : distances[end];
         }
 
-        // ======================================================
-        // DIJKSTRA – YOLU DÖNDÜRÜR (WEIGHT KULLANIR)
-        // ======================================================
+         
+        // DIJKSTRA – yolu döndürür (WEIGHT)
+         
         private List<Node> DijkstraPath(Graph graph, Node start, Node end)
         {
             var distances = graph.Nodes.ToDictionary(n => n, n => double.PositiveInfinity);

@@ -3392,7 +3392,7 @@ Uygulama Windows Forms teknolojisi kullanarak geliştirilmiştir. Ana form (Form
 Aşağıda uygulamanın başlangıç ekranı gösterilmiştir:
 
 ```
-![Ana Ekran](/screenshots/5.2.1.png)
+![Ana Ekran](screenshots/5.2.1.png)
 
 ```
 

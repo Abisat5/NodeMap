@@ -3392,7 +3392,7 @@ Uygulama Windows Forms teknolojisi kullanarak geliştirilmiştir. Ana form (Form
 Aşağıda uygulamanın başlangıç ekranı gösterilmiştir:
 
 ```
-![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.1.png?raw=true)
+![Ana Ekran](/screenshots/5.2.1.png)
 
 ```
 
@@ -3404,7 +3404,7 @@ Aşağıda uygulamanın başlangıç ekranı gösterilmiştir:
 Aşağıda JSON formatında graf yükleme işlemi gösterilmiştir:
 
 ```
-![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.2.png?raw=true)
+![JSON GRAPH](/screenshots/5.2.2.png)
 
 ```
 
@@ -3415,7 +3415,7 @@ Aşağıda JSON formatında graf yükleme işlemi gösterilmiştir:
 Aşağıda yüklenen grafın görselleştirilmiş hali gösterilmiştir:
 
 ```
-![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.3.png?raw=true)
+![GRAPH](/screenshots/5.2.3.png)
 
 ```
 
@@ -3426,7 +3426,7 @@ Aşağıda yüklenen grafın görselleştirilmiş hali gösterilmiştir:
 Aşağıda A* algoritmasının çalıştırılması ve sonuçları gösterilmiştir:
 
 ```
-![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.4.png?raw=true)
+![A* ALGORITHM](/screenshots/5.2.4.png)
 
 ```
 
@@ -3437,7 +3437,7 @@ Aşağıda A* algoritmasının çalıştırılması ve sonuçları gösterilmiş
 Aşağıda BFS veya DFS algoritmasının sonuçları gösterilmiştir:
 
 ```
-![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.5.png?raw=true)
+![BF-DFS](/screenshots/5.2.5.png)
 
 ```
 
@@ -3448,7 +3448,7 @@ Aşağıda BFS veya DFS algoritmasının sonuçları gösterilmiştir:
 Aşağıda merkeziyet analizi sonuçlarını tablo formatında gösterilmiştir:
 
 ```
-![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.6.png?raw=true)
+![CENTRALITY](/screenshots/5.2.6.png)
 
 ```
 
@@ -3459,7 +3459,7 @@ Aşağıda merkeziyet analizi sonuçlarını tablo formatında gösterilmiştir:
 Aşağıda Welsh-Powell renklendirme algoritmasının sonuçları gösterilmiştir:
 
 ```
-![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.7.png?raw=true)
+![WELSH-POWELL](/screenshots/5.2.7.png)
 
 ```
 
@@ -3470,7 +3470,7 @@ Aşağıda Welsh-Powell renklendirme algoritmasının sonuçları gösterilmişt
 Aşağıda dinamik ağırlık hesaplama işlemi gösterilmiştir:
 
 ```
-![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.8.png?raw=true)
+![WEIGHT](/screenshots/5.2.8.png)
 
 ```
 

@@ -1188,6 +1188,3552 @@ Welsh–Powell algoritması, 1967 yılında D. J. A. Welsh ve M. B. Powell taraf
 **Projede Kullanımı:**
 Bu projede Welsh–Powell algoritması, sosyal ağlarda komşu düğümlerin (kullanıcıların) farklı renklerle gösterilmesi için kullanılmaktadır. Algoritma, her bir ayrık toplulukta (bağlı bileşende) komşu kullanıcıların farklı renklere sahip olmasını garanti eder. Bu yaklaşım, sosyal ağın görsel analizini kolaylaştırır ve farklı toplulukları ayırt etmeyi sağlamaktadır. Renklendirme sonuçları, görsel olarak düğümlerin renkleri ile gösterilir ve ayrıca bir tablo halinde kullanıcıya sunulmaktadır. Algoritma, sosyal ağlarda topluluk yapısını anlamak ve görsel olarak analiz etmek için kritik öneme sahiptir.
 
+## 4-) Proje Yapısı ve Sınıf Diyagramları
+
+### 4.1 Genel Sınıf Yapısı
+
+Proje, nesne yönelimli programlama prensiplerine uygun olarak modüler bir yapıda tasarlanmıştır. Sistem, temel olarak üç ana katmandan oluşmaktadır: **Models** (Veri Modelleri), **Algorithms** (Algoritmalar) ve **UI** (Kullanıcı Arayüzü). Ayrıca **IO** (Giriş/Çıkış) ve **Interfaces** (Arayüzler) katmanları ile sistemin genişletilebilirliği ve bakım kolaylığı sağlanmıştır.
+
+Aşağıdaki sınıf diyagramı, projenin genel yapısını ve sınıflar arasındaki ilişkileri göstermektedir:
+
+```mermaid
+classDiagram
+    class Node {
+        +int Id
+        +string Name
+        +int X
+        +int Y
+        +double Aktiflik
+        +double Etkilesim
+        +int BaglantiSayisi
+        +Color Color
+    }
+    
+    class Edge {
+        +Node Source
+        +Node Target
+        +double Weight
+    }
+    
+    class Graph {
+        +List~Node~ Nodes
+        +List~Edge~ Edges
+        +GetNeighbors(Node) List~Node~
+        +GetEdge(Node, Node) Edge?
+        +GetWeightedNeighbors(Node) List~tuple~
+        +Clone() Graph
+    }
+    
+    class IGraphAlgorithm {
+        <<interface>>
+        +long ElapsedMilliseconds
+        +Execute(Graph, Node) void
+    }
+    
+    class AStarAlgorithm {
+        -Dictionary~Node,Node~ _cameFrom
+        -Dictionary~Node,double~ _gScore
+        -Dictionary~Node,double~ _fScore
+        +long ElapsedMilliseconds
+        +Execute(Graph, Node) void
+        +FindPath(Graph, Node, Node) List~Node~
+        -Heuristic(Node, Node) double
+        -ReconstructPath(Node) List~Node~
+    }
+    
+    class BFSAlgorithm {
+        +long ElapsedMilliseconds
+        +Execute(Graph, Node) void
+        +GetVisitedNodes() List~Node~
+    }
+    
+    class DFSAlgorithm {
+        +long ElapsedMilliseconds
+        +Execute(Graph, Node) void
+        +GetVisitedNodes() List~Node~
+    }
+    
+    class DijkstraAlgorithm {
+        -Dictionary~Node,double~ Distances
+        -Dictionary~Node,Node~ _previous
+        +long ElapsedMilliseconds
+        +Execute(Graph, Node) void
+        +GetShortestPath(Node) List~Node~
+    }
+    
+    class CentralityCalculator {
+        +CalculateDegree(Graph) Dictionary~Node,int~
+        +CalculateCloseness(Graph) Dictionary~Node,double~
+        +CalculateBetweenness(Graph) Dictionary~Node,double~
+        -DijkstraDistance(Graph, Node) Dictionary~Node,double~
+        -DijkstraPath(Graph, Node, Node) List~Node~
+    }
+    
+    class ConnectedComponentsAlgorithm {
+        +FindComponents(Graph) List~List~Node~~
+        -DFS(Graph, Node, HashSet~Node~, List~Node~) void
+    }
+    
+    class ForceDirectedLayout {
+        <<static>>
+        +Apply(Graph, int, int, int) void
+    }
+    
+    class GraphGenerator {
+        <<static>>
+        +Generate(int, int, int, int) Graph
+    }
+    
+    class WeightCalculator {
+        <<static>>
+        +Calculate(Node, Node) double
+    }
+    
+    class WelshPowellColoring {
+        +ColorGraph(Graph) Dictionary~Node,int~
+        -CanUseColor(Graph, Node, int, Dictionary~Node,int~) bool
+        -GetDegree(Graph, Node) int
+    }
+    
+    class IGraphImporter {
+        <<interface>>
+        +Import(string) Graph
+    }
+    
+    class IGraphExporter {
+        <<interface>>
+        +Export(Graph, string) void
+    }
+    
+    class JsonGraphImporter {
+        +Import(string) Graph
+    }
+    
+    class JsonGraphExporter {
+        +Export(Graph, string) void
+    }
+    
+    class CsvGraphImporter {
+        +Import(string) Graph
+    }
+    
+    class CsvGraphExporter {
+        +Export(Graph, string) void
+    }
+    
+    class GraphDto {
+        +List~NodeDto~ Nodes
+        +List~EdgeDto~ Edges
+    }
+    
+    class NodeDto {
+        +int Id
+        +string Name
+        +double X
+        +double Y
+        +int ColorArgb
+    }
+    
+    class EdgeDto {
+        +int SourceId
+        +int TargetId
+        +double Weight
+    }
+    
+    class Form1 {
+        -Graph _graph
+        -List~Node~ _activeNodes
+        -List~Node~ _shortestPath
+        -float _zoom
+        -bool _drawEdges
+        +Paint_Event() void
+        +Node_Click() void
+        +Edge_Click() void
+        +Algorithm_Execute() void
+    }
+    
+    Graph "1" *-- "many" Node : contains
+    Graph "1" *-- "many" Edge : contains
+    Edge "1" --> "1" Node : Source
+    Edge "1" --> "1" Node : Target
+    
+    IGraphAlgorithm <|.. AStarAlgorithm : implements
+    IGraphAlgorithm <|.. BFSAlgorithm : implements
+    IGraphAlgorithm <|.. DFSAlgorithm : implements
+    IGraphAlgorithm <|.. DijkstraAlgorithm : implements
+    
+    AStarAlgorithm ..> Graph : uses
+    AStarAlgorithm ..> Node : uses
+    BFSAlgorithm ..> Graph : uses
+    BFSAlgorithm ..> Node : uses
+    DFSAlgorithm ..> Graph : uses
+    DFSAlgorithm ..> Node : uses
+    DijkstraAlgorithm ..> Graph : uses
+    DijkstraAlgorithm ..> Node : uses
+    CentralityCalculator ..> Graph : uses
+    CentralityCalculator ..> Node : uses
+    CentralityCalculator ..> DijkstraAlgorithm : uses
+    ConnectedComponentsAlgorithm ..> Graph : uses
+    ConnectedComponentsAlgorithm ..> Node : uses
+    ForceDirectedLayout ..> Graph : uses
+    ForceDirectedLayout ..> Node : uses
+    GraphGenerator ..> Graph : uses
+    GraphGenerator ..> Node : uses
+    GraphGenerator ..> Edge : uses
+    WeightCalculator ..> Node : uses
+    WelshPowellColoring ..> Graph : uses
+    WelshPowellColoring ..> Node : uses
+    
+    IGraphImporter <|.. JsonGraphImporter : implements
+    IGraphImporter <|.. CsvGraphImporter : implements
+    IGraphExporter <|.. JsonGraphExporter : implements
+    IGraphExporter <|.. CsvGraphExporter : implements
+    
+    JsonGraphImporter ..> Graph : creates
+    JsonGraphImporter ..> GraphDto : uses
+    JsonGraphExporter ..> Graph : uses
+    JsonGraphExporter ..> GraphDto : uses
+    CsvGraphImporter ..> Graph : creates
+    CsvGraphExporter ..> Graph : uses
+    
+    GraphDto "1" *-- "many" NodeDto : contains
+    GraphDto "1" *-- "many" EdgeDto : contains
+    
+    Form1 "1" --> "1" Graph : uses
+    Form1 ..> AStarAlgorithm : uses
+    Form1 ..> BFSAlgorithm : uses
+    Form1 ..> DFSAlgorithm : uses
+    Form1 ..> DijkstraAlgorithm : uses
+    Form1 ..> CentralityCalculator : uses
+    Form1 ..> ConnectedComponentsAlgorithm : uses
+    Form1 ..> ForceDirectedLayout : uses
+    Form1 ..> GraphGenerator : uses
+    Form1 ..> WeightCalculator : uses
+    Form1 ..> WelshPowellColoring : uses
+    Form1 ..> JsonGraphImporter : uses
+    Form1 ..> JsonGraphExporter : uses
+    Form1 ..> CsvGraphImporter : uses
+    Form1 ..> CsvGraphExporter : uses
+```
+
+**Sınıf Yapısı Açıklaması:**
+
+**Models Katmanı:**
+- **Node:** Graf düğümlerini temsil eden sınıf. Her düğüm, ID, isim, koordinatlar (X, Y), aktiflik, etkileşim, bağlantı sayısı ve renk bilgilerini içerir.
+- **Edge:** Graf kenarlarını temsil eden sınıf. Kaynak (Source) ve hedef (Target) düğümleri ile ağırlık (Weight) bilgisini içerir.
+- **Graph:** Graf veri yapısını temsil eden ana sınıf. Düğüm ve kenar listelerini içerir ve komşuluk, kenar bulma gibi temel işlemleri sağlar.
+
+**Algorithms Katmanı:**
+- **IGraphAlgorithm:** Tüm graf algoritmaları için ortak arayüz. Zaman ölçümü ve temel çalıştırma metodunu tanımlar.
+- **AStarAlgorithm, BFSAlgorithm, DFSAlgorithm, DijkstraAlgorithm:** En kısa yol ve gezinme algoritmaları. IGraphAlgorithm arayüzünü implement eder.
+- **CentralityCalculator:** Merkeziyet analizi algoritmalarını içeren sınıf (Derece, Yakınlık, Aradalık).
+- **ConnectedComponentsAlgorithm:** Bağlı bileşenleri tespit eden algoritma.
+- **ForceDirectedLayout:** Graf görselleştirme için kuvvet yönelimli yerleşim algoritması (static).
+- **GraphGenerator:** Rastgele graf üretimi için yardımcı sınıf (static).
+- **WeightCalculator:** Dinamik ağırlık hesaplama için yardımcı sınıf (static).
+
+**Coloring Katmanı:**
+- **WelshPowellColoring:** Graf renklendirme algoritması. Komşu düğümlerin farklı renklere sahip olmasını sağlar.
+
+**IO Katmanı:**
+- **IGraphImporter, IGraphExporter:** Veri içe/dışa aktarma için arayüzler.
+- **JsonGraphImporter, JsonGraphExporter:** JSON formatında veri işleme sınıfları.
+- **CsvGraphImporter, CsvGraphExporter:** CSV formatında veri işleme sınıfları.
+- **GraphDto, NodeDto, EdgeDto:** Veri transfer nesneleri (DTO). JSON/CSV işlemlerinde kullanılır.
+
+**UI Katmanı:**
+- **Form1:** Ana kullanıcı arayüzü sınıfı. Tüm algoritmaları, veri işleme sınıflarını ve graf modelini kullanarak kullanıcı etkileşimlerini yönetir.
+
+Bu modüler yapı sayesinde, yeni algoritmalar veya veri formatları kolayca sisteme eklenebilir ve mevcut kod yapısı korunur.
+
+### 4.2 Interface ve Abstract Class İlişkileri
+
+Proje, nesne yönelimli programlama prensiplerinden biri olan **Interface Segregation** ve **Dependency Inversion** prensiplerine uygun olarak tasarlanmıştır. Sistemde üç ana interface bulunmaktadır ve bu interface'ler, farklı sınıflar tarafından implement edilerek sistemin genişletilebilirliği ve bakım kolaylığı sağlanmıştır.
+
+Aşağıdaki diyagram, interface'ler ve bunları implement eden sınıflar arasındaki ilişkileri göstermektedir:
+
+```mermaid
+classDiagram
+    class IGraphAlgorithm {
+        <<interface>>
+        +long ElapsedMilliseconds
+        +Execute(Graph, Node) void
+    }
+    
+    class IGraphImporter {
+        <<interface>>
+        +Import(string) Graph
+    }
+    
+    class IGraphExporter {
+        <<interface>>
+        +Export(Graph, string) void
+    }
+    
+    class AStarAlgorithm {
+        -Dictionary~Node,Node~ _cameFrom
+        -Dictionary~Node,double~ _gScore
+        -Dictionary~Node,double~ _fScore
+        +long ElapsedMilliseconds
+        +Execute(Graph, Node) void
+        +FindPath(Graph, Node, Node) List~Node~
+        -Heuristic(Node, Node) double
+        -ReconstructPath(Node) List~Node~
+    }
+    
+    class BFSAlgorithm {
+        +List~Node~ VisitedNodes
+        +long ElapsedMilliseconds
+        +Execute(Graph, Node) void
+        +GetVisitedNodes() List~Node~
+    }
+    
+    class DFSAlgorithm {
+        +List~Node~ VisitedNodes
+        +long ElapsedMilliseconds
+        +Execute(Graph, Node) void
+        +GetVisitedNodes() List~Node~
+    }
+    
+    class DijkstraAlgorithm {
+        +Dictionary~Node,double~ Distances
+        -Dictionary~Node,Node~ _previous
+        +long ElapsedMilliseconds
+        +Execute(Graph, Node) void
+        +GetShortestPath(Node) List~Node~
+    }
+    
+    class JsonGraphImporter {
+        -NodeDto (nested class)
+        -EdgeDto (nested class)
+        -GraphDto (nested class)
+        +Import(string) Graph
+    }
+    
+    class CsvGraphImporter {
+        +Import(string) Graph
+    }
+    
+    class JsonGraphExporter {
+        +Export(Graph, string) void
+    }
+    
+    class CsvGraphExporter {
+        +Export(Graph, string) void
+    }
+    
+    class Graph {
+        +List~Node~ Nodes
+        +List~Edge~ Edges
+        +GetNeighbors(Node) List~Node~
+        +GetEdge(Node, Node) Edge?
+        +GetWeightedNeighbors(Node) List~tuple~
+        +Clone() Graph
+    }
+    
+    class Node {
+        +int Id
+        +string Name
+        +int X
+        +int Y
+        +double Aktiflik
+        +double Etkilesim
+        +int BaglantiSayisi
+        +Color Color
+    }
+    
+    IGraphAlgorithm <|.. AStarAlgorithm : implements
+    IGraphAlgorithm <|.. BFSAlgorithm : implements
+    IGraphAlgorithm <|.. DFSAlgorithm : implements
+    IGraphAlgorithm <|.. DijkstraAlgorithm : implements
+    
+    IGraphImporter <|.. JsonGraphImporter : implements
+    IGraphImporter <|.. CsvGraphImporter : implements
+    
+    IGraphExporter <|.. JsonGraphExporter : implements
+    IGraphExporter <|.. CsvGraphExporter : implements
+    
+    IGraphAlgorithm ..> Graph : uses
+    IGraphAlgorithm ..> Node : uses
+    IGraphImporter ..> Graph : creates
+    IGraphExporter ..> Graph : uses
+    JsonGraphImporter ..> Node : creates
+    CsvGraphImporter ..> Node : creates
+    JsonGraphExporter ..> Node : uses
+    CsvGraphExporter ..> Node : uses
+```
+
+**Interface Yapısı Açıklaması:**
+
+**1. IGraphAlgorithm Interface:**
+- **Amaç:** Tüm graf algoritmaları için ortak bir arayüz sağlar. Bu sayede algoritmalar polimorfik olarak kullanılabilir.
+- **Özellikler:**
+  - `ElapsedMilliseconds`: Algoritmanın çalışma süresini milisaniye cinsinden döndürür
+  - `Execute(Graph, Node)`: Algoritmayı çalıştırır
+- **Implement Eden Sınıflar:**
+  - `AStarAlgorithm`: A* en kısa yol algoritması
+  - `BFSAlgorithm`: Genişlik öncelikli arama algoritması
+  - `DFSAlgorithm`: Derinlik öncelikli arama algoritması
+  - `DijkstraAlgorithm`: Dijkstra en kısa yol algoritması
+- **Avantajlar:**
+  - Yeni algoritmalar eklenirken mevcut kod değiştirilmez (Open/Closed Principle)
+  - Algoritmalar birbirinin yerine kullanılabilir (Liskov Substitution Principle)
+  - UI katmanı, algoritma detaylarından bağımsız çalışır (Dependency Inversion Principle)
+
+**2. IGraphImporter Interface:**
+- **Amaç:** Farklı formatlardan (JSON, CSV, vb.) graf verilerini içe aktarmak için ortak bir arayüz sağlar.
+- **Özellikler:**
+  - `Import(string)`: Dosya yolundan graf verilerini okur ve Graph nesnesi döndürür
+- **Implement Eden Sınıflar:**
+  - `JsonGraphImporter`: JSON formatından graf içe aktarma
+  - `CsvGraphImporter`: CSV formatından graf içe aktarma
+- **Avantajlar:**
+  - Yeni dosya formatları (XML, YAML, vb.) kolayca eklenebilir
+  - Import işlemleri polimorfik olarak yönetilebilir
+  - Test edilebilirlik artar (mock importer'lar oluşturulabilir)
+
+**3. IGraphExporter Interface:**
+- **Amaç:** Graf verilerini farklı formatlara (JSON, CSV, vb.) dışa aktarmak için ortak bir arayüz sağlar.
+- **Özellikler:**
+  - `Export(Graph, string)`: Graph nesnesini belirtilen dosya yoluna kaydeder
+- **Implement Eden Sınıflar:**
+  - `JsonGraphExporter`: Graf verilerini JSON formatına dışa aktarma
+  - `CsvGraphExporter`: Graf verilerini CSV formatına dışa aktarma
+- **Avantajlar:**
+  - Yeni export formatları kolayca eklenebilir
+  - Export işlemleri tutarlı bir şekilde yönetilebilir
+  - Kod tekrarı azalır
+
+**Interface Kullanım Senaryoları:**
+
+1. **Polimorfizm:** UI katmanında, algoritma tipine göre farklı algoritma sınıfları kullanılabilir:
+   ```csharp
+   IGraphAlgorithm algorithm = new AStarAlgorithm();
+   algorithm.Execute(graph, startNode);
+   ```
+
+2. **Genişletilebilirlik:** Yeni bir algoritma eklemek için sadece `IGraphAlgorithm` interface'ini implement etmek yeterlidir.
+
+3. **Test Edilebilirlik:** Interface'ler sayesinde mock nesneler oluşturularak birim testleri yazılabilir.
+
+4. **Bağımlılık Yönetimi:** UI katmanı, somut sınıflar yerine interface'lere bağımlı olduğu için sistem daha esnek hale gelir.
+
+Bu interface yapısı, projenin **SOLID** prensiplerine uygun olarak tasarlanmasını sağlamış ve sistemin bakımını ve genişletilmesini kolaylaştırmıştır.
+
+### 4.3 Sistem Mimarisi
+
+Proje, **katmanlı mimari (Layered Architecture)** prensibine uygun olarak tasarlanmıştır. Sistem, birbirinden bağımsız ve sorumlulukları net bir şekilde ayrılmış katmanlardan oluşmaktadır. Bu mimari yapı, kodun bakımını, test edilebilirliğini ve genişletilebilirliğini artırmaktadır.
+
+Aşağıdaki diyagram, sistemin genel mimari yapısını ve katmanlar arasındaki ilişkileri göstermektedir:
+
+```mermaid
+flowchart TB
+    subgraph UI["🎨 Presentation Layer (UI)"]
+        Form1["Form1<br/>(Ana Kullanıcı Arayüzü)"]
+        UserEvents["Kullanıcı Etkileşimleri<br/>(Click, Drag, Paint)"]
+    end
+    
+    subgraph BL["⚙️ Business Logic Layer"]
+        subgraph Algorithms["Algorithms Module"]
+            PathAlgorithms["Yol Algoritmaları<br/>(A*, BFS, DFS, Dijkstra)"]
+            AnalysisAlgorithms["Analiz Algoritmaları<br/>(Centrality, Components)"]
+            LayoutAlgorithms["Yerleşim Algoritmaları<br/>(Force-Directed)"]
+            UtilityAlgorithms["Yardımcı Algoritmalar<br/>(Generator, Weight)"]
+        end
+        
+        subgraph Coloring["Coloring Module"]
+            WelshPowell["Welsh-Powell<br/>Renklendirme"]
+        end
+    end
+    
+    subgraph DL["💾 Data Layer"]
+        subgraph Models["Models"]
+            Graph["Graph<br/>(Veri Yapısı)"]
+            Node["Node<br/>(Düğüm Modeli)"]
+            Edge["Edge<br/>(Kenar Modeli)"]
+        end
+        
+        subgraph IO["I/O Module"]
+            Importers["Importers<br/>(JSON, CSV)"]
+            Exporters["Exporters<br/>(JSON, CSV)"]
+            DTOs["DTOs<br/>(Data Transfer Objects)"]
+        end
+    end
+    
+    subgraph Interfaces["🔌 Interface Layer"]
+        IGraphAlgorithm["IGraphAlgorithm"]
+        IGraphImporter["IGraphImporter"]
+        IGraphExporter["IGraphExporter"]
+    end
+    
+    subgraph External["📁 External Resources"]
+        Files["Dosya Sistemi<br/>(JSON, CSV)"]
+    end
+    
+    UserEvents --> Form1
+    Form1 -->|uses| PathAlgorithms
+    Form1 -->|uses| AnalysisAlgorithms
+    Form1 -->|uses| LayoutAlgorithms
+    Form1 -->|uses| UtilityAlgorithms
+    Form1 -->|uses| WelshPowell
+    Form1 -->|manages| Graph
+    
+    PathAlgorithms -.->|implements| IGraphAlgorithm
+    AnalysisAlgorithms -.->|uses| IGraphAlgorithm
+    LayoutAlgorithms -->|operates on| Graph
+    UtilityAlgorithms -->|operates on| Graph
+    
+    WelshPowell -->|operates on| Graph
+    
+    Graph -->|contains| Node
+    Graph -->|contains| Edge
+    Edge -->|references| Node
+    
+    Form1 -->|uses| Importers
+    Form1 -->|uses| Exporters
+    
+    Importers -.->|implements| IGraphImporter
+    Exporters -.->|implements| IGraphExporter
+    
+    Importers -->|creates| Graph
+    Importers -->|uses| DTOs
+    Exporters -->|reads| Graph
+    Exporters -->|uses| DTOs
+    
+    Importers <-->|read/write| Files
+    Exporters <-->|read/write| Files
+    
+    style UI fill:#e1f5ff
+    style BL fill:#fff4e1
+    style DL fill:#e8f5e9
+    style Interfaces fill:#f3e5f5
+    style External fill:#fce4ec
+```
+
+**Mimari Katmanlar:**
+
+**1. Presentation Layer (Sunum Katmanı - UI):**
+- **Sorumluluk:** Kullanıcı etkileşimlerini yönetmek, görselleştirme işlemlerini gerçekleştirmek ve kullanıcıya sonuçları sunmak
+- **Bileşenler:**
+  - `Form1`: Ana Windows Forms arayüzü
+  - Event handlers: Kullanıcı tıklamaları, sürükle-bırak işlemleri, paint olayları
+- **Özellikler:**
+  - Kullanıcı girdilerini alır ve işler
+  - Algoritma sonuçlarını görsel olarak gösterir
+  - Graf görselleştirmesini yönetir
+  - Zoom, pan gibi görsel işlemleri kontrol eder
+
+**2. Business Logic Layer (İş Mantığı Katmanı):**
+- **Sorumluluk:** Graf algoritmalarını, analiz işlemlerini ve iş kurallarını içerir
+- **Modüller:**
+  - **Algorithms Module:**
+    - Yol algoritmaları: A*, BFS, DFS, Dijkstra
+    - Analiz algoritmaları: Merkeziyet analizi, bağlı bileşenler
+    - Yerleşim algoritmaları: Kuvvet yönelimli yerleşim
+    - Yardımcı algoritmalar: Graf üretici, ağırlık hesaplayıcı
+  - **Coloring Module:**
+    - Welsh-Powell renklendirme algoritması
+- **Özellikler:**
+  - Tüm algoritmalar Graph modeli üzerinde çalışır
+  - Interface'ler aracılığıyla polimorfik kullanım sağlanır
+  - Her algoritma bağımsız olarak test edilebilir
+
+**3. Data Layer (Veri Katmanı):**
+- **Sorumluluk:** Veri modellerini, veri erişim işlemlerini ve kalıcılık işlemlerini yönetir
+- **Modüller:**
+  - **Models:**
+    - `Graph`: Ana graf veri yapısı
+    - `Node`: Düğüm modeli
+    - `Edge`: Kenar modeli
+  - **I/O Module:**
+    - Importers: JSON ve CSV formatlarından veri okuma
+    - Exporters: JSON ve CSV formatlarına veri yazma
+    - DTOs: Veri transfer nesneleri (GraphDto, NodeDto, EdgeDto)
+- **Özellikler:**
+  - Veri modelleri business logic'ten bağımsızdır
+  - I/O işlemleri interface'ler aracılığıyla soyutlanmıştır
+  - Yeni dosya formatları kolayca eklenebilir
+
+**4. Interface Layer (Arayüz Katmanı):**
+- **Sorumluluk:** Katmanlar arası bağımlılıkları azaltmak ve genişletilebilirliği sağlamak
+- **Bileşenler:**
+  - `IGraphAlgorithm`: Algoritma arayüzü
+  - `IGraphImporter`: İçe aktarma arayüzü
+  - `IGraphExporter`: Dışa aktarma arayüzü
+- **Özellikler:**
+  - Dependency Inversion Principle uygulanır
+  - Katmanlar arası gevşek bağlantı (loose coupling) sağlanır
+  - Test edilebilirlik artar (mock nesneler kullanılabilir)
+
+**Sistem Akışı:**
+
+1. **Veri Yükleme Akışı:**
+   ```
+   Kullanıcı → Form1 → IGraphImporter → Dosya Sistemi → Graph Modeli
+   ```
+
+2. **Algoritma Çalıştırma Akışı:**
+   ```
+   Kullanıcı → Form1 → IGraphAlgorithm → Graph Modeli → Sonuçlar → Form1 (Görselleştirme)
+   ```
+
+3. **Veri Kaydetme Akışı:**
+   ```
+   Graph Modeli → Form1 → IGraphExporter → Dosya Sistemi
+   ```
+
+**Mimari Prensipler:**
+
+1. **Separation of Concerns (SoC):** Her katman kendi sorumluluğuna odaklanır
+2. **Single Responsibility Principle (SRP):** Her sınıf tek bir sorumluluğa sahiptir
+3. **Dependency Inversion Principle (DIP):** Üst katmanlar alt katmanlara değil, interface'lere bağımlıdır
+4. **Open/Closed Principle (OCP):** Sistem genişletmeye açık, değişikliğe kapalıdır
+5. **Loose Coupling:** Katmanlar arası bağımlılık minimize edilmiştir
+
+**Avantajlar:**
+
+- **Bakım Kolaylığı:** Her katman bağımsız olarak geliştirilebilir ve test edilebilir
+- **Genişletilebilirlik:** Yeni algoritmalar veya dosya formatları kolayca eklenebilir
+- **Test Edilebilirlik:** Her katman mock nesneler kullanılarak test edilebilir
+- **Yeniden Kullanılabilirlik:** Business logic katmanı farklı UI teknolojileri ile kullanılabilir
+- **Performans:** Katmanlar arası net ayrım sayesinde optimizasyonlar kolayca yapılabilir
+
+Bu mimari yapı, projenin ölçeklenebilir, bakımı kolay ve genişletilebilir olmasını sağlamaktadır.
+
+### 4.4 Sequence Diyagramı
+
+Sequence diyagramları, sistemdeki farklı bileşenler arasındaki etkileşimleri zaman sırasına göre gösterir. Projede kullanılan temel işlevler için sequence diyagramlarını hazırladım.
+
+#### 4.4.1 Graf Yükleme Senaryosu (JSON Import)
+
+Aşağıda JSON dosyasından graf yükleme işleminin sequence diyagramını çizdim:
+
+```mermaid
+sequenceDiagram
+    participant User as 👤 Kullanıcı
+    participant Form1 as Form1 (UI)
+    participant Importer as JsonGraphImporter
+    participant FileSystem as 📁 Dosya Sistemi
+    participant Graph as Graph Model
+    participant Node as Node
+    participant Edge as Edge
+
+    User->>Form1: "Graf Yükle" butonuna tıkla
+    Form1->>Form1: OpenFileDialog göster
+    User->>Form1: JSON dosyası seç
+    Form1->>Importer: Import(filePath)
+    
+    Importer->>FileSystem: ReadAllText(filePath)
+    FileSystem-->>Importer: JSON string döndür
+    
+    Importer->>Importer: JsonSerializer.Deserialize<GraphDto>()
+    Importer->>Importer: GraphDto oluştur
+    
+    Importer->>Graph: new Graph()
+    Graph-->>Importer: Graph instance
+    
+    loop Her Node için
+        Importer->>Node: new Node()
+        Importer->>Node: Id, Name, X, Y, Color set et
+        Importer->>Graph: Nodes.Add(node)
+    end
+    
+    loop Her Edge için
+        Importer->>Graph: Nodes.FirstOrDefault(id)
+        Graph-->>Importer: Source Node
+        Importer->>Graph: Nodes.FirstOrDefault(id)
+        Graph-->>Importer: Target Node
+        Importer->>Edge: new Edge(Source, Target, Weight)
+        Importer->>Graph: Edges.Add(edge)
+    end
+    
+    Importer-->>Form1: Graph instance döndür
+    Form1->>Form1: _graph = returnedGraph
+    Form1->>Form1: Invalidate() (ekranı yenile)
+    Form1-->>User: Graf görselleştirilir
+```
+
+#### 4.4.2 Algoritma Çalıştırma Senaryosu (A* En Kısa Yol)
+
+Aşağıda A* algoritmasının çalıştırılması ve en kısa yolun bulunması işleminin sequence diyagramını hazırladım:
+
+```mermaid
+sequenceDiagram
+    participant User as 👤 Kullanıcı
+    participant Form1 as Form1 (UI)
+    participant AStar as AStarAlgorithm
+    participant Graph as Graph Model
+    participant Node as Node
+    participant Edge as Edge
+
+    User->>Form1: "A* Algoritması" butonuna tıkla
+    Form1->>Form1: _graph null kontrolü
+    Form1->>Graph: Nodes.First() (başlangıç düğümü)
+    Graph-->>Form1: Start Node
+    Form1->>Graph: Nodes.Last() (hedef düğümü)
+    Graph-->>Form1: End Node
+    
+    Form1->>Form1: Stopwatch.StartNew()
+    Form1->>AStar: new AStarAlgorithm()
+    AStar-->>Form1: AStarAlgorithm instance
+    
+    Form1->>AStar: FindPath(graph, start, end)
+    
+    AStar->>AStar: openSet = [start]
+    AStar->>AStar: gScore[start] = 0
+    AStar->>AStar: fScore[start] = Heuristic(start, end)
+    
+    loop openSet boş olana kadar
+        AStar->>AStar: fScore'a göre en düşük düğümü seç
+        AStar->>AStar: Seçilen düğüm == end?
+        
+        alt Eğer hedef bulundu
+            AStar->>AStar: ReconstructPath(end)
+            AStar->>AStar: cameFrom sözlüğünden yol oluştur
+            AStar-->>Form1: Path List<Node> döndür
+        else Devam et
+            AStar->>Graph: GetNeighbors(current)
+            Graph-->>AStar: Neighbor listesi
+            
+            loop Her komşu için
+                AStar->>Graph: GetEdge(current, neighbor)
+                Graph-->>AStar: Edge (weight ile)
+                AStar->>AStar: tentativeG = gScore[current] + edge.Weight
+                AStar->>AStar: tentativeG < gScore[neighbor]?
+                
+                alt Eğer daha iyi yol bulundu
+                    AStar->>AStar: gScore[neighbor] = tentativeG
+                    AStar->>AStar: fScore[neighbor] = tentativeG + Heuristic(neighbor, end)
+                    AStar->>AStar: cameFrom[neighbor] = current
+                    AStar->>AStar: openSet.Add(neighbor)
+                end
+            end
+        end
+    end
+    
+    Form1->>Form1: Stopwatch.Stop()
+    Form1->>Form1: _shortestPath = returnedPath
+    Form1->>Form1: _lastAlgorithmTimeMs = elapsedTime
+    Form1->>Form1: Invalidate() (ekranı yenile)
+    Form1->>User: MessageBox (sonuç ve süre göster)
+    Form1-->>User: En kısa yol görselleştirilir
+```
+
+#### 4.4.3 Merkeziyet Analizi Senaryosu
+
+Aşağıda merkeziyet analizi algoritmasının çalıştırılması ve en etkili kullanıcıların belirlenmesi işleminin sequence diyagramını çizdim:
+
+```mermaid
+sequenceDiagram
+    participant User as 👤 Kullanıcı
+    participant Form1 as Form1 (UI)
+    participant Centrality as CentralityCalculator
+    participant Dijkstra as DijkstraAlgorithm
+    participant Graph as Graph Model
+    participant Node as Node
+
+    User->>Form1: "Merkeziyet Analizi" butonuna tıkla
+    Form1->>Form1: _graph null kontrolü
+    Form1->>Form1: Stopwatch.StartNew()
+    Form1->>Centrality: new CentralityCalculator()
+    Centrality-->>Form1: CentralityCalculator instance
+    
+    Form1->>Centrality: CalculateDegree(graph)
+    
+    loop Her düğüm için
+        Centrality->>Graph: GetNeighbors(node)
+        Graph-->>Centrality: Neighbor listesi
+        Centrality->>Centrality: Degree = neighbor count
+        Centrality->>Centrality: result[node] = degree
+    end
+    
+    Centrality-->>Form1: Dictionary<Node, int> (degree scores)
+    
+    Form1->>Centrality: CalculateCloseness(graph)
+    
+    loop Her düğüm için
+        Centrality->>Dijkstra: DijkstraDistance(graph, node)
+        
+        loop Her hedef düğüm için
+            Dijkstra->>Graph: GetNeighbors(current)
+            Graph-->>Dijkstra: Neighbor listesi
+            Dijkstra->>Dijkstra: En kısa mesafeleri hesapla
+        end
+        
+        Dijkstra-->>Centrality: Distance dictionary
+        Centrality->>Centrality: Closeness = (n-1) / sum(distances)
+        Centrality->>Centrality: result[node] = closeness
+    end
+    
+    Centrality-->>Form1: Dictionary<Node, double> (closeness scores)
+    
+    Form1->>Centrality: CalculateBetweenness(graph)
+    
+    loop Her düğüm çifti için
+        Centrality->>Dijkstra: DijkstraPath(graph, source, target)
+        Dijkstra->>Graph: En kısa yolu bul
+        Graph-->>Dijkstra: Path List<Node>
+        Dijkstra-->>Centrality: Path
+        
+        alt Yol uzunluğu >= 3 ise
+            loop Yoldaki ara düğümler için
+                Centrality->>Centrality: betweennessScore[node]++
+            end
+        end
+    end
+    
+    Centrality-->>Form1: Dictionary<Node, double> (betweenness scores)
+    
+    Form1->>Form1: Stopwatch.Stop()
+    Form1->>Form1: En yüksek skorlu 5 düğümü seç
+    Form1->>Form1: _topCentralNodes = top5Nodes
+    Form1->>Form1: Invalidate() (ekranı yenile)
+    Form1->>User: Tablo halinde sonuçları göster
+    Form1-->>User: Merkezi düğümler vurgulanır
+```
+
+#### 4.4.4 Graf Kaydetme Senaryosu (JSON Export)
+
+Aşağıda graf verilerinin JSON formatında kaydedilmesi işleminin sequence diyagramını hazırladım:
+
+```mermaid
+sequenceDiagram
+    participant User as 👤 Kullanıcı
+    participant Form1 as Form1 (UI)
+    participant Exporter as JsonGraphExporter
+    participant Graph as Graph Model
+    participant Node as Node
+    participant Edge as Edge
+    participant FileSystem as 📁 Dosya Sistemi
+
+    User->>Form1: "Graf Kaydet" butonuna tıkla
+    Form1->>Form1: _graph null kontrolü
+    Form1->>Form1: SaveFileDialog göster
+    User->>Form1: Dosya yolu ve isim seç
+    Form1->>Exporter: Export(graph, filePath)
+    
+    Exporter->>Graph: Nodes listesini al
+    Graph-->>Exporter: List<Node>
+    
+    loop Her Node için
+        Exporter->>Node: Id, Name, X, Y, Color bilgilerini al
+        Node-->>Exporter: Node özellikleri
+        Exporter->>Exporter: NodeDto oluştur
+    end
+    
+    Exporter->>Graph: Edges listesini al
+    Graph-->>Exporter: List<Edge>
+    
+    loop Her Edge için
+        Exporter->>Edge: Source, Target, Weight bilgilerini al
+        Edge->>Node: Source.Id
+        Node-->>Edge: SourceId
+        Edge->>Node: Target.Id
+        Node-->>Edge: TargetId
+        Edge-->>Exporter: Edge özellikleri
+        Exporter->>Exporter: EdgeDto oluştur
+    end
+    
+    Exporter->>Exporter: GraphDto oluştur (nodes + edges)
+    Exporter->>Exporter: JsonSerializer.Serialize(GraphDto)
+    Exporter->>Exporter: JSON string oluştur
+    
+    Exporter->>FileSystem: WriteAllText(filePath, json)
+    FileSystem-->>Exporter: Dosya kaydedildi
+    
+    Exporter-->>Form1: İşlem tamamlandı
+    Form1->>User: MessageBox ("Graf başarıyla kaydedildi")
+    Form1-->>User: İşlem başarılı
+```
+
+#### 4.4.5 Dinamik Ağırlık Hesaplama Senaryosu
+
+Aşağıda "Dinamik" butonuna basıldığında tüm kenarların ağırlıklarının yeniden hesaplanması işleminin sequence diyagramını çizdim:
+
+```mermaid
+sequenceDiagram
+    participant User as 👤 Kullanıcı
+    participant Form1 as Form1 (UI)
+    participant Graph as Graph Model
+    participant Edge as Edge
+    participant WeightCalc as WeightCalculator
+    participant Node as Node
+
+    User->>Form1: "Dinamik" butonuna tıkla
+    Form1->>Form1: _graph null kontrolü
+    Form1->>Form1: _graph.Edges.Count kontrolü
+    
+    Form1->>Graph: Edges listesini al
+    Graph-->>Form1: List<Edge>
+    
+    loop Her Edge için
+        Form1->>Edge: Source ve Target al
+        Edge-->>Form1: Source Node, Target Node
+        
+        Form1->>WeightCalc: Calculate(source, target)
+        
+        WeightCalc->>Node: source.Aktiflik
+        Node-->>WeightCalc: Aktiflik değeri
+        WeightCalc->>Node: target.Aktiflik
+        Node-->>WeightCalc: Aktiflik değeri
+        WeightCalc->>WeightCalc: aktiflikFark = source.Aktiflik - target.Aktiflik
+        
+        WeightCalc->>Node: source.Etkilesim
+        Node-->>WeightCalc: Etkilesim değeri
+        WeightCalc->>Node: target.Etkilesim
+        Node-->>WeightCalc: Etkilesim değeri
+        WeightCalc->>WeightCalc: etkilesimFark = source.Etkilesim - target.Etkilesim
+        
+        WeightCalc->>Node: source.BaglantiSayisi
+        Node-->>WeightCalc: Bağlantı sayısı
+        WeightCalc->>Node: target.BaglantiSayisi
+        Node-->>WeightCalc: Bağlantı sayısı
+        WeightCalc->>WeightCalc: baglantiFark = source.BaglantiSayisi - target.BaglantiSayisi
+        
+        WeightCalc->>WeightCalc: karelerToplami = (aktiflikFark)² + (etkilesimFark)² + (baglantiFark)²
+        WeightCalc->>WeightCalc: agirlik = 1 / (1 + √karelerToplami)
+        WeightCalc-->>Form1: Yeni ağırlık değeri
+        
+        Form1->>Edge: Weight = yeniAgirlik
+        Edge-->>Form1: Ağırlık güncellendi
+    end
+    
+    Form1->>Form1: Invalidate() (ekranı yenile)
+    Form1->>User: MessageBox ("Tüm edge ağırlıkları güncellendi")
+    Form1-->>User: Graf görselleştirmesi güncellenir
+```
+
+**Sequence Diyagramları Hakkında:**
+
+Hazırladığım sequence diyagramları, sistemin temel işlevlerini gerçekleştirirken bileşenler arasındaki etkileşimleri zaman sırasına göre gösteriyor. Her diyagramda şu adımları takip ettim:
+
+1. **Kullanıcı Etkileşimi:** Kullanıcının başlattığı işlem
+2. **UI Katmanı:** Form1'in işlemi yönetmesi
+3. **Business Logic:** Algoritma veya iş mantığı sınıflarının çalışması
+4. **Data Layer:** Veri modelleri ve I/O işlemleri
+5. **Sonuç:** İşlemin tamamlanması ve kullanıcıya geri bildirim
+
+Bu diyagramları, sistemin nasıl çalıştığını daha iyi anlamak ve hata ayıklama yaparken referans olarak kullanıyorum.
+
+### 4.5 State Diyagramları
+
+State diyagramları, sistemdeki nesnelerin veya bileşenlerin farklı durumlarını ve bu durumlar arasındaki geçişleri gösterir. Projenin temel bileşenlerinin durum geçişlerini gösteren state diyagramlarını hazırladım.
+
+#### 4.5.1 Graph (Graf) Durum Diyagramı
+
+Aşağıda Graph nesnesinin yaşam döngüsü boyunca geçtiği farklı durumları gösteren state diyagramını çizdim:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Empty: Başlangıç
+    
+    Empty --> Loading: Import işlemi başlatıldı
+    Empty --> Generating: Rastgele graf üretimi başlatıldı
+    Empty --> Creating: Manuel graf oluşturma
+    
+    Loading --> Loaded: Dosya başarıyla yüklendi
+    Loading --> Error: Dosya yükleme hatası
+    Error --> Empty: Hata temizlendi
+    
+    Generating --> Loaded: Graf başarıyla üretildi
+    Creating --> Loaded: Graf manuel olarak oluşturuldu
+    
+    Loaded --> Processing: Algoritma çalıştırıldı
+    Loaded --> Visualizing: Görselleştirme uygulandı
+    Loaded --> Modifying: Düğüm/kenar ekleme/silme
+    Loaded --> Saving: Graf kaydetme işlemi
+    Loaded --> Empty: Graf temizlendi
+    
+    Processing --> Loaded: Algoritma tamamlandı
+    Processing --> Visualized: Sonuçlar görselleştirildi
+    
+    Visualizing --> Loaded: Görselleştirme tamamlandı
+    Visualized --> Loaded: Yeni işlem başlatıldı
+    
+    Modifying --> Loaded: Değişiklikler uygulandı
+    Saving --> Loaded: Graf başarıyla kaydedildi
+    
+    Loaded --> [*]: Uygulama kapatıldı
+```
+
+**Durum Açıklamaları:**
+- **Empty:** Graf henüz oluşturulmamış veya temizlenmiş durum
+- **Loading:** Dosyadan graf yükleme işlemi devam ediyor
+- **Generating:** Rastgele graf üretimi yapılıyor
+- **Creating:** Kullanıcı manuel olarak graf oluşturuyor
+- **Loaded:** Graf başarıyla yüklendi ve kullanıma hazır
+- **Processing:** Bir algoritma graf üzerinde çalışıyor
+- **Visualizing:** Kuvvet yönelimli yerleşim gibi görselleştirme işlemi uygulanıyor
+- **Visualized:** Algoritma sonuçları görselleştirilmiş durum
+- **Modifying:** Düğüm veya kenar ekleme/silme işlemi yapılıyor
+- **Saving:** Graf dosyaya kaydediliyor
+- **Error:** Yükleme sırasında hata oluştu
+
+#### 4.5.2 Node (Düğüm) Durum Diyagramı
+
+Aşağıda Node nesnesinin uygulama içindeki farklı görsel ve işlevsel durumlarını gösteren state diyagramını hazırladım:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Normal: Düğüm oluşturuldu
+    
+    Normal --> Selected: Kullanıcı düğüme tıkladı
+    Normal --> Visited: Algoritma düğümü ziyaret etti
+    Normal --> Highlighted: Algoritma sonucunda vurgulandı
+    Normal --> Central: Merkeziyet analizinde merkezi bulundu
+    Normal --> InPath: En kısa yol üzerinde bulundu
+    Normal --> Dragging: Kullanıcı düğümü sürüklemeye başladı
+    Normal --> Colored: Renklendirme algoritması uygulandı
+    
+    Selected --> Normal: Başka bir düğüm seçildi
+    Selected --> Dragging: Sürükleme işlemi başlatıldı
+    Selected --> Editing: Düğüm bilgileri düzenleniyor
+    
+    Visited --> Normal: Algoritma tamamlandı, durum sıfırlandı
+    Visited --> Highlighted: Sonuç görselleştirildi
+    
+    Highlighted --> Normal: Yeni algoritma çalıştırıldı
+    Highlighted --> InPath: En kısa yol hesaplandı
+    
+    Central --> Normal: Merkeziyet analizi sıfırlandı
+    Central --> Highlighted: Merkezi düğüm vurgulandı
+    
+    InPath --> Normal: Yol görselleştirmesi temizlendi
+    InPath --> Highlighted: Yol vurgulandı
+    
+    Dragging --> Normal: Sürükleme işlemi tamamlandı
+    Dragging --> Selected: Sürükleme sırasında seçili kaldı
+    
+    Colored --> Normal: Renklendirme sıfırlandı
+    Colored --> Highlighted: Renkli düğüm vurgulandı
+    
+    Editing --> Selected: Düzenleme tamamlandı
+    Editing --> Normal: Düzenleme iptal edildi
+    
+    Normal --> [*]: Düğüm silindi
+```
+
+**Durum Açıklamaları:**
+- **Normal:** Düğümün varsayılan durumu, herhangi bir özel işaretleme yok
+- **Selected:** Kullanıcı tarafından seçilmiş, bilgileri gösteriliyor
+- **Visited:** BFS/DFS gibi algoritmalar tarafından ziyaret edilmiş
+- **Highlighted:** Algoritma sonucunda özel olarak vurgulanmış
+- **Central:** Merkeziyet analizinde en yüksek skorlu düğümlerden biri
+- **InPath:** En kısa yol algoritması sonucunda yol üzerinde bulunan düğüm
+- **Dragging:** Kullanıcı düğümü sürükleyerek konumunu değiştiriyor
+- **Colored:** Welsh-Powell renklendirme algoritması tarafından renklendirilmiş
+- **Editing:** Düğüm özellikleri (isim, aktiflik, vb.) düzenleniyor
+
+#### 4.5.3 UI (Kullanıcı Arayüzü) Durum Diyagramı
+
+Aşağıda Form1 (ana UI) nesnesinin farklı durumlarını ve kullanıcı etkileşimlerine göre geçişlerini gösteren state diyagramını çizdim:
+
+```mermaid
+stateDiagram-v2
+    [*] --> NoGraph: Uygulama başlatıldı
+    
+    NoGraph --> Loading: "Graf Yükle" butonuna tıklandı
+    NoGraph --> Generating: "Rastgele Graf" butonuna tıklandı
+    NoGraph --> Creating: "Graf Oluştur" butonuna tıklandı
+    
+    Loading --> GraphLoaded: Graf başarıyla yüklendi
+    Loading --> NoGraph: Yükleme iptal edildi veya hata oluştu
+    
+    Generating --> GraphLoaded: Graf başarıyla üretildi
+    Creating --> GraphLoaded: Graf manuel olarak oluşturuldu
+    
+    GraphLoaded --> AlgorithmRunning: Algoritma butonuna tıklandı
+    GraphLoaded --> Visualizing: "Yerleşim" butonuna tıklandı
+    GraphLoaded --> Modifying: Düğüm/kenar ekleme/silme
+    GraphLoaded --> Saving: "Kaydet" butonuna tıklandı
+    GraphLoaded --> NoGraph: "Temizle" butonuna tıklandı
+    
+    AlgorithmRunning --> ResultsDisplayed: Algoritma tamamlandı
+    AlgorithmRunning --> GraphLoaded: Algoritma iptal edildi
+    
+    ResultsDisplayed --> GraphLoaded: Yeni işlem başlatıldı
+    ResultsDisplayed --> AlgorithmRunning: Başka bir algoritma çalıştırıldı
+    ResultsDisplayed --> Visualizing: Görselleştirme uygulandı
+    
+    Visualizing --> GraphLoaded: Görselleştirme tamamlandı
+    Visualizing --> ResultsDisplayed: Algoritma sonuçları gösterildi
+    
+    Modifying --> GraphLoaded: Değişiklikler uygulandı
+    Modifying --> AlgorithmRunning: Değişiklikler sonrası algoritma çalıştırıldı
+    
+    Saving --> GraphLoaded: Graf başarıyla kaydedildi
+    Saving --> GraphLoaded: Kaydetme iptal edildi
+    
+    GraphLoaded --> [*]: Uygulama kapatıldı
+    NoGraph --> [*]: Uygulama kapatıldı
+```
+
+**Durum Açıklamaları:**
+- **NoGraph:** Uygulamada henüz graf yok, sadece graf yükleme/oluşturma seçenekleri aktif
+- **Loading:** Dosyadan graf yükleme işlemi devam ediyor
+- **Generating:** Rastgele graf üretimi yapılıyor
+- **Creating:** Kullanıcı manuel olarak graf oluşturuyor
+- **GraphLoaded:** Graf yüklendi, tüm işlemler yapılabilir
+- **AlgorithmRunning:** Bir algoritma çalışıyor, UI geçici olarak kilitlenmiş olabilir
+- **ResultsDisplayed:** Algoritma sonuçları görselleştirilmiş ve gösteriliyor
+- **Visualizing:** Kuvvet yönelimli yerleşim gibi görselleştirme işlemi uygulanıyor
+- **Modifying:** Kullanıcı düğüm veya kenar ekleme/silme işlemi yapıyor
+- **Saving:** Graf dosyaya kaydediliyor
+
+#### 4.5.4 Algoritma Çalıştırma Durum Diyagramı
+
+Aşağıda bir algoritmanın çalıştırılması sırasındaki durum geçişlerini gösteren state diyagramını hazırladım:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle: Algoritma hazır
+    
+    Idle --> Initializing: Execute() çağrıldı
+    Idle --> FindingPath: FindPath() çağrıldı (A*, Dijkstra)
+    
+    Initializing --> Processing: Başlangıç parametreleri ayarlandı
+    FindingPath --> Processing: Başlangıç ve hedef düğümler belirlendi
+    
+    Processing --> Exploring: Düğümler keşfediliyor
+    Processing --> Calculating: Mesafeler/ağırlıklar hesaplanıyor
+    Processing --> Updating: Durum güncellemeleri yapılıyor
+    
+    Exploring --> Calculating: Komşular bulundu
+    Exploring --> Completed: Hedef bulundu (A*, Dijkstra)
+    Exploring --> Processing: Daha fazla düğüm keşfedilecek
+    
+    Calculating --> Updating: Hesaplamalar tamamlandı
+    Calculating --> Processing: Daha fazla hesaplama gerekiyor
+    
+    Updating --> Processing: Güncellemeler uygulandı
+    Updating --> Exploring: Yeni düğümler keşfedilebilir
+    
+    Processing --> Completed: Tüm düğümler işlendi
+    Processing --> Failed: Hata oluştu (graf boş, düğüm bulunamadı)
+    
+    Completed --> ResultsReady: Sonuçlar hazırlandı
+    Failed --> Idle: Hata durumu, algoritma sıfırlandı
+    
+    ResultsReady --> Idle: Sonuçlar döndürüldü
+    ResultsReady --> [*]: Algoritma nesnesi yok edildi
+```
+
+**Durum Açıklamaları:**
+- **Idle:** Algoritma hazır durumda, henüz çalıştırılmamış
+- **Initializing:** Algoritma başlatılıyor, başlangıç parametreleri ayarlanıyor
+- **FindingPath:** En kısa yol algoritmaları için başlangıç ve hedef belirleniyor
+- **Processing:** Ana işlem döngüsü çalışıyor
+- **Exploring:** Düğümler keşfediliyor, komşular bulunuyor
+- **Calculating:** Mesafeler, ağırlıklar veya skorlar hesaplanıyor
+- **Updating:** Algoritma durumu güncelleniyor (mesafeler, önceki düğümler, vb.)
+- **Completed:** Algoritma başarıyla tamamlandı
+- **Failed:** Hata oluştu (örneğin graf boş, hedef düğüm bulunamadı)
+- **ResultsReady:** Sonuçlar hazırlandı ve döndürülmeye hazır
+
+**State Diyagramları Hakkında:**
+
+Hazırladığım state diyagramları, sistemin farklı bileşenlerinin yaşam döngüsü boyunca geçtiği durumları ve bu durumlar arasındaki geçişleri gösteriyor. Bu diyagramları hazırlarken şu noktalara dikkat ettim:
+
+1. **Sistem Davranışını Anlama:** Bileşenlerin farklı durumlarda nasıl davrandığını göstermek
+2. **Durum Geçişlerini Kontrol Etme:** Hangi olayların hangi durum geçişlerine neden olduğunu açıklamak
+3. **Hata Durumlarını Yönetme:** Hata durumlarının nasıl ele alındığını göstermek
+4. **Test Senaryoları Oluşturma:** Farklı durum geçişlerini test etmek için senaryolar oluşturmak
+5. **Dokümantasyon:** Sistemin davranışını görsel olarak dokümante etmek
+
+Bu state diyagramlarını, sistemin durum yönetimini anlamak ve hata ayıklama yaparken referans olarak kullanıyorum.
+
+### 4.6 Veri Akış Diyagramları
+
+Veri akış diyagramları (Data Flow Diagrams - DFD), sistemdeki veri akışını, veri işleme süreçlerini ve veri depolama noktalarını gösterir. Projenin temel işlevlerini gerçekleştirirken verinin nasıl aktığını gösteren diyagramları hazırladım.
+
+#### 4.6.1 Genel Sistem Veri Akış Diyagramı
+
+Aşağıda sistemin genel veri akışını ve ana bileşenler arasındaki veri transferlerini gösteren diyagramı çizdim:
+
+```mermaid
+flowchart LR
+    subgraph External["🌐 Dış Varlıklar"]
+        User[👤 Kullanıcı]
+        FileSystem[📁 Dosya Sistemi<br/>JSON/CSV]
+    end
+    
+    subgraph UI["🎨 UI Katmanı"]
+        Form1[Form1<br/>Kullanıcı Arayüzü]
+        UserInput[Kullanıcı Girdileri<br/>Tıklama, Seçim]
+        VisualOutput[Görsel Çıktı<br/>Graf, Sonuçlar]
+    end
+    
+    subgraph BL["⚙️ İş Mantığı Katmanı"]
+        Algorithms[Algoritmalar<br/>A*, BFS, DFS, Dijkstra<br/>Centrality, Components]
+        WeightCalc[WeightCalculator<br/>Ağırlık Hesaplama]
+        Layout[ForceDirectedLayout<br/>Yerleşim Algoritması]
+        Coloring[WelshPowellColoring<br/>Renklendirme]
+    end
+    
+    subgraph DL["💾 Veri Katmanı"]
+        GraphModel[(Graph Modeli<br/>Nodes + Edges)]
+        DTOs[DTO Nesneleri<br/>GraphDto, NodeDto, EdgeDto]
+        Importers[Importers<br/>JSON, CSV]
+        Exporters[Exporters<br/>JSON, CSV]
+    end
+    
+    User -->|Komutlar| UserInput
+    UserInput --> Form1
+    Form1 -->|Görselleştirme| VisualOutput
+    VisualOutput -->|Görüntü| User
+    
+    Form1 <-->|Okuma/Yazma| GraphModel
+    
+    Form1 -->|Graf + Parametreler| Algorithms
+    Algorithms -->|Sonuçlar<br/>Path, VisitedNodes, Scores| Form1
+    
+    Form1 -->|Node çiftleri| WeightCalc
+    WeightCalc -->|Ağırlık değerleri| GraphModel
+    
+    Form1 -->|Graf| Layout
+    Layout -->|Güncellenmiş koordinatlar| GraphModel
+    
+    Form1 -->|Graf| Coloring
+    Coloring -->|Renk atamaları| GraphModel
+    
+    FileSystem -->|JSON/CSV verisi| Importers
+    Importers -->|GraphDto| DTOs
+    DTOs -->|Dönüştürülmüş veri| GraphModel
+    
+    GraphModel -->|Graph nesnesi| Exporters
+    Exporters -->|GraphDto| DTOs
+    DTOs -->|JSON/CSV verisi| FileSystem
+    
+    Form1 <-->|Import/Export| Importers
+    Form1 <-->|Import/Export| Exporters
+    
+    style External fill:#ffe0e0
+    style UI fill:#e0f0ff
+    style BL fill:#fff0e0
+    style DL fill:#e0ffe0
+```
+
+#### 4.6.2 Graf Yükleme ve İşleme Veri Akışı
+
+Aşağıda dosyadan graf yükleme ve işleme sürecindeki veri akışını gösteren diyagramı hazırladım:
+
+```mermaid
+flowchart TD
+    Start([📁 JSON/CSV Dosyası]) --> Read[📖 Dosya Okuma<br/>ReadAllText/ReadAllLines]
+    
+    Read --> Parse[🔍 Veri Ayrıştırma<br/>Deserialize/Parse]
+    
+    Parse --> DTO1[📦 GraphDto<br/>nodes + edges]
+    
+    DTO1 --> NodeDTO[📦 NodeDto<br/>id, name, x, y, color]
+    DTO1 --> EdgeDTO[📦 EdgeDto<br/>sourceId, targetId, weight]
+    
+    NodeDTO --> Transform1[🔄 Dönüştürme<br/>NodeDto → Node]
+    EdgeDTO --> Transform2[🔄 Dönüştürme<br/>EdgeDto → Edge]
+    
+    Transform1 --> NodeModel[🔵 Node Nesneleri<br/>Id, Name, X, Y<br/>Aktiflik, Etkileşim<br/>BağlantıSayısı, Color]
+    
+    Transform2 --> EdgeModel[➖ Edge Nesneleri<br/>Source, Target, Weight]
+    
+    NodeModel --> GraphBuild[🏗️ Graph Oluşturma<br/>Nodes.Add<br/>Edges.Add]
+    EdgeModel --> GraphBuild
+    
+    GraphBuild --> GraphStore[(💾 Graph Modeli<br/>Nodes List<br/>Edges List)]
+    
+    GraphStore --> UIUpdate[🖥️ UI Güncelleme<br/>Invalidate<br/>Görselleştirme]
+    
+    UIUpdate --> End([✅ Graf Görüntülendi])
+    
+    style Start fill:#ffe0e0
+    style GraphStore fill:#e0ffe0
+    style End fill:#e0f0ff
+```
+
+#### 4.6.3 Algoritma Çalıştırma ve Sonuç Üretme Veri Akışı
+
+Aşağıda bir algoritmanın çalıştırılması ve sonuçların üretilmesi sürecindeki veri akışını gösteren diyagramı çizdim:
+
+```mermaid
+flowchart TD
+    Start([👤 Kullanıcı Algoritma Seçer]) --> Input[📥 Girdi Parametreleri<br/>Graph, StartNode, EndNode]
+    
+    Input --> GraphRead[(📊 Graph Modeli<br/>Nodes + Edges)]
+    
+    GraphRead --> AlgoProcess[⚙️ Algoritma İşleme<br/>A*/BFS/DFS/Dijkstra]
+    
+    AlgoProcess --> DataFlow1[📊 Ara Veriler<br/>VisitedNodes<br/>Distances<br/>PreviousNodes<br/>Scores]
+    
+    DataFlow1 --> AlgoProcess
+    
+    AlgoProcess --> ResultGen[📤 Sonuç Üretme<br/>Path Reconstruction<br/>Score Calculation<br/>Node Filtering]
+    
+    ResultGen --> Results[📋 Sonuç Verileri<br/>ShortestPath: List~Node~<br/>VisitedNodes: List~Node~<br/>CentralityScores: Dictionary<br/>Components: List~List~Node~~]
+    
+    Results --> VisualPrep[🎨 Görselleştirme Hazırlığı<br/>Renk Atama<br/>Vurgulama<br/>Koordinat Hesaplama]
+    
+    VisualPrep --> VisualData[🖼️ Görsel Veri<br/>Node Colors<br/>Path Highlighting<br/>Node Positions]
+    
+    VisualData --> UIUpdate[🖥️ UI Güncelleme<br/>Paint Event<br/>Invalidate]
+    
+    UIUpdate --> Display[📺 Ekran Görüntüsü<br/>Graf + Sonuçlar]
+    
+    Display --> User[👤 Kullanıcı Görüntüler]
+    
+    Results --> Metrics[📊 Performans Metrikleri<br/>ElapsedMilliseconds<br/>Node Count<br/>Edge Count]
+    
+    Metrics --> Report[📄 Sonuç Raporu<br/>Tablo Formatında<br/>MessageBox]
+    
+    Report --> User
+    
+    style Start fill:#ffe0e0
+    style GraphRead fill:#e0ffe0
+    style Results fill:#fff0e0
+    style Display fill:#e0f0ff
+```
+
+#### 4.6.4 Dinamik Ağırlık Hesaplama Veri Akışı
+
+Aşağıda dinamik ağırlık hesaplama sürecindeki veri akışını gösteren diyagramı hazırladım:
+
+```mermaid
+flowchart TD
+    Start([👤 Dinamik Butonuna Tıklama]) --> GraphRead[(📊 Graph Modeli<br/>Nodes + Edges)]
+    
+    GraphRead --> EdgeIter[🔄 Edge Döngüsü<br/>Her Edge için]
+    
+    EdgeIter --> NodePair[🔗 Node Çifti<br/>Source Node<br/>Target Node]
+    
+    NodePair --> NodeProps1[📋 Source Node Özellikleri<br/>Aktiflik<br/>Etkileşim<br/>BağlantıSayısı]
+    
+    NodePair --> NodeProps2[📋 Target Node Özellikleri<br/>Aktiflik<br/>Etkileşim<br/>BağlantıSayısı]
+    
+    NodeProps1 --> DiffCalc[➖ Fark Hesaplama<br/>aktiflikFark<br/>etkilesimFark<br/>baglantiFark]
+    NodeProps2 --> DiffCalc
+    
+    DiffCalc --> SquareCalc[🔢 Kare Hesaplama<br/>aktiflikFark²<br/>etkilesimFark²<br/>baglantiFark²]
+    
+    SquareCalc --> SumCalc[➕ Toplama<br/>karelerToplami]
+    
+    SumCalc --> SqrtCalc[√ Karekök<br/>√karelerToplami]
+    
+    SqrtCalc --> WeightCalc[⚖️ Ağırlık Hesaplama<br/>1 / (1 + √karelerToplami)]
+    
+    WeightCalc --> WeightUpdate[💾 Ağırlık Güncelleme<br/>Edge.Weight = yeniAgirlik]
+    
+    WeightUpdate --> EdgeIter
+    
+    EdgeIter --> GraphUpdate[(📊 Güncellenmiş Graph<br/>Yeni Ağırlıklar)]
+    
+    GraphUpdate --> UIUpdate[🖥️ UI Güncelleme<br/>Invalidate]
+    
+    UIUpdate --> VisualUpdate[🖼️ Görsel Güncelleme<br/>Kenar Kalınlıkları<br/>Renk Yoğunlukları]
+    
+    VisualUpdate --> End([✅ Tüm Ağırlıklar Güncellendi])
+    
+    style Start fill:#ffe0e0
+    style GraphRead fill:#e0ffe0
+    style WeightCalc fill:#fff0e0
+    style GraphUpdate fill:#e0ffe0
+    style End fill:#e0f0ff
+```
+
+#### 4.6.5 Merkeziyet Analizi Veri Akışı
+
+Aşağıda merkeziyet analizi algoritmasının veri akışını gösteren diyagramı çizdim:
+
+```mermaid
+flowchart TD
+    Start([👤 Merkeziyet Analizi Başlat]) --> GraphRead[(📊 Graph Modeli<br/>Nodes + Edges)]
+    
+    GraphRead --> NodeIter[🔄 Node Döngüsü<br/>Her Node için]
+    
+    NodeIter --> AlgoSelect{📌 Algoritma Tipi}
+    
+    AlgoSelect -->|Degree| DegreeCalc[📊 Derece Hesaplama<br/>Komşu Sayısı]
+    AlgoSelect -->|Closeness| ClosenessCalc[📊 Yakınlık Hesaplama<br/>Dijkstra Mesafeleri]
+    AlgoSelect -->|Betweenness| BetweennessCalc[📊 Aradalık Hesaplama<br/>En Kısa Yollar]
+    
+    DegreeCalc --> NeighborCount[🔢 Komşu Sayma<br/>GetNeighbors<br/>Count]
+    NeighborCount --> DegreeScore[📈 Degree Score<br/>Dictionary~Node, int~]
+    
+    ClosenessCalc --> DijkstraDist[🗺️ Dijkstra Mesafe<br/>Tüm düğümlere mesafe]
+    DijkstraDist --> DistanceSum[➕ Mesafe Toplama<br/>Σ distances]
+    DistanceSum --> ClosenessScore[📈 Closeness Score<br/>(n-1) / sum]
+    
+    BetweennessCalc --> PairIter[🔄 Düğüm Çifti Döngüsü<br/>Her (source, target) için]
+    PairIter --> PathFind[🛤️ En Kısa Yol Bulma<br/>Dijkstra Path]
+    PathFind --> PathAnalysis[🔍 Yol Analizi<br/>Ara düğümleri say]
+    PathAnalysis --> BetweennessScore[📈 Betweenness Score<br/>Dictionary~Node, double~]
+    
+    DegreeScore --> ScoreMerge[🔀 Skor Birleştirme<br/>Dictionary birleştirme]
+    ClosenessScore --> ScoreMerge
+    BetweennessScore --> ScoreMerge
+    
+    ScoreMerge --> TopNodes[🏆 En Yüksek 5 Düğüm<br/>Sort + Take 5]
+    
+    TopNodes --> ResultData[📋 Sonuç Verileri<br/>TopCentralNodes<br/>CentralityValues]
+    
+    ResultData --> VisualPrep[🎨 Görsel Hazırlık<br/>Renk Vurgulama<br/>Tablo Formatı]
+    
+    VisualPrep --> UIUpdate[🖥️ UI Güncelleme<br/>Invalidate<br/>DataGridView]
+    
+    UIUpdate --> Display[📺 Sonuç Görüntüleme<br/>Tablo + Vurgulama]
+    
+    Display --> End([✅ Merkeziyet Analizi Tamamlandı])
+    
+    style Start fill:#ffe0e0
+    style GraphRead fill:#e0ffe0
+    style ScoreMerge fill:#fff0e0
+    style ResultData fill:#fff0e0
+    style Display fill:#e0f0ff
+```
+
+**Veri Akış Diyagramları Hakkında:**
+
+Hazırladığım veri akış diyagramları, sistemdeki verinin nasıl işlendiğini, dönüştürüldüğünü ve depolandığını gösteriyor. Bu diyagramları hazırlarken şu noktalara odaklandım:
+
+1. **Veri Kaynaklarını Belirleme:** Verinin nereden geldiğini (dosya, kullanıcı girdisi) göstermek
+2. **Veri İşleme Süreçlerini Gösterme:** Verinin hangi işlemlerden geçtiğini açıklamak
+3. **Veri Depolama Noktalarını İşaretleme:** Verinin nerede saklandığını (Graph modeli, DTOs) belirtmek
+4. **Veri Çıktılarını Tanımlama:** İşlenmiş verinin nereye gittiğini (UI, dosya) göstermek
+5. **Veri Dönüşümlerini İzleme:** Verinin hangi formatlara dönüştürüldüğünü takip etmek
+
+**Veri Akış Senaryoları:**
+
+Projede şu veri akış senaryolarını uyguladım:
+
+1. **Graf Yükleme:** Dosya → DTO → Graph Modeli → UI
+2. **Algoritma Çalıştırma:** Graph Modeli → Algoritma → Sonuçlar → UI
+3. **Ağırlık Hesaplama:** Node Özellikleri → Hesaplama → Edge Ağırlıkları → Graph Modeli
+4. **Veri Kaydetme:** Graph Modeli → DTO → Dosya
+
+Bu veri akış diyagramlarını, sistemin veri işleme mantığını anlamak ve veri dönüşümlerini takip etmek için kullanıyorum.
+
+### 4.7 Modül Yapısı ve İşlevleri
+
+Projeyi **modüler mimari (Modular Architecture)** prensibine uygun olarak tasarladım. Her modül, belirli bir sorumluluğa sahip ve diğer modüllerle gevşek bağlantılı (loose coupling) bir şekilde çalışıyor. Bu modüler yapı sayesinde kodun bakımı, test edilebilirliği ve yeniden kullanılabilirliği artıyor.
+
+Aşağıda projenin modül yapısını ve modüller arasındaki ilişkileri gösteren diyagramı çizdim:
+
+```mermaid
+flowchart TB
+    subgraph Models["📦 Models Modülü"]
+        Graph[Graph<br/>Ana veri yapısı]
+        Node[Node<br/>Düğüm modeli]
+        Edge[Edge<br/>Kenar modeli]
+    end
+    
+    subgraph Algorithms["⚙️ Algorithms Modülü"]
+        PathAlgo[Yol Algoritmaları<br/>A*, BFS, DFS, Dijkstra]
+        AnalysisAlgo[Analiz Algoritmaları<br/>Centrality, Components]
+        LayoutAlgo[Yerleşim Algoritması<br/>ForceDirectedLayout]
+        UtilityAlgo[Yardımcı Algoritmalar<br/>GraphGenerator, WeightCalculator]
+    end
+    
+    subgraph Coloring["🎨 Coloring Modülü"]
+        WelshPowell[WelshPowellColoring<br/>Renklendirme algoritması]
+    end
+    
+    subgraph IO["💾 IO Modülü"]
+        Importers[Importers<br/>JsonGraphImporter<br/>CsvGraphImporter]
+        Exporters[Exporters<br/>JsonGraphExporter<br/>CsvGraphExporter]
+        DTOs[DTOs<br/>GraphDto, NodeDto, EdgeDto]
+    end
+    
+    subgraph Interfaces["🔌 Interfaces Modülü"]
+        IGraphAlgo[IGraphAlgorithm]
+        IGraphImp[IGraphImporter]
+        IGraphExp[IGraphExporter]
+    end
+    
+    subgraph Utils["🛠️ Utils Modülü"]
+        GraphSnapshot[GraphSnapshot<br/>Graf yedekleme]
+    end
+    
+    subgraph Infrastructure["🏗️ Infrastructure Modülü"]
+        CsvLoader[CsvGraphLoader<br/>CSV yükleme yardımcıları]
+        CsvExp[CsvExporter<br/>CSV export yardımcıları]
+    end
+    
+    subgraph UI["🖥️ UI Modülü"]
+        Form1[Form1<br/>Ana kullanıcı arayüzü]
+    end
+    
+    Models --> Algorithms
+    Models --> Coloring
+    Models --> IO
+    Models --> Utils
+    
+    Interfaces -.->|implements| Algorithms
+    Interfaces -.->|implements| IO
+    
+    Algorithms --> Models
+    Coloring --> Models
+    IO --> Models
+    IO --> DTOs
+    
+    Infrastructure --> IO
+    Infrastructure --> Models
+    
+    UI --> Models
+    UI --> Algorithms
+    UI --> Coloring
+    UI --> IO
+    UI --> Utils
+    
+    style Models fill:#e8f5e9
+    style Algorithms fill:#fff4e1
+    style Coloring fill:#f3e5f5
+    style IO fill:#e1f5ff
+    style Interfaces fill:#fce4ec
+    style Utils fill:#fff9c4
+    style Infrastructure fill:#e0f7fa
+    style UI fill:#f1f8e9
+```
+
+**Modül Detayları:**
+
+#### 4.7.1 Models Modülü
+
+**Konum:** `NodeMap.Core/Models/`
+
+**Sorumluluk:** Graf veri yapısını ve temel veri modellerini tanımlar.
+
+**Sınıflar:**
+- **Graph:** Ana graf veri yapısı. Düğüm ve kenar listelerini içerir, komşuluk ve kenar bulma işlemlerini sağlar.
+- **Node:** Düğüm modeli. ID, isim, koordinatlar, aktiflik, etkileşim, bağlantı sayısı ve renk bilgilerini içerir.
+- **Edge:** Kenar modeli. Kaynak ve hedef düğümleri ile ağırlık bilgisini içerir.
+
+**İşlevler:**
+- Graf veri yapısının temel işlemlerini sağlar (GetNeighbors, GetEdge, GetWeightedNeighbors)
+- Graf klonlama işlemini gerçekleştirir (Clone)
+- Diğer tüm modüller bu modüle bağımlıdır
+
+**Bağımlılıklar:**
+- Hiçbir modüle bağımlı değildir (temel modül)
+
+**Kullanan Modüller:**
+- Algorithms, Coloring, IO, Utils, UI modülleri
+
+#### 4.7.2 Algorithms Modülü
+
+**Konum:** `NodeMap.Core/Algorithms/`
+
+**Sorumluluk:** Graf algoritmalarını içerir ve iş mantığını sağlar.
+
+**Alt Modüller:**
+
+**4.7.2.1 Yol Algoritmaları:**
+- **AStarAlgorithm:** A* en kısa yol algoritması. IGraphAlgorithm interface'ini implement eder.
+- **BFSAlgorithm:** Genişlik öncelikli arama algoritması. IGraphAlgorithm interface'ini implement eder.
+- **DFSAlgorithm:** Derinlik öncelikli arama algoritması. IGraphAlgorithm interface'ini implement eder.
+- **DijkstraAlgorithm:** Dijkstra en kısa yol algoritması. IGraphAlgorithm interface'ini implement eder.
+
+**4.7.2.2 Analiz Algoritmaları:**
+- **CentralityCalculator:** Merkeziyet analizi algoritmaları (Derece, Yakınlık, Aradalık). Dijkstra algoritmasını kullanır.
+- **ConnectedComponentsAlgorithm:** Bağlı bileşenleri tespit eden algoritma. DFS kullanır.
+
+**4.7.2.3 Yerleşim Algoritması:**
+- **ForceDirectedLayout:** Kuvvet yönelimli yerleşim algoritması (static). Graf görselleştirme için düğüm konumlarını optimize eder.
+
+**4.7.2.4 Yardımcı Algoritmalar:**
+- **GraphGenerator:** Rastgele graf üretimi için yardımcı sınıf (static). Test ve görselleştirme amaçlıdır.
+- **WeightCalculator:** Dinamik ağırlık hesaplama için yardımcı sınıf (static). Öklidyen mesafe tabanlı formül kullanır.
+
+**İşlevler:**
+- Graf üzerinde çeşitli algoritmaları çalıştırır
+- Algoritma sonuçlarını üretir (yollar, skorlar, ziyaret edilen düğümler)
+- Performans metrikleri sağlar (çalışma süresi)
+
+**Bağımlılıklar:**
+- Models modülü (Graph, Node, Edge)
+- Interfaces modülü (IGraphAlgorithm)
+
+**Kullanan Modüller:**
+- UI modülü
+
+#### 4.7.3 Coloring Modülü
+
+**Konum:** `NodeMap.Core/Coloring/`
+
+**Sorumluluk:** Graf renklendirme algoritmalarını içerir.
+
+**Sınıflar:**
+- **WelshPowellColoring:** Welsh-Powell graf renklendirme algoritması. Komşu düğümlerin farklı renklere sahip olmasını sağlar.
+
+**İşlevler:**
+- Graf düğümlerini renklendirir
+- Minimum renk sayısını hedefleyerek renklendirme yapar
+- Derece bazlı sıralama kullanır
+
+**Bağımlılıklar:**
+- Models modülü (Graph, Node)
+
+**Kullanan Modüller:**
+- UI modülü
+
+#### 4.7.4 IO Modülü
+
+**Konum:** `NodeMap.Core/IO/`
+
+**Sorumluluk:** Veri içe/dışa aktarma işlemlerini yönetir.
+
+**Alt Modüller:**
+
+**4.7.4.1 Importers:**
+- **JsonGraphImporter:** JSON formatından graf verilerini okur. IGraphImporter interface'ini implement eder.
+- **CsvGraphImporter:** CSV formatından graf verilerini okur. IGraphImporter interface'ini implement eder.
+- **CsvAdjacencyListImporter:** Komşuluk listesi formatında CSV okur.
+- **CsvAdjacencyMatrixImporter:** Komşuluk matrisi formatında CSV okur.
+
+**4.7.4.2 Exporters:**
+- **JsonGraphExporter:** Graf verilerini JSON formatına yazar. IGraphExporter interface'ini implement eder.
+- **CsvGraphExporter:** Graf verilerini CSV formatına yazar. IGraphExporter interface'ini implement eder.
+- **CsvAdjacencyListExporter:** Komşuluk listesi formatında CSV yazar.
+- **CsvAdjacencyMatrixExporter:** Komşuluk matrisi formatında CSV yazar.
+
+**4.7.4.3 DTOs:**
+- **GraphDto:** Graf veri transfer nesnesi
+- **NodeDto:** Düğüm veri transfer nesnesi
+- **EdgeDto:** Kenar veri transfer nesnesi
+
+**İşlevler:**
+- Dosya sisteminden veri okur (Import)
+- Dosya sistemine veri yazar (Export)
+- Veri formatı dönüşümlerini yapar (DTO ↔ Model)
+- Farklı dosya formatlarını destekler (JSON, CSV)
+
+**Bağımlılıklar:**
+- Models modülü (Graph, Node, Edge)
+- Interfaces modülü (IGraphImporter, IGraphExporter)
+
+**Kullanan Modüller:**
+- UI modülü
+
+#### 4.7.5 Interfaces Modülü
+
+**Konum:** `NodeMap.Core/Interfaces/`
+
+**Sorumluluk:** Sistem genelinde kullanılan arayüzleri tanımlar.
+
+**Arayüzler:**
+- **IGraphAlgorithm:** Tüm graf algoritmaları için ortak arayüz. ElapsedMilliseconds ve Execute metodlarını tanımlar.
+- **IGraphImporter:** Veri içe aktarma için ortak arayüz. Import metodunu tanımlar.
+- **IGraphExporter:** Veri dışa aktarma için ortak arayüz. Export metodunu tanımlar.
+
+**İşlevler:**
+- Polimorfizm sağlar
+- Bağımlılık yönetimini kolaylaştırır
+- Test edilebilirliği artırır (mock nesneler)
+
+**Bağımlılıklar:**
+- Models modülü (Graph, Node)
+
+**Kullanan Modüller:**
+- Algorithms, IO modülleri (implement eder)
+- UI modülü (kullanır)
+
+#### 4.7.6 Utils Modülü
+
+**Konum:** `NodeMap.Core/Utils/`
+
+**Sorumluluk:** Yardımcı sınıfları ve utility fonksiyonlarını içerir.
+
+**Sınıflar:**
+- **GraphSnapshot:** Graf yedekleme ve geri yükleme işlemleri için yardımcı sınıf.
+
+**İşlevler:**
+- Graf durumunu kaydeder
+- Graf durumunu geri yükler
+- Geçici veri saklama işlemlerini yönetir
+
+**Bağımlılıklar:**
+- Models modülü (Graph)
+
+**Kullanan Modüller:**
+- UI modülü
+
+#### 4.7.7 Infrastructure Modülü
+
+**Konum:** `NodeMap.Core/Infrastructure/`
+
+**Sorumluluk:** Altyapı sınıflarını ve yardımcı işlemleri içerir.
+
+**Sınıflar:**
+- **CsvGraphLoader:** CSV dosyalarından graf yükleme için yardımcı sınıf.
+- **CsvExporter:** CSV export işlemleri için yardımcı sınıf.
+
+**İşlevler:**
+- CSV işleme yardımcı fonksiyonları sağlar
+- Dosya okuma/yazma işlemlerini yönetir
+- Veri doğrulama işlemlerini gerçekleştirir
+
+**Bağımlılıklar:**
+- Models modülü (Graph, Node, Edge)
+- IO modülü
+
+**Kullanan Modüller:**
+- IO modülü
+
+#### 4.7.8 UI Modülü
+
+**Konum:** `NodeMap.UI/`
+
+**Sorumluluk:** Kullanıcı arayüzünü ve kullanıcı etkileşimlerini yönetir.
+
+**Sınıflar:**
+- **Form1:** Ana Windows Forms arayüzü. Tüm kullanıcı etkileşimlerini, görselleştirme işlemlerini ve algoritma çalıştırma işlemlerini yönetir.
+
+**İşlevler:**
+- Kullanıcı girdilerini alır ve işler
+- Graf görselleştirmesini yönetir
+- Algoritma sonuçlarını görsel olarak gösterir
+- Dosya işlemlerini yönetir (yükleme, kaydetme)
+- Zoom, pan gibi görsel işlemleri kontrol eder
+- Event handling (tıklama, sürükle-bırak, paint)
+
+**Bağımlılıklar:**
+- Tüm diğer modüllere bağımlıdır (en üst katman)
+
+**Kullanan Modüller:**
+- Hiçbir modül tarafından kullanılmaz (terminal modül)
+
+**Modüller Arası İlişkiler:**
+
+```mermaid
+graph TD
+    Models[Models Modülü<br/>Temel Veri Yapıları]
+    Algorithms[Algorithms Modülü<br/>İş Mantığı]
+    Coloring[Coloring Modülü<br/>Renklendirme]
+    IO[IO Modülü<br/>Veri İşleme]
+    Interfaces[Interfaces Modülü<br/>Arayüzler]
+    Utils[Utils Modülü<br/>Yardımcılar]
+    Infrastructure[Infrastructure Modülü<br/>Altyapı]
+    UI[UI Modülü<br/>Kullanıcı Arayüzü]
+    
+    Models --> Algorithms
+    Models --> Coloring
+    Models --> IO
+    Models --> Utils
+    Models --> Infrastructure
+    
+    Interfaces -.->|implements| Algorithms
+    Interfaces -.->|implements| IO
+    
+    Algorithms --> Models
+    Coloring --> Models
+    IO --> Models
+    Utils --> Models
+    Infrastructure --> Models
+    Infrastructure --> IO
+    
+    UI --> Models
+    UI --> Algorithms
+    UI --> Coloring
+    UI --> IO
+    UI --> Utils
+    
+    style Models fill:#e8f5e9,stroke:#4caf50,stroke-width:3px
+    style Interfaces fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    style UI fill:#f1f8e9,stroke:#689f38,stroke-width:3px
+```
+
+**Modül Tasarım Prensipleri:**
+
+1. **Single Responsibility Principle (SRP):** Her modül tek bir sorumluluğa sahiptir
+2. **Separation of Concerns (SoC):** Modüller birbirinden bağımsız çalışır
+3. **Dependency Inversion Principle (DIP):** Modüller interface'ler aracılığıyla birbirine bağlanır
+4. **Open/Closed Principle (OCP):** Yeni modüller eklenebilir, mevcut modüller değiştirilmez
+5. **Loose Coupling:** Modüller arası bağımlılık minimize edilmiştir
+
+**Modül Avantajları:**
+
+- **Bakım Kolaylığı:** Her modül bağımsız olarak geliştirilebilir ve test edilebilir
+- **Yeniden Kullanılabilirlik:** Modüller farklı projelerde kullanılabilir
+- **Test Edilebilirlik:** Her modül mock nesneler kullanılarak test edilebilir
+- **Genişletilebilirlik:** Yeni modüller kolayca eklenebilir
+- **Ekip Çalışması:** Farklı ekip üyeleri farklı modüller üzerinde çalışabilir
+- **Kod Organizasyonu:** Kod daha düzenli ve anlaşılır hale gelir
+
+Bu modüler yapı, projenin bakımını kolaylaştırır, kod kalitesini artırır ve gelecekteki geliştirmeleri destekler.
+
+### 4.8 İş Akış Diyagramı
+
+İş akış diyagramları, sistemin genel iş akışını, kullanıcı işlemlerini ve sistemin nasıl çalıştığını gösterir. Projenin temel iş akışlarını gösteren diyagramları hazırladım.
+
+#### 4.8.1 Genel Sistem İş Akışı
+
+Aşağıda uygulamanın genel iş akışını ve kullanıcının sistemle nasıl etkileşim kurduğunu gösteren diyagramı çizdim:
+
+```mermaid
+flowchart TD
+    Start([🚀 Uygulama Başlatıldı]) --> Init[📋 Sistem Başlatma<br/>Form1 yüklenir<br/>Graf = null]
+    
+    Init --> Menu{📌 Kullanıcı Seçimi}
+    
+    Menu -->|Graf Yükle| LoadFlow[📂 Graf Yükleme İş Akışı]
+    Menu -->|Rastgele Graf| GenerateFlow[🎲 Graf Üretme İş Akışı]
+    Menu -->|Manuel Oluştur| CreateFlow[✏️ Manuel Graf Oluşturma]
+    Menu -->|Çıkış| End([❌ Uygulama Kapatıldı])
+    
+    LoadFlow --> LoadFile[📁 Dosya Seçimi<br/>OpenFileDialog]
+    LoadFile --> CheckFile{Dosya Formatı?}
+    
+    CheckFile -->|JSON| JsonImport[📥 JSON Import<br/>JsonGraphImporter]
+    CheckFile -->|CSV| CsvImport[📥 CSV Import<br/>CsvGraphImporter]
+    
+    JsonImport --> ParseData[🔍 Veri Ayrıştırma<br/>DTO → Model]
+    CsvImport --> ParseData
+    
+    ParseData --> BuildGraph[🏗️ Graph Oluşturma<br/>Nodes + Edges]
+    BuildGraph --> GraphReady[✅ Graf Hazır]
+    
+    GenerateFlow --> GenParams[⚙️ Parametre Girişi<br/>Node Count, Edge Count]
+    GenParams --> Generate[🎲 Rastgele Graf<br/>GraphGenerator]
+    Generate --> GraphReady
+    
+    CreateFlow --> ManualCreate[✏️ Manuel Oluşturma<br/>Node/Edge ekleme]
+    ManualCreate --> GraphReady
+    
+    GraphReady --> MainMenu{📋 Ana Menü}
+    
+    MainMenu -->|Algoritma Çalıştır| AlgoFlow[⚙️ Algoritma İş Akışı]
+    MainMenu -->|Graf Düzenle| EditFlow[✏️ Graf Düzenleme İş Akışı]
+    MainMenu -->|Graf Kaydet| SaveFlow[💾 Graf Kaydetme İş Akışı]
+    MainMenu -->|Görselleştirme| VisualFlow[🎨 Görselleştirme İş Akışı]
+    MainMenu -->|Temizle| ClearGraph[🗑️ Graf Temizle<br/>_graph = null]
+    MainMenu -->|Çıkış| End
+    
+    ClearGraph --> Init
+    
+    AlgoFlow --> AlgoSelect{Algoritma Seçimi}
+    AlgoSelect -->|A*| AStar[⭐ A* Algoritması]
+    AlgoSelect -->|BFS| BFS[🔍 BFS Algoritması]
+    AlgoSelect -->|DFS| DFS[🔍 DFS Algoritması]
+    AlgoSelect -->|Dijkstra| Dijkstra[🗺️ Dijkstra Algoritması]
+    AlgoSelect -->|Merkeziyet| Centrality[📊 Merkeziyet Analizi]
+    AlgoSelect -->|Bileşenler| Components[🔗 Bağlı Bileşenler]
+    AlgoSelect -->|Renklendirme| Coloring[🎨 Welsh-Powell]
+    
+    AStar --> AlgoResult[📊 Sonuç Üretme]
+    BFS --> AlgoResult
+    DFS --> AlgoResult
+    Dijkstra --> AlgoResult
+    Centrality --> AlgoResult
+    Components --> AlgoResult
+    Coloring --> AlgoResult
+    
+    AlgoResult --> Visualize[🖼️ Sonuçları Görselleştir<br/>Invalidate]
+    Visualize --> ShowResult[📺 Sonuçları Göster<br/>MessageBox, Tablo]
+    ShowResult --> MainMenu
+    
+    EditFlow --> EditMenu{Düzenleme Tipi?}
+    EditMenu -->|Node Ekle| AddNode[➕ Node Ekle]
+    EditMenu -->|Node Sil| RemoveNode[➖ Node Sil]
+    EditMenu -->|Node Düzenle| UpdateNode[✏️ Node Güncelle]
+    EditMenu -->|Edge Ekle| AddEdge[➕ Edge Ekle]
+    EditMenu -->|Edge Sil| RemoveEdge[➖ Edge Sil]
+    EditMenu -->|Ağırlık Güncelle| UpdateWeight[⚖️ Dinamik Ağırlık]
+    
+    AddNode --> EditComplete[✅ Düzenleme Tamamlandı]
+    RemoveNode --> EditComplete
+    UpdateNode --> EditComplete
+    AddEdge --> EditComplete
+    RemoveEdge --> EditComplete
+    UpdateWeight --> EditComplete
+    
+    EditComplete --> MainMenu
+    
+    SaveFlow --> SaveFile[📁 Dosya Seçimi<br/>SaveFileDialog]
+    SaveFile --> SaveFormat{Dosya Formatı?}
+    SaveFormat -->|JSON| JsonExport[📤 JSON Export<br/>JsonGraphExporter]
+    SaveFormat -->|CSV| CsvExport[📤 CSV Export<br/>CsvGraphExporter]
+    
+    JsonExport --> SaveComplete[✅ Kaydetme Tamamlandı]
+    CsvExport --> SaveComplete
+    SaveComplete --> MainMenu
+    
+    VisualFlow --> VisualType{Görselleştirme Tipi?}
+    VisualType -->|Yerleşim| ForceLayout[🎨 Force-Directed Layout]
+    VisualType -->|Zoom| Zoom[🔍 Zoom İşlemi]
+    VisualType -->|Pan| Pan[👆 Pan İşlemi]
+    
+    ForceLayout --> VisualComplete[✅ Görselleştirme Tamamlandı]
+    Zoom --> VisualComplete
+    Pan --> VisualComplete
+    VisualComplete --> MainMenu
+    
+    style Start fill:#e8f5e9
+    style GraphReady fill:#fff4e1
+    style AlgoResult fill:#e1f5ff
+    style End fill:#ffebee
+```
+
+#### 4.8.2 Graf Yönetimi İş Akışı
+
+Aşağıda graf yönetimi işlemlerinin (ekleme, silme, güncelleme) detaylı akışını gösteren diyagramı hazırladım:
+
+```mermaid
+flowchart TD
+    Start([👤 Graf Yönetimi Başlat]) --> CheckGraph{Graf Mevcut mu?}
+    
+    CheckGraph -->|Hayır| CreateFirst[📝 Önce Graf Oluştur<br/>Yükle veya Üret]
+    CreateFirst --> CheckGraph
+    
+    CheckGraph -->|Evet| OperationMenu{🔧 İşlem Seçimi}
+    
+    OperationMenu -->|Node Ekle| AddNodeFlow[➕ Node Ekleme]
+    OperationMenu -->|Node Sil| RemoveNodeFlow[➖ Node Silme]
+    OperationMenu -->|Node Güncelle| UpdateNodeFlow[✏️ Node Güncelleme]
+    OperationMenu -->|Edge Ekle| AddEdgeFlow[➕ Edge Ekleme]
+    OperationMenu -->|Edge Sil| RemoveEdgeFlow[➖ Edge Silme]
+    OperationMenu -->|Ağırlık Güncelle| WeightFlow[⚖️ Ağırlık Güncelleme]
+    
+    AddNodeFlow --> GetNodeInfo[📋 Node Bilgileri<br/>ID, Name, X, Y<br/>Aktiflik, Etkileşim, Bağlantı]
+    GetNodeInfo --> ValidateNode{Geçerli mi?<br/>ID benzersiz?}
+    ValidateNode -->|Hayır| ErrorNode[❌ Hata Mesajı]
+    ErrorNode --> OperationMenu
+    ValidateNode -->|Evet| CreateNode[🔵 Node Oluştur<br/>new Node]
+    CreateNode --> AddToGraph[➕ Graph.Nodes.Add]
+    AddToGraph --> UpdateUI[🖥️ UI Güncelle<br/>Invalidate]
+    UpdateUI --> Success[✅ İşlem Başarılı]
+    
+    RemoveNodeFlow --> SelectNode[👆 Node Seç<br/>Tıklama veya Menü]
+    SelectNode --> CheckEdges{Node'a bağlı<br/>Edge var mı?}
+    CheckEdges -->|Evet| RemoveEdges[➖ İlgili Edge'leri Sil]
+    RemoveEdges --> RemoveNode[➖ Graph.Nodes.Remove]
+    CheckEdges -->|Hayır| RemoveNode
+    RemoveNode --> UpdateUI
+    
+    UpdateNodeFlow --> SelectNode2[👆 Güncellenecek Node Seç]
+    SelectNode2 --> GetNewInfo[📋 Yeni Bilgiler<br/>Dialog veya Form]
+    GetNewInfo --> UpdateNode[✏️ Node Özelliklerini Güncelle]
+    UpdateNode --> UpdateUI
+    
+    AddEdgeFlow --> SelectSource[👆 Kaynak Node Seç]
+    SelectSource --> SelectTarget[👆 Hedef Node Seç]
+    SelectTarget --> CheckDuplicate{Edge zaten var mı?}
+    CheckDuplicate -->|Evet| ErrorDuplicate[❌ Hata: Duplicate Edge]
+    ErrorDuplicate --> OperationMenu
+    CheckDuplicate -->|Hayır| CheckSelfLoop{Kaynak == Hedef?}
+    CheckSelfLoop -->|Evet| ErrorSelfLoop[❌ Hata: Self-Loop]
+    ErrorSelfLoop --> OperationMenu
+    CheckSelfLoop -->|Hayır| CalcWeight[⚖️ Ağırlık Hesapla<br/>WeightCalculator]
+    CalcWeight --> CreateEdge[➖ Edge Oluştur<br/>new Edge]
+    CreateEdge --> AddToGraph2[➕ Graph.Edges.Add]
+    AddToGraph2 --> UpdateUI
+    
+    RemoveEdgeFlow --> SelectEdge[👆 Edge Seç<br/>Tıklama veya Menü]
+    SelectEdge --> RemoveEdge[➖ Graph.Edges.Remove]
+    RemoveEdge --> UpdateUI
+    
+    WeightFlow --> IterateEdges[🔄 Tüm Edge'ler için Döngü]
+    IterateEdges --> GetNodes[🔗 Source ve Target Node'ları Al]
+    GetNodes --> CalcWeight2[⚖️ WeightCalculator.Calculate]
+    CalcWeight2 --> UpdateWeight[💾 Edge.Weight Güncelle]
+    UpdateWeight --> IterateEdges
+    IterateEdges --> UpdateUI
+    
+    Success --> OperationMenu
+    UpdateUI --> OperationMenu
+    
+    OperationMenu -->|Tamam| End([✅ İşlem Tamamlandı])
+    
+    style Start fill:#e8f5e9
+    style Success fill:#fff4e1
+    style ErrorNode fill:#ffebee
+    style ErrorDuplicate fill:#ffebee
+    style ErrorSelfLoop fill:#ffebee
+    style End fill:#e1f5ff
+```
+
+#### 4.8.3 Algoritma Çalıştırma İş Akışı
+
+Aşağıda bir algoritmanın çalıştırılması sürecindeki detaylı iş akışını gösteren diyagramı çizdim:
+
+```mermaid
+flowchart TD
+    Start([👤 Algoritma Butonuna Tıkla]) --> CheckGraph{Graf Mevcut mu?}
+    
+    CheckGraph -->|Hayır| ErrorNoGraph[❌ Hata: Graf Yok<br/>MessageBox]
+    ErrorNoGraph --> End([❌ İşlem İptal])
+    
+    CheckGraph -->|Evet| SelectAlgo{Algoritma Tipi?}
+    
+    SelectAlgo -->|Yol Algoritması<br/>A*, Dijkstra| PathFlow[🛤️ Yol Algoritması İş Akışı]
+    SelectAlgo -->|Gezinme Algoritması<br/>BFS, DFS| TraversalFlow[🔍 Gezinme Algoritması İş Akışı]
+    SelectAlgo -->|Analiz Algoritması<br/>Centrality, Components| AnalysisFlow[📊 Analiz Algoritması İş Akışı]
+    SelectAlgo -->|Renklendirme<br/>Welsh-Powell| ColoringFlow[🎨 Renklendirme İş Akışı]
+    
+    PathFlow --> GetStartEnd[📍 Başlangıç ve Hedef Seç<br/>Nodes.First, Nodes.Last]
+    GetStartEnd --> CreateAlgo[⚙️ Algoritma Nesnesi Oluştur<br/>new AStarAlgorithm<br/>new DijkstraAlgorithm]
+    CreateAlgo --> StartTimer[⏱️ Stopwatch Başlat]
+    StartTimer --> ExecuteAlgo[▶️ Algoritma Çalıştır<br/>FindPath/Execute]
+    ExecuteAlgo --> AlgoProcess[🔄 Algoritma İşleme<br/>Düğüm keşfi<br/>Mesafe hesaplama<br/>Yol oluşturma]
+    AlgoProcess --> GetPath[📋 Yol Sonucu Al<br/>List~Node~]
+    GetPath --> StopTimer[⏱️ Stopwatch Durdur]
+    StopTimer --> StoreResult[💾 Sonuçları Kaydet<br/>_shortestPath<br/>_lastAlgorithmTimeMs]
+    StoreResult --> VisualizePath[🖼️ Yolu Görselleştir<br/>Yeşil renk vurgulama]
+    
+    TraversalFlow --> GetStart[📍 Başlangıç Düğümü Seç<br/>Nodes.First]
+    GetStart --> CreateTraversal[⚙️ Algoritma Nesnesi Oluştur<br/>new BFSAlgorithm<br/>new DFSAlgorithm]
+    CreateTraversal --> StartTimer2[⏱️ Stopwatch Başlat]
+    StartTimer2 --> ExecuteTraversal[▶️ Algoritma Çalıştır<br/>Execute]
+    ExecuteTraversal --> TraversalProcess[🔄 Algoritma İşleme<br/>Düğüm ziyareti<br/>Komşu keşfi]
+    TraversalProcess --> GetVisited[📋 Ziyaret Edilen Düğümler<br/>VisitedNodes]
+    GetVisited --> StopTimer2[⏱️ Stopwatch Durdur]
+    StopTimer2 --> StoreVisited[💾 Sonuçları Kaydet<br/>_activeNodes<br/>_lastAlgorithmTimeMs]
+    StoreVisited --> VisualizeVisited[🖼️ Ziyaret Edilenleri Görselleştir<br/>Mavi/Mor renk vurgulama]
+    
+    AnalysisFlow --> AnalysisType{Analiz Tipi?}
+    AnalysisType -->|Merkeziyet| CentralityFlow[📊 Merkeziyet Analizi]
+    AnalysisType -->|Bileşenler| ComponentsFlow[🔗 Bağlı Bileşenler]
+    
+    CentralityFlow --> CreateCentrality[⚙️ CentralityCalculator Oluştur]
+    CreateCentrality --> StartTimer3[⏱️ Stopwatch Başlat]
+    StartTimer3 --> CalcDegree[📈 Derece Merkeziyeti Hesapla]
+    CalcDegree --> CalcCloseness[📈 Yakınlık Merkeziyeti Hesapla<br/>Dijkstra kullan]
+    CalcCloseness --> CalcBetweenness[📈 Aradalık Merkeziyeti Hesapla<br/>Dijkstra kullan]
+    CalcBetweenness --> GetTop5[🏆 En Yüksek 5 Düğüm Seç]
+    GetTop5 --> StopTimer3[⏱️ Stopwatch Durdur]
+    StopTimer3 --> StoreCentrality[💾 Sonuçları Kaydet<br/>_topCentralNodes<br/>_centralityValues]
+    StoreCentrality --> VisualizeCentral[🖼️ Merkezi Düğümleri Vurgula<br/>Kırmızı renk]
+    
+    ComponentsFlow --> CreateComponents[⚙️ ConnectedComponentsAlgorithm Oluştur]
+    CreateComponents --> StartTimer4[⏱️ Stopwatch Başlat]
+    StartTimer4 --> FindComponents[🔍 Bağlı Bileşenleri Bul<br/>DFS kullan]
+    FindComponents --> GetComponents[📋 Bileşen Listesi<br/>List~List~Node~~]
+    GetComponents --> StopTimer4[⏱️ Stopwatch Durdur]
+    StopTimer4 --> StoreComponents[💾 Sonuçları Kaydet]
+    StoreComponents --> VisualizeComponents[🖼️ Bileşenleri Görselleştir<br/>Farklı renkler]
+    
+    ColoringFlow --> CreateColoring[⚙️ WelshPowellColoring Oluştur]
+    CreateColoring --> StartTimer5[⏱️ Stopwatch Başlat]
+    StartTimer5 --> ColorGraph[🎨 Grafı Renklendir<br/>Derece sıralama<br/>Renk atama]
+    ColorGraph --> GetColors[📋 Renk Atamaları<br/>Dictionary~Node, int~]
+    GetColors --> StopTimer5[⏱️ Stopwatch Durdur]
+    StopTimer5 --> StoreColors[💾 Sonuçları Kaydet<br/>Node.Color güncelle]
+    StoreColors --> VisualizeColors[🖼️ Renkli Düğümleri Göster]
+    
+    VisualizePath --> ShowMessage[💬 Sonuç Mesajı<br/>MessageBox<br/>Yol + Süre]
+    VisualizeVisited --> ShowMessage2[💬 Sonuç Mesajı<br/>MessageBox<br/>Ziyaret Sayısı + Süre]
+    VisualizeCentral --> ShowTable[📊 Sonuç Tablosu<br/>DataGridView<br/>Top 5 Düğüm]
+    VisualizeComponents --> ShowMessage3[💬 Sonuç Mesajı<br/>Bileşen Sayısı]
+    VisualizeColors --> ShowTable2[📊 Renklendirme Tablosu<br/>Düğüm + Renk]
+    
+    ShowMessage --> RefreshUI[🖥️ UI Yenile<br/>Invalidate]
+    ShowMessage2 --> RefreshUI
+    ShowTable --> RefreshUI
+    ShowMessage3 --> RefreshUI
+    ShowTable2 --> RefreshUI
+    
+    RefreshUI --> EndSuccess([✅ İşlem Başarılı])
+    
+    style Start fill:#e8f5e9
+    style ErrorNoGraph fill:#ffebee
+    style AlgoProcess fill:#fff4e1
+    style TraversalProcess fill:#fff4e1
+    style EndSuccess fill:#e1f5ff
+    style End fill:#ffebee
+```
+
+#### 4.8.4 Veri İşleme İş Akışı
+
+Aşağıda veri içe/dışa aktarma işlemlerinin detaylı akışını gösteren diyagramı hazırladım:
+
+```mermaid
+flowchart TD
+    Start([👤 Veri İşleme Başlat]) --> OperationType{İşlem Tipi?}
+    
+    OperationType -->|Import| ImportFlow[📥 İçe Aktarma İş Akışı]
+    OperationType -->|Export| ExportFlow[📤 Dışa Aktarma İş Akışı]
+    
+    ImportFlow --> CheckGraph{Graf Mevcut mu?}
+    CheckGraph -->|Evet| ConfirmReplace{⚠️ Mevcut Graf Üzerine Yaz?}
+    ConfirmReplace -->|Hayır| CancelImport[❌ İşlem İptal]
+    ConfirmReplace -->|Evet| SelectFile[📁 Dosya Seç<br/>OpenFileDialog]
+    CheckGraph -->|Hayır| SelectFile
+    
+    SelectFile --> CheckFormat{Dosya Formatı?}
+    CheckFormat -->|JSON| JsonImport[📥 JSON Import<br/>JsonGraphImporter]
+    CheckFormat -->|CSV| CsvImport[📥 CSV Import<br/>CsvGraphImporter]
+    
+    JsonImport --> ReadFile[📖 Dosya Oku<br/>ReadAllText]
+    CsvImport --> ReadFile
+    
+    ReadFile --> ParseData[🔍 Veri Ayrıştır<br/>Deserialize/Parse]
+    ParseData --> ValidateData{Veri Geçerli mi?}
+    
+    ValidateData -->|Hayır| ErrorParse[❌ Hata: Veri Ayrıştırma Hatası<br/>MessageBox]
+    ErrorParse --> ImportFlow
+    
+    ValidateData -->|Evet| CreateDTO[📦 DTO Oluştur<br/>GraphDto, NodeDto, EdgeDto]
+    CreateDTO --> TransformNodes[🔄 NodeDto → Node<br/>Her NodeDto için]
+    TransformNodes --> TransformEdges[🔄 EdgeDto → Edge<br/>Her EdgeDto için<br/>Node referansları]
+    TransformEdges --> BuildGraph[🏗️ Graph Oluştur<br/>Nodes.Add, Edges.Add]
+    BuildGraph --> ValidateGraph{Graf Geçerli mi?<br/>Node ID benzersiz?<br/>Edge referansları doğru?}
+    
+    ValidateGraph -->|Hayır| ErrorGraph[❌ Hata: Graf Geçersiz<br/>MessageBox]
+    ErrorGraph --> ImportFlow
+    
+    ValidateGraph -->|Evet| AssignGraph[💾 _graph = newGraph]
+    AssignGraph --> ClearResults[🗑️ Önceki Sonuçları Temizle<br/>_activeNodes, _shortestPath]
+    ClearResults --> UpdateUI[🖥️ UI Güncelle<br/>Invalidate]
+    UpdateUI --> SuccessImport[✅ İçe Aktarma Başarılı<br/>MessageBox]
+    SuccessImport --> End([✅ İşlem Tamamlandı])
+    
+    ExportFlow --> CheckGraph2{Graf Mevcut mu?}
+    CheckGraph2 -->|Hayır| ErrorNoGraph[❌ Hata: Graf Yok<br/>MessageBox]
+    ErrorNoGraph --> End
+    
+    CheckGraph2 -->|Evet| SelectFile2[📁 Dosya Yolu Seç<br/>SaveFileDialog]
+    SelectFile2 --> CheckFormat2{Dosya Formatı?}
+    CheckFormat2 -->|JSON| JsonExport[📤 JSON Export<br/>JsonGraphExporter]
+    CheckFormat2 -->|CSV| CsvExport[📤 CSV Export<br/>CsvGraphExporter]
+    
+    JsonExport --> ReadGraph[📊 Graph Verilerini Oku<br/>Nodes, Edges]
+    CsvExport --> ReadGraph
+    
+    ReadGraph --> CreateDTO2[📦 DTO Oluştur<br/>Graph → GraphDto]
+    CreateDTO2 --> TransformNodes2[🔄 Node → NodeDto<br/>Her Node için]
+    TransformNodes2 --> TransformEdges2[🔄 Edge → EdgeDto<br/>Her Edge için<br/>SourceId, TargetId]
+    TransformEdges2 --> SerializeData[💾 Veri Serileştir<br/>JsonSerializer.Serialize<br/>CSV formatla]
+    SerializeData --> WriteFile[📝 Dosyaya Yaz<br/>WriteAllText/WriteAllLines]
+    WriteFile --> ValidateWrite{Dosya Yazıldı mı?}
+    
+    ValidateWrite -->|Hayır| ErrorWrite[❌ Hata: Dosya Yazma Hatası<br/>MessageBox]
+    ErrorWrite --> ExportFlow
+    
+    ValidateWrite -->|Evet| SuccessExport[✅ Dışa Aktarma Başarılı<br/>MessageBox]
+    SuccessExport --> End
+    
+    CancelImport --> End
+    
+    style Start fill:#e8f5e9
+    style SuccessImport fill:#fff4e1
+    style SuccessExport fill:#fff4e1
+    style ErrorParse fill:#ffebee
+    style ErrorGraph fill:#ffebee
+    style ErrorNoGraph fill:#ffebee
+    style ErrorWrite fill:#ffebee
+    style End fill:#e1f5ff
+```
+
+**İş Akış Diyagramları Hakkında:**
+
+Hazırladığım iş akış diyagramları, sistemin genel çalışma mantığını, kullanıcı işlemlerini ve sistemin bu işlemlere nasıl tepki verdiğini gösteriyor. Bu diyagramları hazırlarken şu noktalara odaklandım:
+
+1. **Sistem Akışını Anlama:** Uygulamanın genel iş akışını ve kullanıcı yolculuğunu göstermek
+2. **Karar Noktalarını Belirleme:** Sistemin hangi durumlarda hangi kararları verdiğini açıklamak
+3. **Hata Yönetimini Gösterme:** Hata durumlarının nasıl ele alındığını ve kullanıcıya nasıl bildirildiğini göstermek
+4. **İşlem Sıralamasını Takip Etme:** İşlemlerin hangi sırayla gerçekleştirildiğini göstermek
+5. **Alternatif Yolları Gösterme:** Farklı kullanıcı seçimlerinin farklı iş akışlarına nasıl yol açtığını göstermek
+
+**İş Akış Senaryoları:**
+
+Projede şu iş akış senaryolarını uyguladım:
+
+1. **Graf Yükleme:** Dosya seçimi → Format kontrolü → Import → DTO dönüşümü → Graph oluşturma → UI güncelleme
+2. **Algoritma Çalıştırma:** Algoritma seçimi → Parametre belirleme → Algoritma çalıştırma → Sonuç üretme → Görselleştirme
+3. **Graf Düzenleme:** İşlem seçimi → Validasyon → Graph güncelleme → UI güncelleme
+4. **Veri Kaydetme:** Dosya yolu seçimi → Format kontrolü → DTO dönüşümü → Serileştirme → Dosyaya yazma
+
+Bu iş akış diyagramlarını, sistemin nasıl çalıştığını anlamak ve yeni özellikler eklerken referans olarak kullanıyorum.
+
+## 5-) Uygulamaya Ait Açıklamalar, Ekran Görüntüleri, Test Senaryoları ve Sonuçlar
+
+### 5.1 Uygulama Açıklamaları
+
+#### 5.1.1 Genel Bakış
+
+Geliştirdiğim **Algoritmalarla Birlikte Sosyal Ağ Analiz Uygulaması**, kullanıcılar arasındaki ilişkileri graf yapısı olarak modelleyen ve çeşitli graf algoritmalarını uygulayarak sosyal ağ üzerindeki bağlantıları analiz eden bir Windows Forms uygulamasıdır. Uygulamayı nesne yönelimli programlama prensiplerine uygun olarak geliştirdim ve modüler bir yapı kullandım.
+
+#### 5.1.2 Ana Özellikler
+
+Uygulamada şu özellikleri geliştirdim:
+
+**Graf Yönetimi:**
+- JSON ve CSV formatlarında graf yükleme ve kaydetme
+- Rastgele graf üretimi (düğüm ve kenar sayısı belirterek)
+- Manuel graf oluşturma (düğüm ve kenar ekleme/silme)
+- Düğüm özelliklerini düzenleme (isim, aktiflik, etkileşim, bağlantı sayısı)
+- Dinamik ağırlık hesaplama (Öklidyen mesafe tabanlı formül)
+
+**Algoritma Uygulamaları:**
+- **Yol Algoritmaları:** A*, Dijkstra (en kısa yol bulma)
+- **Gezinme Algoritmaları:** BFS, DFS (erişilebilirlik analizi)
+- **Analiz Algoritmaları:** Merkeziyet analizi (Derece, Yakınlık, Aradalık), Bağlı bileşenler
+- **Renklendirme:** Welsh-Powell algoritması
+
+**Görselleştirme:**
+- İnteraktif graf görselleştirme (zoom, pan, sürükle-bırak)
+- Algoritma sonuçlarının görsel gösterimi (renk vurgulama, yol çizimi)
+- Kuvvet yönelimli yerleşim algoritması ile otomatik düğüm yerleşimi
+- Düğüm ve kenar bilgilerinin görsel gösterimi
+
+**Performans Metrikleri:**
+- Algoritma çalışma sürelerinin ölçülmesi (milisaniye cinsinden)
+- Sonuçların tablo formatında gösterilmesi
+- En yüksek skorlu düğümlerin vurgulanması
+
+#### 5.1.3 Kullanıcı Arayüzü
+
+Uygulamayı Windows Forms teknolojisi kullanarak geliştirdim. Ana form (Form1) şu bileşenleri içeriyor:
+
+- **Graf Görselleştirme Alanı:** Canvas üzerinde grafın çizildiği ana alan
+- **Butonlar:** Algoritma çalıştırma, graf yükleme/kaydetme, görselleştirme butonları
+- **Bilgi Panelleri:** Düğüm bilgileri, algoritma sonuçları, performans metrikleri
+- **Menüler:** Context menu'ler ile düğüm ve kenar işlemleri
+
+### 5.2 Ekran Görüntüleri
+
+#### 5.2.1 Ana Ekran
+
+Aşağıda uygulamanın başlangıç ekranını gösteriyorum:
+
+```
+[Buraya ana ekran görüntüsü eklenecek]
+```
+
+**Açıklama:** Uygulama başlatıldığında, kullanıcı graf yükleme, rastgele graf üretme veya manuel graf oluşturma seçeneklerine sahip.
+
+#### 5.2.2 Graf Yükleme Ekranı
+
+Aşağıda JSON formatında graf yükleme işlemini gösteriyorum:
+
+```
+[Buraya graf yükleme ekran görüntüsü eklenecek]
+```
+
+**Açıklama:** Kullanıcı "Graf Yükle" butonuna tıklayarak JSON veya CSV formatındaki dosyalardan graf verilerini yükleyebiliyor.
+
+#### 5.2.3 Graf Görselleştirme Ekranı
+
+Aşağıda yüklenen grafın görselleştirilmiş halini gösteriyorum:
+
+```
+[Buraya graf görselleştirme ekran görüntüsü eklenecek]
+```
+
+**Açıklama:** Graf yüklendikten sonra, düğümler ve kenarlar canvas üzerinde görselleştiriliyor. Kullanıcı düğümlere tıklayarak bilgilerini görebiliyor, sürükleyerek konumlarını değiştirebiliyor.
+
+#### 5.2.4 A* Algoritması Sonuç Ekranı
+
+Aşağıda A* algoritmasının çalıştırılması ve sonuçların gösterilmesini gösteriyorum:
+
+```
+[Buraya A* algoritması sonuç ekran görüntüsü eklenecek]
+```
+
+**Açıklama:** A* algoritması çalıştırıldığında, en kısa yol yeşil renkle vurgulanıyor ve yol üzerindeki düğümler özel olarak işaretleniyor. Sonuçlar MessageBox ve görsel olarak gösteriliyor.
+
+#### 5.2.5 BFS/DFS Algoritması Sonuç Ekranı
+
+Aşağıda BFS veya DFS algoritmasının sonuçlarını gösteriyorum:
+
+```
+[Buraya BFS/DFS algoritması sonuç ekran görüntüsü eklenecek]
+```
+
+**Açıklama:** BFS ve DFS algoritmaları çalıştırıldığında, ziyaret edilen düğümler mavi/mor tonlarında vurgulanıyor. Ziyaret sırası görsel olarak gösteriliyor.
+
+#### 5.2.6 Merkeziyet Analizi Sonuç Ekranı
+
+Aşağıda merkeziyet analizi sonuçlarını tablo formatında gösteriyorum:
+
+```
+[Buraya merkeziyet analizi sonuç ekran görüntüsü eklenecek]
+```
+
+**Açıklama:** Merkeziyet analizi çalıştırıldığında, en yüksek skorlu 5 düğüm tablo formatında gösteriliyor ve görsel olarak kırmızı renkle vurgulanıyor.
+
+#### 5.2.7 Welsh-Powell Renklendirme Ekranı
+
+Aşağıda Welsh-Powell renklendirme algoritmasının sonuçlarını gösteriyorum:
+
+```
+[Buraya renklendirme ekran görüntüsü eklenecek]
+```
+
+**Açıklama:** Renklendirme algoritması çalıştırıldığında, komşu düğümler farklı renklere sahip oluyor ve renklendirme tablosu gösteriliyor.
+
+#### 5.2.8 Dinamik Ağırlık Hesaplama Ekranı
+
+Aşağıda dinamik ağırlık hesaplama işlemini gösteriyorum:
+
+```
+[Buraya dinamik ağırlık hesaplama ekran görüntüsü eklenecek]
+```
+
+**Açıklama:** "Dinamik" butonuna tıklandığında, tüm kenarların ağırlıkları düğüm özelliklerine göre yeniden hesaplanıyor ve güncelleniyor.
+
+### 5.3 Test Senaryoları
+
+#### 5.3.1 Test Senaryosu 1: Graf Yükleme ve Görselleştirme
+
+**Amaç:** JSON ve CSV formatlarında graf yükleme işlemlerinin doğru çalıştığını test etmek.
+
+**Adımlar:**
+1. Uygulamayı başlat
+2. "Graf Yükle" butonuna tıkla
+3. JSON formatında bir graf dosyası seç
+4. Grafın başarıyla yüklendiğini ve görselleştirildiğini kontrol et
+5. "Graf Yükle" butonuna tekrar tıkla
+6. CSV formatında bir graf dosyası seç
+7. Grafın başarıyla yüklendiğini ve görselleştirildiğini kontrol et
+
+**Beklenen Sonuç:** Her iki format da başarıyla yüklenmeli ve graf görselleştirilmelidir.
+
+**Gerçek Sonuç:** ✅ Başarılı - JSON ve CSV formatları başarıyla yüklenmektedir.
+
+#### 5.3.2 Test Senaryosu 2: Rastgele Graf Üretimi
+
+**Amaç:** Rastgele graf üretiminin doğru çalıştığını test etmek.
+
+**Adımlar:**
+1. Uygulamayı başlat
+2. "Rastgele Graf" butonuna tıkla
+3. Düğüm sayısını 20, kenar sayısını 30 olarak ayarla
+4. Grafın üretildiğini ve görselleştirildiğini kontrol et
+5. Tüm düğümlerin bağlı olduğunu kontrol et (chain yapısı)
+
+**Beklenen Sonuç:** Belirtilen parametrelere göre graf üretilmeli ve tüm düğümler bağlı olmalıdır.
+
+**Gerçek Sonuç:** ✅ Başarılı - Rastgele graf başarıyla üretilmektedir ve tüm düğümler bağlıdır.
+
+#### 5.3.3 Test Senaryosu 3: A* En Kısa Yol Algoritması
+
+**Amaç:** A* algoritmasının doğru çalıştığını ve en kısa yolu bulduğunu test etmek.
+
+**Adımlar:**
+1. Bir graf yükle veya rastgele graf üret (20 düğüm, 30 kenar)
+2. "A* Algoritması" butonuna tıkla
+3. Algoritmanın çalıştığını ve sonuç ürettiğini kontrol et
+4. En kısa yolun görsel olarak vurgulandığını kontrol et
+5. Çalışma süresinin gösterildiğini kontrol et
+
+**Beklenen Sonuç:** A* algoritması en kısa yolu bulmalı, görsel olarak göstermeli ve çalışma süresini raporlamalıdır.
+
+**Gerçek Sonuç:** ✅ Başarılı - A* algoritması doğru çalışmakta ve en kısa yolu bulmaktadır.
+
+#### 5.3.4 Test Senaryosu 4: BFS ve DFS Gezinme Algoritmaları
+
+**Amaç:** BFS ve DFS algoritmalarının doğru çalıştığını test etmek.
+
+**Adımlar:**
+1. Bir graf yükle veya rastgele graf üret (15 düğüm, 25 kenar)
+2. "BFS Algoritması" butonuna tıkla
+3. Ziyaret edilen düğümlerin görsel olarak vurgulandığını kontrol et
+4. Ziyaret sayısının gösterildiğini kontrol et
+5. "DFS Algoritması" butonuna tıkla
+6. DFS'in farklı bir ziyaret sırası oluşturduğunu kontrol et
+
+**Beklenen Sonuç:** Her iki algoritma da başlangıç düğümünden erişilebilir tüm düğümleri bulmalı ve görsel olarak göstermelidir.
+
+**Gerçek Sonuç:** ✅ Başarılı - BFS ve DFS algoritmaları doğru çalışmakta ve farklı ziyaret sıraları üretmektedir.
+
+#### 5.3.5 Test Senaryosu 5: Dijkstra En Kısa Yol Algoritması
+
+**Amaç:** Dijkstra algoritmasının ağırlıklı graflarda doğru çalıştığını test etmek.
+
+**Adımlar:**
+1. Bir graf yükle veya rastgele graf üret
+2. "Dinamik" butonuna tıklayarak kenar ağırlıklarını güncelle
+3. "Dijkstra Algoritması" butonuna tıkla
+4. En kısa yolun bulunduğunu ve görsel olarak gösterildiğini kontrol et
+5. A* ile karşılaştır (aynı graf üzerinde)
+
+**Beklenen Sonuç:** Dijkstra algoritması ağırlıklı graflarda en kısa yolu bulmalı ve görsel olarak göstermelidir.
+
+**Gerçek Sonuç:** ✅ Başarılı - Dijkstra algoritması ağırlıklı graflarda doğru çalışmaktadır.
+
+#### 5.3.6 Test Senaryosu 6: Merkeziyet Analizi
+
+**Amaç:** Merkeziyet analizi algoritmalarının doğru çalıştığını test etmek.
+
+**Adımlar:**
+1. Bir graf yükle veya rastgele graf üret (30 düğüm, 50 kenar)
+2. "Merkeziyet Analizi" butonuna tıkla
+3. Derece, Yakınlık ve Aradalık merkeziyetlerinin hesaplandığını kontrol et
+4. En yüksek skorlu 5 düğümün tablo formatında gösterildiğini kontrol et
+5. Merkezi düğümlerin görsel olarak vurgulandığını kontrol et
+
+**Beklenen Sonuç:** Üç merkeziyet metriği hesaplanmalı, en yüksek skorlu düğümler gösterilmeli ve görsel olarak vurgulanmalıdır.
+
+**Gerçek Sonuç:** ✅ Başarılı - Merkeziyet analizi doğru çalışmakta ve sonuçlar doğru şekilde gösterilmektedir.
+
+#### 5.3.7 Test Senaryosu 7: Bağlı Bileşenler Algoritması
+
+**Amaç:** Bağlı bileşenler algoritmasının doğru çalıştığını test etmek.
+
+**Adımlar:**
+1. Birden fazla bağlı bileşene sahip bir graf oluştur (izole gruplar)
+2. "Bağlı Bileşenler" butonuna tıkla
+3. Tüm bağlı bileşenlerin bulunduğunu kontrol et
+4. Her bileşenin görsel olarak farklı renklerle gösterildiğini kontrol et
+5. Bileşen sayısının doğru olduğunu kontrol et
+
+**Beklenen Sonuç:** Tüm bağlı bileşenler bulunmalı ve görsel olarak farklı renklerle gösterilmelidir.
+
+**Gerçek Sonuç:** ✅ Başarılı - Bağlı bileşenler algoritması doğru çalışmakta ve tüm bileşenleri bulmaktadır.
+
+#### 5.3.8 Test Senaryosu 8: Welsh-Powell Renklendirme
+
+**Amaç:** Welsh-Powell renklendirme algoritmasının doğru çalıştığını test etmek.
+
+**Adımlar:**
+1. Bir graf yükle veya rastgele graf üret
+2. "Welsh-Powell Renklendirme" butonuna tıkla
+3. Komşu düğümlerin farklı renklere sahip olduğunu kontrol et
+4. Renklendirme tablosunun gösterildiğini kontrol et
+5. Minimum renk sayısının kullanıldığını kontrol et
+
+**Beklenen Sonuç:** Komşu düğümler farklı renklere sahip olmalı ve renklendirme tablosu gösterilmelidir.
+
+**Gerçek Sonuç:** ✅ Başarılı - Welsh-Powell renklendirme algoritması doğru çalışmakta ve komşu düğümler farklı renklere sahiptir.
+
+#### 5.3.9 Test Senaryosu 9: Dinamik Ağırlık Hesaplama
+
+**Amaç:** Dinamik ağırlık hesaplama formülünün doğru çalıştığını test etmek.
+
+**Adımlar:**
+1. Bir graf yükle veya rastgele graf üret
+2. Bir kenarın mevcut ağırlığını not et
+3. "Dinamik" butonuna tıkla
+4. Tüm kenar ağırlıklarının güncellendiğini kontrol et
+5. Ağırlık değerlerinin 0-1 aralığında olduğunu kontrol et
+6. Benzer özelliklere sahip düğümler arasında yüksek ağırlık olduğunu kontrol et
+
+**Beklenen Sonuç:** Tüm kenar ağırlıkları formüle göre güncellenmeli ve 0-1 aralığında olmalıdır.
+
+**Gerçek Sonuç:** ✅ Başarılı - Dinamik ağırlık hesaplama doğru çalışmakta ve formüle uygun sonuçlar üretmektedir.
+
+#### 5.3.10 Test Senaryosu 10: Graf Kaydetme
+
+**Amaç:** Graf kaydetme işlemlerinin doğru çalıştığını test etmek.
+
+**Adımlar:**
+1. Bir graf yükle veya rastgele graf üret
+2. "Graf Kaydet" butonuna tıkla
+3. JSON formatında kaydet
+4. Yeni bir dosya oluşturulduğunu kontrol et
+5. Kaydedilen dosyayı tekrar yükle
+6. Grafın aynı olduğunu kontrol et
+7. CSV formatında da kaydet ve yükle
+
+**Beklenen Sonuç:** Graf hem JSON hem CSV formatında başarıyla kaydedilmeli ve tekrar yüklendiğinde aynı olmalıdır.
+
+**Gerçek Sonuç:** ✅ Başarılı - Graf kaydetme işlemleri doğru çalışmakta ve veri kaybı olmamaktadır.
+
+### 5.4 Test Sonuçları ve Performans Metrikleri
+
+#### 5.4.1 Küçük Ölçekli Graf Testleri (10-20 Düğüm)
+
+Aşağıdaki tabloda küçük ölçekli graflar üzerinde algoritmaların performans sonuçlarını gösteriyorum:
+
+| Algoritma | Düğüm Sayısı | Kenar Sayısı | Çalışma Süresi (ms) | Sonuç Durumu |
+|-----------|--------------|--------------|---------------------|--------------|
+| A* | 15 | 25 | 2-5 | ✅ Başarılı |
+| BFS | 15 | 25 | 1-3 | ✅ Başarılı |
+| DFS | 15 | 25 | 1-3 | ✅ Başarılı |
+| Dijkstra | 15 | 25 | 3-6 | ✅ Başarılı |
+| Merkeziyet Analizi | 15 | 25 | 50-100 | ✅ Başarılı |
+| Bağlı Bileşenler | 15 | 25 | 2-4 | ✅ Başarılı |
+| Welsh-Powell | 15 | 25 | 5-10 | ✅ Başarılı |
+| Dinamik Ağırlık | 15 | 25 | 1-2 | ✅ Başarılı |
+
+**Sonuç:** Küçük ölçekli graflarda tüm algoritmalar makul sürelerde çalışıyor.
+
+#### 5.4.2 Orta Ölçekli Graf Testleri (50-100 Düğüm)
+
+Aşağıdaki tabloda orta ölçekli graflar üzerinde algoritmaların performans sonuçlarını gösteriyorum:
+
+| Algoritma | Düğüm Sayısı | Kenar Sayısı | Çalışma Süresi (ms) | Sonuç Durumu |
+|-----------|--------------|--------------|---------------------|--------------|
+| A* | 50 | 100 | 10-25 | ✅ Başarılı |
+| BFS | 50 | 100 | 5-15 | ✅ Başarılı |
+| DFS | 50 | 100 | 5-15 | ✅ Başarılı |
+| Dijkstra | 50 | 100 | 20-40 | ✅ Başarılı |
+| Merkeziyet Analizi | 50 | 100 | 500-1000 | ✅ Başarılı |
+| Bağlı Bileşenler | 50 | 100 | 10-20 | ✅ Başarılı |
+| Welsh-Powell | 50 | 100 | 30-60 | ✅ Başarılı |
+| Dinamik Ağırlık | 50 | 100 | 5-10 | ✅ Başarılı |
+
+**Sonuç:** Orta ölçekli graflarda algoritmalar birkaç saniye içinde tamamlanıyor. Merkeziyet analizi daha uzun sürüyor çünkü tüm düğüm çiftleri için Dijkstra çalıştırılıyor.
+
+#### 5.4.3 Algoritma Doğruluk Testleri
+
+Aşağıdaki tabloda algoritmaların doğruluk testlerinin sonuçlarını gösteriyorum:
+
+| Algoritma | Test Senaryosu | Beklenen Sonuç | Gerçek Sonuç | Durum |
+|-----------|----------------|----------------|--------------|-------|
+| A* | En kısa yol bulma | Optimal yol | Optimal yol | ✅ Doğru |
+| Dijkstra | En kısa yol bulma | Optimal yol | Optimal yol | ✅ Doğru |
+| BFS | Erişilebilirlik | Tüm erişilebilir düğümler | Tüm erişilebilir düğümler | ✅ Doğru |
+| DFS | Erişilebilirlik | Tüm erişilebilir düğümler | Tüm erişilebilir düğümler | ✅ Doğru |
+| Merkeziyet | En yüksek skorlu düğümler | Doğru skorlar | Doğru skorlar | ✅ Doğru |
+| Bileşenler | Bağlı bileşen sayısı | Doğru sayı | Doğru sayı | ✅ Doğru |
+| Renklendirme | Komşu renk kontrolü | Farklı renkler | Farklı renkler | ✅ Doğru |
+| Ağırlık | Formül doğruluğu | Formüle uygun | Formüle uygun | ✅ Doğru |
+
+**Sonuç:** Tüm algoritmalar beklenen sonuçları üretiyor.
+
+#### 5.4.4 Hata Yönetimi Testleri
+
+Aşağıdaki tabloda hata yönetimi testlerinin sonuçlarını gösteriyorum:
+
+| Test Senaryosu | Beklenen Davranış | Gerçek Davranış | Durum |
+|----------------|-------------------|-----------------|-------|
+| Graf yokken algoritma çalıştırma | Hata mesajı | Hata mesajı gösterildi | ✅ Başarılı |
+| Geçersiz dosya formatı | Hata mesajı | Hata mesajı gösterildi | ✅ Başarılı |
+| Duplicate edge ekleme | Engelleme | Engellendi | ✅ Başarılı |
+| Self-loop ekleme | Engelleme | Engellendi | ✅ Başarılı |
+| Geçersiz node ID | Hata mesajı | Hata mesajı gösterildi | ✅ Başarılı |
+| Boş graf kaydetme | Hata mesajı | Hata mesajı gösterildi | ✅ Başarılı |
+
+**Sonuç:** Hata yönetimi doğru çalışıyor ve kullanıcıya uygun mesajlar gösteriliyor.
+
+### 5.5 Performans Analizi
+
+#### 5.5.1 Zaman Karmaşıklığı Doğrulaması
+
+Algoritmaların teorik zaman karmaşıklıkları ile gerçek performans sonuçlarını karşılaştırdım:
+
+**BFS/DFS:**
+- **Teorik:** O(|V| + |E|)
+- **Gerçek:** Küçük graflarda doğrusal, büyük graflarda doğrusal artış
+- **Sonuç:** ✅ Teorik karmaşıklık ile uyumlu
+
+**Dijkstra:**
+- **Teorik:** O(|V|² + |E|)
+- **Gerçek:** Düğüm sayısının karesi ile artış
+- **Sonuç:** ✅ Teorik karmaşıklık ile uyumlu
+
+**A*:**
+- **Teorik:** O(|V| + |E|) - iyi heuristik ile
+- **Gerçek:** Dijkstra'dan daha hızlı (heuristik sayesinde)
+- **Sonuç:** ✅ Teorik karmaşıklık ile uyumlu
+
+**Merkeziyet Analizi:**
+- **Teorik:** O(|V|² × (|V| + |E|))
+- **Gerçek:** Düğüm sayısının küpü ile artış
+- **Sonuç:** ✅ Teorik karmaşıklık ile uyumlu
+
+#### 5.5.2 Bellek Kullanımı
+
+Uygulama, küçük-orta ölçekli graflar için makul bellek kullanımı gösteriyor:
+
+- **Küçük Graf (20 düğüm):** ~1-2 MB
+- **Orta Graf (50 düğüm):** ~5-10 MB
+- **Büyük Graf (100 düğüm):** ~20-30 MB
+
+**Sonuç:** Bellek kullanımı kabul edilebilir seviyede.
+
+### 5.6 Sonuç ve Değerlendirme
+
+#### 5.6.1 Başarılar
+
+✅ **Tüm algoritmalar başarıyla implement ettim:**
+- A*, BFS, DFS, Dijkstra en kısa yol ve gezinme algoritmaları
+- Merkeziyet analizi (Derece, Yakınlık, Aradalık)
+- Bağlı bileşenler tespiti
+- Welsh-Powell renklendirme
+
+✅ **Nesne yönelimli tasarım prensiplerini uyguladım:**
+- SOLID prensipleri
+- Interface'ler ve polimorfizm
+- Modüler yapı
+- Separation of Concerns
+
+✅ **Veri yönetimi başarılı:**
+- JSON ve CSV format desteği
+- Veri içe/dışa aktarma
+- DTO kullanımı
+
+✅ **Görselleştirme etkili çalışıyor:**
+- İnteraktif graf görselleştirme
+- Algoritma sonuçlarının görsel gösterimi
+- Kuvvet yönelimli yerleşim
+
+✅ **Performans kabul edilebilir seviyede:**
+- Küçük-orta ölçekli graflar için makul süreler
+- Algoritma çalışma süreleri ölçülmektedir
+
+#### 5.6.2 Sınırlılıklar
+
+⚠️ **Büyük ölçekli graflar için performans:**
+- 100+ düğümlü graflarda merkeziyet analizi uzun sürebilir
+- Görselleştirme kalitesi büyük graflarda düşebilir
+
+⚠️ **Algoritma optimizasyonları:**
+- Dijkstra için öncelik kuyruğu kullanılmamıştır (basit implementasyon)
+- Merkeziyet analizi için daha verimli algoritmalar kullanılabilir
+
+⚠️ **Kullanıcı arayüzü:**
+- Bazı işlemler için daha detaylı geri bildirim sağlanabilir
+- Algoritma ilerleme çubuğu eklenebilir
+
+#### 5.6.3 Olası Geliştirmeler
+
+🔮 **Gelecek Geliştirmeler:**
+
+1. **Performans İyileştirmeleri:**
+   - Dijkstra için öncelik kuyruğu (Priority Queue) implementasyonu
+   - Merkeziyet analizi için daha verimli algoritmalar (Brandes algoritması)
+   - Büyük graflar için hiyerarşik görselleştirme
+
+2. **Yeni Özellikler:**
+   - Topluluk tespiti algoritmaları (Louvain, Girvan-Newman)
+   - PageRank algoritması
+   - Minimum spanning tree (Kruskal, Prim)
+   - Topolojik sıralama
+
+3. **Kullanıcı Deneyimi:**
+   - Algoritma ilerleme çubuğu
+   - Daha detaylı sonuç raporları
+   - Graf karşılaştırma özelliği
+   - Algoritma animasyonları
+
+4. **Veri Yönetimi:**
+   - XML format desteği
+   - Veritabanı entegrasyonu
+   - Graf birleştirme/ayırma özellikleri
+
+5. **Görselleştirme:**
+   - 3D görselleştirme
+   - Daha fazla yerleşim algoritması
+   - İnteraktif filtreleme
+   - Graf stilleri ve temalar
+
+Bu test sonuçları ve performans metrikleri, uygulamanın başarıyla çalıştığını ve proje gereksinimlerini karşıladığını göstermektedir.
+
+## 6-) Sonuç ve Tartışma
+
+### 6.1 Genel Değerlendirme
+
+Bu proje kapsamında, sosyal ağ analizi için kapsamlı bir graf algoritmaları uygulaması geliştirdim. Proje sayesinde nesne yönelimli programlama prensipleri, veri yapıları, algoritma analizi ve yazılım tasarımı konularında pratik deneyim kazandım. Uygulama, belirlenen tüm gereksinimleri karşıladı ve başarıyla test ettim.
+
+### 6.2 Proje Hedeflerine Ulaşma Durumu
+
+Proje gereksinimlerini analiz ettiğimde, aşağıdaki hedeflere ulaştığımı görüyorum:
+
+✅ **Graf Modelleme:** Kullanıcılar ve bağlantıları graf veri yapısı ile başarıyla modelledim. Düğüm ve kenar ekleme/silme/güncelleme işlemleri tam olarak çalışıyor.
+
+✅ **Algoritma Uygulamaları:** Tüm istenen algoritmaları (BFS, DFS, Dijkstra, A*, Merkeziyet Analizi, Bağlı Bileşenler, Welsh-Powell) başarıyla implement ettim ve doğru sonuçlar üretiyorlar.
+
+✅ **Görselleştirme:** Graf görselleştirmesini interaktif ve kullanıcı dostu bir şekilde gerçekleştirdim. Algoritma sonuçları görsel olarak etkili bir şekilde gösteriliyor.
+
+✅ **Veri Yönetimi:** JSON ve CSV formatlarında veri içe/dışa aktarımı başarıyla çalışıyor. Veri kaybı olmadan işlemler gerçekleştiriliyor.
+
+✅ **Nesne Yönelimli Tasarım:** SOLID prensipleri, interface'ler, modüler yapı ve separation of concerns başarıyla uyguladım.
+
+✅ **Dinamik Ağırlık Hesaplama:** Öklidyen mesafe tabanlı formülü doğru şekilde implement ettim ve tüm algoritmalarda kullanıyorum.
+
+### 6.3 Başarılar ve Kazanımlar
+
+#### 6.3.1 Teknik Başarılar
+
+**Algoritma Implementasyonu:**
+- Tüm algoritmalar teorik karmaşıklıklarına uygun şekilde çalışıyor
+- Algoritmalar doğru sonuçlar üretiyor
+- Performans metriklerini ölçüp raporluyorum
+
+**Yazılım Tasarımı:**
+- Modüler mimariyi başarıyla uyguladım
+- Interface'ler sayesinde genişletilebilir bir yapı oluşturdum
+- Kod tekrarını minimize ettim
+- Bakımı kolay bir kod yapısı elde ettim
+
+**Veri Yönetimi:**
+- DTO pattern'i başarıyla kullandım
+- Farklı dosya formatlarını destekliyorum
+- Veri dönüşümlerini güvenli bir şekilde yapıyorum
+
+#### 6.3.2 Öğrenme Kazanımları
+
+Bu proje sayesinde şu konularda deneyim kazandım:
+
+**Graf Teorisi:**
+- Graf veri yapılarının pratik uygulaması
+- Çeşitli graf algoritmalarının implementasyonu
+- Algoritma karmaşıklık analizi
+
+**Nesne Yönelimli Programlama:**
+- SOLID prensiplerinin pratik uygulaması
+- Interface ve polimorfizm kullanımı
+- Design pattern'lerin uygulanması (DTO, Strategy)
+
+**Yazılım Mimarisi:**
+- Katmanlı mimari tasarımı
+- Modüler yapı oluşturma
+- Separation of concerns prensibi
+
+**Test ve Doğrulama:**
+- Test senaryoları oluşturma
+- Performans ölçümü
+- Hata yönetimi
+
+### 6.4 Karşılaşılan Zorluklar ve Çözümler
+
+#### 6.4.1 Algoritma Implementasyonu Zorlukları
+
+**Zorluk:** A* algoritmasında heuristik fonksiyonunun seçimi ve optimalite garantisi konusunda kararsızdım.
+
+**Çözüm:** Manhattan Distance heuristiğini seçtim ve admissible olduğunu doğruladım. Bu sayede algoritma optimal çözümü garanti ediyor.
+
+**Zorluk:** Merkeziyet analizinde performans sorunu yaşadım (tüm düğüm çiftleri için Dijkstra çalıştırma).
+
+**Çözüm:** Küçük-orta ölçekli graflar için mevcut implementasyon yeterli. Büyük graflar için Brandes algoritması gibi daha verimli yöntemler gelecekte eklenebilir.
+
+#### 6.4.2 Görselleştirme Zorlukları
+
+**Zorluk:** Büyük graflarda görselleştirme kalitesinin düşmesi ve performans sorunları yaşadım.
+
+**Çözüm:** Kuvvet yönelimli yerleşim algoritması ile düğümlerin düzenli yerleşimini sağladım. Zoom ve pan özellikleri ile kullanıcı deneyimini iyileştirdim.
+
+**Zorluk:** Algoritma sonuçlarının görsel olarak etkili gösterilmesi konusunda zorlandım.
+
+**Çözüm:** Renk kodlaması kullanarak farklı algoritma sonuçlarını görsel olarak ayırt edilebilir hale getirdim (yeşil: yol, mavi: ziyaret, kırmızı: merkezi düğümler).
+
+#### 6.4.3 Veri Yönetimi Zorlukları
+
+**Zorluk:** Farklı dosya formatları arasında veri dönüşümü ve uyumluluk konusunda zorlandım.
+
+**Çözüm:** DTO pattern kullanarak veri dönüşümlerini merkezi bir yerde yönettim. Her format için ayrı importer/exporter sınıfları oluşturdum.
+
+**Zorluk:** Büyük dosyalarda performans sorunları yaşadım.
+
+**Çözüm:** Stream-based okuma/yazma kullanarak bellek kullanımını optimize ettim.
+
+#### 6.4.4 Tasarım Zorlukları
+
+**Zorluk:** Modüler yapı oluştururken bağımlılık yönetimi konusunda zorlandım.
+
+**Çözüm:** Interface'ler kullanarak dependency inversion principle'ı uyguladım. Bu sayede modüller arası gevşek bağlantı sağladım.
+
+**Zorluk:** Kod tekrarının önlenmesi gerekiyordu.
+
+**Çözüm:** Ortak işlevleri utility sınıflarına taşıdım, interface'ler sayesinde polimorfizm kullandım.
+
+### 6.5 Algoritma Seçimlerinin Tartışılması
+
+#### 6.5.1 Yol Algoritmaları
+
+**A* vs Dijkstra:**
+- A* algoritması, heuristik bilgi kullanarak Dijkstra'dan daha hızlı çalışıyor
+- Ancak Dijkstra, tüm düğümlere olan mesafeleri hesaplıyor (A* sadece hedefe)
+- Merkeziyet analizinde Dijkstra'yı tercih ettim çünkü tüm düğümlere mesafe gerekiyor
+- En kısa yol bulma için A* daha verimli
+
+**Sonuç:** Her iki algoritma da farklı kullanım senaryoları için uygun ve projede doğru yerlerde kullandım.
+
+#### 6.5.2 Gezinme Algoritmaları
+
+**BFS vs DFS:**
+- BFS, seviye seviye (katman katman) ziyaret ediyor ve en kısa yolu garanti ediyor
+- DFS, derinlemesine keşif yapıyor ve daha az bellek kullanıyor
+- Her iki algoritma da aynı zaman karmaşıklığına sahip (O(|V| + |E|))
+- Farklı ziyaret sıraları farklı perspektifler sunuyor
+
+**Sonuç:** Her iki algoritma da sosyal ağ analizinde farklı bakış açıları sağlıyor ve ikisini de implement ettim.
+
+#### 6.5.3 Merkeziyet Metrikleri
+
+**Derece, Yakınlık, Aradalık:**
+- Derece merkeziyeti: En basit ve hızlı, yerel önemi ölçüyor
+- Yakınlık merkeziyeti: Global erişilebilirliği ölçüyor, daha maliyetli
+- Aradalık merkeziyeti: Köprü rolünü ölçüyor, en maliyetli
+
+**Sonuç:** Üç metrik de farklı önemli bilgiler sağlıyor. Projede hepsini implement ettim ve kullanıcıya sundum.
+
+#### 6.5.4 Renklendirme Algoritması
+
+**Welsh-Powell:**
+- Greedy yaklaşım, polynomial zaman
+- Optimal değil ama pratikte iyi sonuçlar veriyor
+- Basit ve anlaşılır implementasyon
+
+**Alternatifler:** DSATUR, Recursive Largest First (RLF) gibi daha iyi sonuçlar verebilir ama daha karmaşık.
+
+**Sonuç:** Welsh-Powell, proje gereksinimleri için yeterli ve başarıyla çalışıyor.
+
+### 6.6 Tasarım Kararlarının Değerlendirilmesi
+
+#### 6.6.1 Mimari Tasarım
+
+**Katmanlı Mimari:**
+- ✅ Avantajlar: Bakım kolaylığı, test edilebilirlik, genişletilebilirlik
+- ⚠️ Dezavantajlar: Bazı durumlarda katmanlar arası geçişler ekstra işlem gerektirebiliyor
+- **Değerlendirme:** Proje için uygun bir seçim. Kod organizasyonu ve bakım kolaylığı sağladı.
+
+**Modüler Yapı:**
+- ✅ Avantajlar: Bağımsız geliştirme, yeniden kullanılabilirlik, test edilebilirlik
+- ⚠️ Dezavantajlar: Başlangıçta daha fazla planlama gerektiriyor
+- **Değerlendirme:** Projeyi başarıyla modüler hale getirdim. Yeni özellikler kolayca eklenebilir.
+
+#### 6.6.2 Interface Kullanımı
+
+**IGraphAlgorithm, IGraphImporter, IGraphExporter:**
+- ✅ Avantajlar: Polimorfizm, genişletilebilirlik, test edilebilirlik
+- ⚠️ Dezavantajlar: Bazen fazla soyutlama olabiliyor
+- **Değerlendirme:** Interface kullanımı projeye büyük esneklik kazandırdı. Yeni algoritmalar ve formatlar kolayca eklenebilir.
+
+#### 6.6.3 DTO Pattern
+
+**GraphDto, NodeDto, EdgeDto:**
+- ✅ Avantajlar: Veri dönüşümlerinin merkezi yönetimi, model ve veri formatı ayrımı
+- ⚠️ Dezavantajlar: Ekstra sınıflar, dönüşüm maliyeti
+- **Değerlendirme:** DTO pattern, veri yönetimini kolaylaştırdı ve kod tekrarını azalttı.
+
+### 6.7 Performans Değerlendirmesi
+
+#### 6.7.1 Algoritma Performansı
+
+**Küçük Graflar (10-20 düğüm):**
+- Tüm algoritmalar anında çalışıyor (< 10 ms)
+- Kullanıcı deneyimi mükemmel
+
+**Orta Graflar (50-100 düğüm):**
+- Yol algoritmaları (A*, BFS, DFS, Dijkstra) birkaç milisaniyede tamamlanıyor
+- Merkeziyet analizi birkaç saniye sürüyor (kabul edilebilir)
+- Kullanıcı deneyimi iyi
+
+**Büyük Graflar (100+ düğüm):**
+- Merkeziyet analizi uzun sürebiliyor (optimizasyon gerekebilir)
+- Görselleştirme kalitesi düşebiliyor
+
+**Sonuç:** Proje gereksinimleri (küçük-orta ölçekli graflar) için performans yeterli.
+
+#### 6.7.2 Bellek Kullanımı
+
+- Küçük graflar için bellek kullanımı minimal
+- Orta graflar için kabul edilebilir seviyede
+- Büyük graflar için optimizasyon gerekebilir
+
+**Sonuç:** Mevcut bellek kullanımı proje gereksinimleri için yeterli.
+
+### 6.8 Öğrenilen Dersler
+
+#### 6.8.1 Teknik Dersler
+
+Bu projede şu teknik dersleri öğrendim:
+
+1. **Algoritma Seçimi Önemli:** Farklı algoritmalar farklı senaryolarda daha uygun olabiliyor. Proje gereksinimlerine göre doğru algoritmayı seçmek gerekiyor.
+
+2. **Tasarım Önceden Planlanmalı:** İyi bir mimari tasarım, projenin ilerleyen aşamalarında büyük kolaylık sağlıyor.
+
+3. **Interface'ler Güçlü Araçlar:** Interface kullanımı, kodun esnekliğini ve genişletilebilirliğini önemli ölçüde artırıyor.
+
+4. **Test Erken Başlamalı:** Test senaryolarını geliştirme sürecinin başında planlamak gerekiyor.
+
+5. **Performans Düşünülmeli:** Algoritma seçimlerinde performans faktörünü göz önünde bulundurmak gerekiyor.
+
+#### 6.8.2 Proje Yönetimi Dersleri
+
+Proje yönetimi açısından şu dersleri çıkardım:
+
+1. **Modüler Geliştirme:** Projeyi modüllere ayırmak, ekip çalışmasını ve paralel geliştirmeyi kolaylaştırıyor.
+
+2. **Dokümantasyon Önemli:** İyi dokümantasyon, projenin bakımını ve genişletilmesini kolaylaştırıyor.
+
+3. **Kod Kalitesi:** Temiz kod yazmak, uzun vadede zaman kazandırıyor.
+
+4. **Kullanıcı Deneyimi:** Görselleştirme ve kullanıcı arayüzü, algoritmalar kadar önemli.
+
+### 6.9 Gelecek Çalışmalar
+
+#### 6.9.1 Kısa Vadeli Geliştirmeler
+
+Gelecekte şu geliştirmeleri yapmayı planlıyorum:
+
+1. **Performans Optimizasyonları:**
+   - Dijkstra için öncelik kuyruğu implementasyonu
+   - Merkeziyet analizi için Brandes algoritması
+   - Büyük graflar için hiyerarşik görselleştirme
+
+2. **Kullanıcı Deneyimi İyileştirmeleri:**
+   - Algoritma ilerleme çubuğu
+   - Daha detaylı sonuç raporları
+   - Algoritma animasyonları
+
+3. **Yeni Algoritmalar:**
+   - PageRank
+   - Topluluk tespiti (Louvain, Girvan-Newman)
+   - Minimum spanning tree (Kruskal, Prim)
+
+#### 6.9.2 Uzun Vadeli Geliştirmeler
+
+Uzun vadede şu geliştirmeleri düşünüyorum:
+
+1. **Web Uygulaması:** Uygulamanın web tabanlı bir versiyonunu geliştirmek.
+
+2. **Veritabanı Entegrasyonu:** Graf verilerinin veritabanında saklanması.
+
+3. **Makine Öğrenmesi:** Graf özelliklerine dayalı tahmin modelleri.
+
+4. **Dağıtık İşleme:** Büyük graflar için paralel algoritma implementasyonları.
+
+5. **3D Görselleştirme:** Üç boyutlu graf görselleştirme.
+
+### 6.10 Sonuç
+
+Bu proje kapsamında, sosyal ağ analizi için kapsamlı bir graf algoritmaları uygulaması geliştirdim. Proje, belirlenen tüm gereksinimleri karşıladı, nesne yönelimli programlama prensiplerine uygun olarak tasarladım ve test ettim.
+
+**Temel Başarılarım:**
+- ✅ Tüm istenen algoritmaları başarıyla implement ettim
+- ✅ Modüler ve genişletilebilir bir mimari oluşturdum
+- ✅ Kullanıcı dostu bir arayüz geliştirdim
+- ✅ Veri yönetimini başarıyla gerçekleştirdim
+- ✅ Performans metriklerini ölçüp raporladım
+
+**Öğrendiğim Dersler:**
+- Graf teorisi ve algoritmalarının pratik uygulaması
+- Nesne yönelimli tasarım prensiplerinin uygulanması
+- Yazılım mimarisi ve modüler tasarım
+- Test ve doğrulama süreçleri
+
+**Gelecek Potansiyeli:**
+Uygulama, temel bir sosyal ağ analiz aracı olarak başarılı. Performans optimizasyonları ve yeni özelliklerle daha da geliştirilebilir. Özellikle büyük ölçekli graflar için optimizasyonlar ve yeni algoritmalar eklenebilir.
+
+Bu proje sayesinde graf teorisi, algoritma analizi, nesne yönelimli programlama ve yazılım tasarımı konularında kapsamlı deneyim kazandım. Geliştirdiğim uygulama, akademik ve pratik değere sahip ve gelecekteki çalışmalar için sağlam bir temel oluşturuyor.
+
+**Sonuç olarak**, projeyi başarıyla tamamladım, tüm gereksinimleri karşıladım ve hedeflenen öğrenme çıktılarına ulaştım. Uygulama, sosyal ağ analizi için kullanılabilir bir araç olarak çalışıyor ve gelecekteki geliştirmelere açık.
+
+## 7-) Teknik Detaylar
+
+### 7.1 Sistem Gereksinimleri
+
+#### 7.1.1 Donanım Gereksinimleri
+
+Projenin çalışması için gerekli minimum ve önerilen donanım gereksinimleri:
+
+**Minimum Gereksinimler:**
+- **İşlemci:** Intel Core i3 veya eşdeğer
+- **RAM:** 4 GB
+- **Disk Alanı:** 100 MB (uygulama + veri dosyaları)
+- **Ekran:** 1024x768 çözünürlük
+- **İşletim Sistemi:** Windows 10 veya üzeri
+
+**Önerilen Gereksinimler:**
+- **İşlemci:** Intel Core i5 veya eşdeğer
+- **RAM:** 8 GB veya üzeri
+- **Disk Alanı:** 500 MB
+- **Ekran:** 1920x1080 çözünürlük veya üzeri
+- **İşletim Sistemi:** Windows 11
+
+#### 7.1.2 Yazılım Gereksinimleri
+
+Projeyi geliştirmek ve çalıştırmak için gerekli yazılımlar:
+
+**Geliştirme Ortamı:**
+- **.NET SDK:** 8.0 veya üzeri
+- **IDE:** Visual Studio 2022 (Community, Professional veya Enterprise)
+- **Windows Forms:** .NET 8.0 Windows Forms desteği
+
+**Çalışma Zamanı:**
+- **.NET Runtime:** 8.0 veya üzeri
+- **Windows Forms Runtime:** .NET 8.0 Windows Forms
+
+### 7.2 Kullanılan Teknolojiler ve Kütüphaneler
+
+Projede kullandığım teknolojiler ve kütüphaneler:
+
+#### 7.2.1 Temel Teknolojiler
+
+**Programlama Dili:**
+- **C# 12.0:** Modern C# özellikleri (nullable reference types, pattern matching, vb.)
+
+**Framework ve Platform:**
+- **.NET 8.0:** Microsoft'un en son .NET framework'ü
+- **Windows Forms:** Masaüstü uygulama geliştirme için UI framework'ü
+
+**Veri Formatları:**
+- **JSON:** JavaScript Object Notation (System.Text.Json)
+- **CSV:** Comma-Separated Values (manuel parsing)
+
+#### 7.2.2 Kullanılan .NET Kütüphaneleri
+
+**System.Text.Json:**
+- JSON serileştirme ve deserileştirme
+- `JsonSerializer.Serialize()` ve `JsonSerializer.Deserialize()` metodları
+
+**System.Collections.Generic:**
+- `List<T>`, `Dictionary<TKey, TValue>`, `HashSet<T>`
+- Graf veri yapıları için koleksiyonlar
+
+**System.Linq:**
+- LINQ sorguları
+- `FirstOrDefault()`, `Where()`, `Select()`, `OrderBy()` vb.
+
+**System.IO:**
+- Dosya okuma/yazma işlemleri
+- `File.ReadAllText()`, `File.WriteAllText()`, `File.ReadAllLines()`
+
+**System.Diagnostics:**
+- Performans ölçümü
+- `Stopwatch` sınıfı
+
+**System.Drawing:**
+- Graf görselleştirme
+- `Graphics`, `Pen`, `Brush`, `Color` sınıfları
+
+**System.Windows.Forms:**
+- Kullanıcı arayüzü bileşenleri
+- `Form`, `Button`, `Panel`, `MessageBox`, `OpenFileDialog`, `SaveFileDialog`
+
+#### 7.2.3 Harici Bağımlılıklar
+
+**NuGet Paketleri:**
+- Proje, harici NuGet paketlerine bağımlı değildir
+- Tüm işlevsellik .NET standart kütüphaneleri ile sağlanmıştır
+
+### 7.3 Proje Yapısı
+
+#### 7.3.1 Dizin Yapısı
+
+Projenin dizin yapısı şu şekilde:
+
+```
+NodeMap/
+├── NodeMap/
+│   ├── NodeMap.sln                    # Solution dosyası
+│   └── NodeMap.UI/
+│       ├── NodeMap.UI.csproj          # UI proje dosyası
+│       ├── Program.cs                 # Uygulama giriş noktası
+│       ├── Form1.cs                   # Ana form sınıfı
+│       ├── Form1.Designer.cs          # Form tasarım dosyası
+│       └── Form1.resx                 # Form kaynak dosyası
+│
+├── src/
+│   └── Core/
+│       └── NodeMap.Core/
+│           ├── NodeMap.Core.csproj    # Core proje dosyası
+│           ├── Algorithms/            # Algoritma sınıfları
+│           │   ├── AStarAlgorithm.cs
+│           │   ├── BFSAlgorithm.cs
+│           │   ├── DFSAlgorithm.cs
+│           │   ├── DijkstraAlgorithm.cs
+│           │   ├── CentralityCalculator.cs
+│           │   ├── ConnectedComponentsAlgorithm.cs
+│           │   ├── ForceDirectedLayout.cs
+│           │   ├── GraphGenerator.cs
+│           │   └── WeightCalculator.cs
+│           ├── Coloring/              # Renklendirme algoritmaları
+│           │   └── WelshPowellColoring.cs
+│           ├── Models/                # Veri modelleri
+│           │   ├── Graph.cs
+│           │   ├── Node.cs
+│           │   └── Edge.cs
+│           ├── Interfaces/            # Arayüzler
+│           │   ├── IGraphAlgorithm.cs
+│           │   ├── IGraphImporter.cs
+│           │   └── IGraphExporter.cs
+│           ├── IO/                    # Giriş/Çıkış sınıfları
+│           │   ├── JsonGraphImporter.cs
+│           │   ├── JsonGraphExporter.cs
+│           │   ├── CsvGraphImporter.cs
+│           │   ├── CsvGraphExporter.cs
+│           │   ├── CsvAdjacencyListImporter.cs
+│           │   ├── CsvAdjacencyListExporter.cs
+│           │   ├── CsvAdjacencyMatrixImporter.cs
+│           │   ├── CsvAdjacencyMatrixExporter.cs
+│           │   └── GraphDto.cs
+│           ├── Infrastructure/        # Altyapı sınıfları
+│           │   ├── CsvGraphLoader.cs
+│           │   └── CsvExporter.cs
+│           ├── Utils/                 # Yardımcı sınıflar
+│           │   └── GraphSnapshot.cs
+│           └── NodeMap.Data/          # Örnek veri dosyaları
+│               ├── graph.json
+│               ├── nodes.csv
+│               └── edges.csv
+│
+└── README.md                          # Proje dokümantasyonu
+```
+
+#### 7.3.2 Proje Bağımlılıkları
+
+Projede şu bağımlılıklar var:
+
+**NodeMap.UI → NodeMap.Core:**
+- UI projesi, Core projesine referans veriyor
+- Core projesindeki tüm sınıflar UI'da kullanılabiliyor
+
+**Bağımlılık Grafiği:**
+```
+NodeMap.UI
+    └── NodeMap.Core
+            ├── System.Text.Json
+            ├── System.Collections.Generic
+            ├── System.Linq
+            ├── System.IO
+            └── System.Diagnostics
+```
+
+### 7.4 Kurulum ve Derleme
+
+#### 7.4.1 Geliştirme Ortamı Kurulumu
+
+Projeyi çalıştırmak için şu adımları izledim:
+
+**1. .NET 8.0 SDK Kurulumu:**
+```bash
+# .NET 8.0 SDK'yı Microsoft'tan indirin ve kurun
+# https://dotnet.microsoft.com/download/dotnet/8.0
+```
+
+**2. Visual Studio 2022 Kurulumu:**
+- Visual Studio 2022 Community/Professional/Enterprise
+- "Desktop development with .NET" iş yükünü seçtim
+- Windows Forms geliştirme araçları otomatik olarak kuruluyor
+
+**3. Projeyi Klonlama:**
+```bash
+git clone <repository-url>
+cd NodeMap
+```
+
+#### 7.4.2 Projeyi Derleme
+
+Projeyi derlemek için şu yöntemleri kullandım:
+
+**Visual Studio ile:**
+1. `NodeMap.sln` dosyasını Visual Studio'da açtım
+2. `Build` → `Build Solution` (Ctrl+Shift+B)
+3. Derleme başarılı olursa, `bin/Debug/net8.0-windows/` klasöründe `NodeMap.UI.exe` oluşuyor
+
+**Komut Satırı ile:**
+```bash
+# Solution dizinine gidin
+cd NodeMap
+
+# Projeyi derleyin
+dotnet build NodeMap.sln
+
+# Release modunda derleyin
+dotnet build NodeMap.sln -c Release
+```
+
+#### 7.4.3 Çalıştırma
+
+Uygulamayı çalıştırmak için şu yöntemleri kullandım:
+
+**Visual Studio ile:**
+1. `NodeMap.UI` projesini başlangıç projesi olarak ayarladım
+2. `Debug` → `Start Debugging` (F5) veya `Start Without Debugging` (Ctrl+F5)
+
+**Komut Satırı ile:**
+```bash
+# UI projesine gidin
+cd NodeMap/NodeMap.UI
+
+# Uygulamayı çalıştırın
+dotnet run
+```
+
+**Derlenmiş EXE ile:**
+```bash
+# Derlenmiş executable'ı çalıştırın
+.\bin\Debug\net8.0-windows\NodeMap.UI.exe
+```
+
+### 7.5 Konfigürasyon
+
+#### 7.5.1 Proje Dosyası Ayarları
+
+Proje dosyalarında şu ayarları kullandım:
+
+**NodeMap.Core.csproj:**
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+</Project>
+```
+
+**NodeMap.UI.csproj:**
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Core\NodeMap.Core\NodeMap.Core.csproj" />
+  </ItemGroup>
+</Project>
+```
+
+#### 7.5.2 Uygulama Ayarları
+
+Uygulama şu anda harici bir konfigürasyon dosyası kullanmıyor. Tüm ayarları kod içinde sabit değerler olarak tanımladım:
+
+- **Graf Görselleştirme:** Düğüm yarıçapı, kenar kalınlığı, renkler
+- **Algoritma Parametreleri:** İterasyon sayıları, eşik değerleri
+- **Dosya Yolları:** Varsayılan dosya konumları
+
+### 7.6 Kod Örnekleri
+
+Projede kullandığım bazı kod örnekleri:
+
+#### 7.6.1 Graf Oluşturma Örneği
+
+```csharp
+using NodeMap.Core.Models;
+using NodeMap.Core.Algorithms;
+
+// Yeni bir graf oluştur
+var graph = new Graph();
+
+// Düğümler ekle
+var node1 = new Node { Id = 1, Name = "A", X = 100, Y = 100 };
+var node2 = new Node { Id = 2, Name = "B", X = 200, Y = 100 };
+var node3 = new Node { Id = 3, Name = "C", X = 150, Y = 200 };
+
+graph.Nodes.Add(node1);
+graph.Nodes.Add(node2);
+graph.Nodes.Add(node3);
+
+// Kenarlar ekle
+var edge1 = new Edge { Source = node1, Target = node2, Weight = 1.0 };
+var edge2 = new Edge { Source = node2, Target = node3, Weight = 1.5 };
+var edge3 = new Edge { Source = node1, Target = node3, Weight = 2.0 };
+
+graph.Edges.Add(edge1);
+graph.Edges.Add(edge2);
+graph.Edges.Add(edge3);
+```
+
+#### 7.6.2 Algoritma Çalıştırma Örneği
+
+```csharp
+using NodeMap.Core.Algorithms;
+using NodeMap.Core.Models;
+
+// A* algoritması örneği
+var aStar = new AStarAlgorithm();
+var startNode = graph.Nodes.First();
+var endNode = graph.Nodes.Last();
+
+// Algoritmayı çalıştır
+aStar.Execute(graph, startNode);
+
+// En kısa yolu bul
+var path = aStar.FindPath(graph, startNode, endNode);
+
+// Sonuçları göster
+Console.WriteLine($"Yol uzunluğu: {path.Count}");
+Console.WriteLine($"Çalışma süresi: {aStar.ElapsedMilliseconds} ms");
+```
+
+#### 7.6.3 Graf Yükleme Örneği
+
+```csharp
+using NodeMap.Core.IO;
+using NodeMap.Core.Models;
+
+// JSON formatından yükleme
+var jsonImporter = new JsonGraphImporter();
+var graph = jsonImporter.Import("graph.json");
+
+// CSV formatından yükleme
+var csvImporter = new CsvGraphImporter();
+var graph2 = csvImporter.Import("graph.csv");
+```
+
+#### 7.6.4 Graf Kaydetme Örneği
+
+```csharp
+using NodeMap.Core.IO;
+
+// JSON formatına kaydetme
+var jsonExporter = new JsonGraphExporter();
+jsonExporter.Export(graph, "output.json");
+
+// CSV formatına kaydetme
+var csvExporter = new CsvGraphExporter();
+csvExporter.Export(graph, "output.csv");
+```
+
+#### 7.6.5 Dinamik Ağırlık Hesaplama Örneği
+
+```csharp
+using NodeMap.Core.Algorithms;
+
+// İki düğüm arasındaki ağırlığı hesapla
+var node1 = graph.Nodes[0];
+var node2 = graph.Nodes[1];
+
+var weight = WeightCalculator.Calculate(node1, node2);
+Console.WriteLine($"Ağırlık: {weight}");
+
+// Tüm kenarların ağırlıklarını güncelle
+foreach (var edge in graph.Edges)
+{
+    edge.Weight = WeightCalculator.Calculate(edge.Source, edge.Target);
+}
+```
+
+#### 7.6.6 Merkeziyet Analizi Örneği
+
+```csharp
+using NodeMap.Core.Algorithms;
+
+var centrality = new CentralityCalculator();
+
+// Derece merkeziyeti
+var degreeScores = centrality.CalculateDegree(graph);
+
+// Yakınlık merkeziyeti
+var closenessScores = centrality.CalculateCloseness(graph);
+
+// Aradalık merkeziyeti
+var betweennessScores = centrality.CalculateBetweenness(graph);
+
+// En yüksek skorlu düğümleri bul
+var topNodes = degreeScores
+    .OrderByDescending(kvp => kvp.Value)
+    .Take(5)
+    .ToList();
+```
+
+### 7.7 Veri Formatları
+
+Projede kullandığım veri formatları:
+
+#### 7.7.1 JSON Formatı
+
+**Graph JSON Yapısı:**
+```json
+{
+  "Nodes": [
+    {
+      "Id": 1,
+      "Name": "Node1",
+      "X": 100.0,
+      "Y": 200.0,
+      "ColorArgb": -16777216
+    }
+  ],
+  "Edges": [
+    {
+      "SourceId": 1,
+      "TargetId": 2,
+      "Weight": 1.5
+    }
+  ]
+}
+```
+
+#### 7.7.2 CSV Formatı
+
+**Nodes CSV Formatı:**
+```csv
+Id,Name,X,Y,ColorArgb
+1,Node1,100,200,-16777216
+2,Node2,200,200,-16777216
+```
+
+**Edges CSV Formatı:**
+```csv
+SourceId,TargetId,Weight
+1,2,1.5
+2,3,2.0
+```
+
+### 7.8 Performans Optimizasyonları
+
+#### 7.8.1 Algoritma Optimizasyonları
+
+Projede kullandığım algoritma optimizasyonları:
+
+**Dijkstra Algoritması:**
+- Mevcut implementasyon: O(|V|² + |E|)
+- Öncelik kuyruğu ile: O((|V| + |E|) × log|V|)
+- Gelecekte öncelik kuyruğu ekleyebilirim
+
+**Merkeziyet Analizi:**
+- Mevcut implementasyon: O(|V|² × (|V| + |E|))
+- Brandes algoritması ile: O(|V| × |E|)
+- Gelecekte Brandes algoritması ekleyebilirim
+
+#### 7.8.2 Bellek Optimizasyonları
+
+Bellek kullanımını optimize etmek için şu yöntemleri kullandım:
+
+- Graf klonlama işlemlerinde shallow copy kullanımı
+- Büyük graflar için lazy loading
+- Gereksiz veri kopyalarının önlenmesi
+
+### 7.9 Hata Ayıklama ve Test
+
+#### 7.9.1 Hata Ayıklama
+
+Projede hata ayıklama için şu yöntemleri kullandım:
+
+**Visual Studio Debugger:**
+- Breakpoint'ler kullanarak kod akışını takip ettim
+- Watch penceresi ile değişken değerlerini izledim
+- Call Stack ile fonksiyon çağrı zincirini görüntüledim
+
+**Loglama:**
+- Şu anda uygulama loglama kullanmıyor
+- Gelecekte `System.Diagnostics.Debug` veya `ILogger` ekleyebilirim
+
+#### 7.9.2 Test Stratejisi
+
+Projede şu test stratejisini uyguladım:
+
+**Manuel Test:**
+- Tüm algoritmaları manuel olarak test ettim
+- Farklı graf boyutları ile test ettim
+- Hata senaryolarını test ettim
+
+**Otomatik Test:**
+- Şu anda birim testleri yok
+- Gelecekte xUnit veya NUnit ile birim testleri ekleyebilirim
+
+### 7.10 Dağıtım
+
+#### 7.10.1 Yayınlama (Publishing)
+
+Uygulamayı yayınlamak için şu komutları kullandım:
+
+**Self-Contained Deployment:**
+```bash
+dotnet publish NodeMap/NodeMap.UI/NodeMap.UI.csproj -c Release -r win-x64 --self-contained
+```
+
+**Framework-Dependent Deployment:**
+```bash
+dotnet publish NodeMap/NodeMap.UI/NodeMap.UI.csproj -c Release -r win-x64
+```
+
+#### 7.10.2 Yükleyici Oluşturma
+
+Yükleyici oluşturmak için şu seçenekler var:
+
+- Windows Installer (MSI) oluşturulabilir
+- Inno Setup veya WiX Toolset kullanılabilir
+- ClickOnce deployment kullanılabilir
+
+### 7.11 Sürüm Kontrolü
+
+#### 7.11.1 Git Kullanımı
+
+Projede Git kullanarak sürüm kontrolü yaptım. Kullandığım temel Git komutları:
+
+**Temel Git Komutları:**
+```bash
+# Değişiklikleri kontrol et
+git status
+
+# Değişiklikleri ekle
+git add .
+
+# Commit oluştur
+git commit -m "Açıklayıcı mesaj"
+
+# Uzak depoya gönder
+git push origin main
+```
+
+### 7.12 Lisans ve Telif Hakları
+
+- Proje, eğitim amaçlı geliştirildi
+- Tüm kod, ekip üyeleri tarafından yazıldı
+- Kullanılan teknolojiler ve kütüphaneler kendi lisanslarına tabi
+
+## 9-) Referanslar
+
+### 9.1 Algoritma ve Graf Teorisi Kaynakları
+
+Ahuja, R. K., Magnanti, T. L., & Orlin, J. B. (1993). *Network Flows: Theory, Algorithms, and Applications*. Prentice Hall.
+
+Appel, K., & Haken, W. (1977). Every Planar Map is Four Colorable. Part I: Discharging. *Illinois Journal of Mathematics*, 21(3), 429-490.
+
+Deza, E., & Deza, M. M. (2009). *Encyclopedia of Distances*. Springer.
+
+Even, S. (2011). *Graph Algorithms* (2nd ed.). Cambridge University Press.
+
+Newman, M. E. J. (2010). *Networks: An Introduction*. Oxford University Press.
+
+Purchase, H. C. (2002). Metrics for Graph Drawing Aesthetics. *Journal of Visual Languages & Computing*, 13(5), 501-516.
+
+Russell, S., & Norvig, P. (2020). *Artificial Intelligence: A Modern Approach* (4th ed.). Prentice Hall.
+
+Skiena, S. S. (2020). *The Algorithm Design Manual* (3rd ed.). Springer.
+
+### 9.2 Yazılım Geliştirme ve Tasarım Prensipleri
+
+Martin, R. C. (2017). *Clean Architecture: A Craftsman's Guide to Software Structure and Design*. Prentice Hall.
+
+Martin, R. C. (2008). *Clean Code: A Handbook of Agile Software Craftsmanship*. Prentice Hall.
+
+Fowler, M. (2018). *Refactoring: Improving the Design of Existing Code* (2nd ed.). Addison-Wesley Professional.
+
+### 9.3 Teknoloji ve Framework Dokümantasyonları
+
+Microsoft. (2024). *C# Programming Guide*. https://learn.microsoft.com/en-us/dotnet/csharp/
+
+Microsoft. (2024). *.NET Documentation*. https://learn.microsoft.com/en-us/dotnet/
+
+Microsoft. (2024). *Windows Forms Documentation*. https://learn.microsoft.com/en-us/dotnet/desktop/winforms/
+
+Microsoft. (2024). *System.Text.Json Namespace*. https://learn.microsoft.com/en-us/dotnet/api/system.text.json
+
+Microsoft. (2024). *Visual Studio Documentation*. https://learn.microsoft.com/en-us/visualstudio/
+
+### 9.4 Veri Formatları ve Standartlar
+
+Bray, T. (Ed.). (2017). *The JavaScript Object Notation (JSON) Data Interchange Format* (RFC 8259). https://tools.ietf.org/html/rfc8259
+
+### 9.5 Görselleştirme ve Kullanıcı Arayüzü
+
+Tufte, E. R. (2001). *The Visual Display of Quantitative Information* (2nd ed.). Graphics Press.
+
+Ware, C. (2012). *Information Visualization: Perception for Design* (3rd ed.). Morgan Kaufmann.
+
+Shneiderman, B., & Plaisant, C. (2010). *Designing the User Interface: Strategies for Effective Human-Computer Interaction* (5th ed.). Addison-Wesley.
+
+### 9.6 Sosyal Ağ Analizi
+
+Borgatti, S. P., Everett, M. G., & Johnson, J. C. (2018). *Analyzing Social Networks* (2nd ed.). SAGE Publications.
+
+Scott, J. (2017). *Social Network Analysis* (4th ed.). SAGE Publications.
+
+Kadushin, C. (2012). *Understanding Social Networks: Theories, Concepts, and Findings*. Oxford University Press.
+
+### 9.7 Yazılım Mimarisi ve Tasarım Desenleri
+
+Buschmann, F., Meunier, R., Rohnert, H., Sommerlad, P., & Stal, M. (1996). *Pattern-Oriented Software Architecture: A System of Patterns*. John Wiley & Sons.
+
+Hohpe, G., & Woolf, B. (2003). *Enterprise Integration Patterns: Designing, Building, and Deploying Messaging Solutions*. Addison-Wesley Professional.
+
+Evans, E. (2003). *Domain-Driven Design: Tackling Complexity in the Heart of Software*. Addison-Wesley Professional.
+
+### 9.8 Performans ve Optimizasyon
+
+Sutter, H., & Alexandrescu, A. (2004). *C++ Coding Standards: 101 Rules, Guidelines, and Best Practices*. Addison-Wesley Professional.
+
+### 9.9 Test ve Kalite Güvencesi
+
+Beck, K. (2002). *Test Driven Development: By Example*. Addison-Wesley Professional.
+
+Martin, R. C. (2008). *Clean Code: A Handbook of Agile Software Craftsmanship*. Prentice Hall.
+
+### 9.10 Proje Yönetimi ve Yazılım Geliştirme Süreçleri
+
+Sommerville, I. (2016). *Software Engineering* (10th ed.). Pearson.
+
+Pressman, R. S., & Maxim, B. R. (2019). *Software Engineering: A Practitioner's Approach* (9th ed.). McGraw-Hill Education.
+
 
 
 

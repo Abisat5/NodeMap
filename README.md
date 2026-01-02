@@ -3378,7 +3378,7 @@ Uygulamada şu özellikleri geliştirdim:
 
 #### 5.1.3 Kullanıcı Arayüzü
 
-Uygulamayı Windows Forms teknolojisi kullanarak geliştirdim. Ana form (Form1) şu bileşenleri içeriyor:
+Uygulama Windows Forms teknolojisi kullanarak geliştirilmiştir. Ana form (Form1) şu bileşenleri içeriyor:
 
 - **Graf Görselleştirme Alanı:** Canvas üzerinde grafın çizildiği ana alan
 - **Butonlar:** Algoritma çalıştırma, graf yükleme/kaydetme, görselleştirme butonları
@@ -3389,84 +3389,92 @@ Uygulamayı Windows Forms teknolojisi kullanarak geliştirdim. Ana form (Form1) 
 
 #### 5.2.1 Ana Ekran
 
-Aşağıda uygulamanın başlangıç ekranını gösteriyorum:
+Aşağıda uygulamanın başlangıç ekranı gösterilmiştir:
+
+```
+![](screenshots/5.2.1.jpeg)
 
 ```
 
-
-```
 
 **Açıklama:** Uygulama başlatıldığında, kullanıcı graf yükleme, rastgele graf üretme veya manuel graf oluşturma seçeneklerine sahip.
 
 #### 5.2.2 Graf Yükleme Ekranı
 
-Aşağıda JSON formatında graf yükleme işlemini gösteriyorum:
+Aşağıda JSON formatında graf yükleme işlemi gösterilmiştir:
 
 ```
-[Buraya graf yükleme ekran görüntüsü eklenecek]
+![](screenshots/5.2.2.jpeg)
+
 ```
 
 **Açıklama:** Kullanıcı "Graf Yükle" butonuna tıklayarak JSON veya CSV formatındaki dosyalardan graf verilerini yükleyebiliyor.
 
 #### 5.2.3 Graf Görselleştirme Ekranı
 
-Aşağıda yüklenen grafın görselleştirilmiş halini gösteriyorum:
+Aşağıda yüklenen grafın görselleştirilmiş hali gösterilmiştir:
 
 ```
-[Buraya graf görselleştirme ekran görüntüsü eklenecek]
+![](screenshots/5.2.3.jpeg)
+
 ```
 
 **Açıklama:** Graf yüklendikten sonra, düğümler ve kenarlar canvas üzerinde görselleştiriliyor. Kullanıcı düğümlere tıklayarak bilgilerini görebiliyor, sürükleyerek konumlarını değiştirebiliyor.
 
 #### 5.2.4 A* Algoritması Sonuç Ekranı
 
-Aşağıda A* algoritmasının çalıştırılması ve sonuçların gösterilmesini gösteriyorum:
+Aşağıda A* algoritmasının çalıştırılması ve sonuçları gösterilmiştir:
 
 ```
-[Buraya A* algoritması sonuç ekran görüntüsü eklenecek]
+![](screenshots/5.2.4.jpeg)
+
 ```
 
 **Açıklama:** A* algoritması çalıştırıldığında, en kısa yol yeşil renkle vurgulanıyor ve yol üzerindeki düğümler özel olarak işaretleniyor. Sonuçlar MessageBox ve görsel olarak gösteriliyor.
 
 #### 5.2.5 BFS/DFS Algoritması Sonuç Ekranı
 
-Aşağıda BFS veya DFS algoritmasının sonuçlarını gösteriyorum:
+Aşağıda BFS veya DFS algoritmasının sonuçları gösterilmiştir:
 
 ```
-[Buraya BFS/DFS algoritması sonuç ekran görüntüsü eklenecek]
+![](screenshots/5.2.5.jpeg)
+
 ```
 
 **Açıklama:** BFS ve DFS algoritmaları çalıştırıldığında, ziyaret edilen düğümler mavi/mor tonlarında vurgulanıyor. Ziyaret sırası görsel olarak gösteriliyor.
 
 #### 5.2.6 Merkeziyet Analizi Sonuç Ekranı
 
-Aşağıda merkeziyet analizi sonuçlarını tablo formatında gösteriyorum:
+Aşağıda merkeziyet analizi sonuçlarını tablo formatında gösterilmiştir:
 
 ```
-[Buraya merkeziyet analizi sonuç ekran görüntüsü eklenecek]
+![](screenshots/5.2.6.jpeg)
+
 ```
 
 **Açıklama:** Merkeziyet analizi çalıştırıldığında, en yüksek skorlu 5 düğüm tablo formatında gösteriliyor ve görsel olarak kırmızı renkle vurgulanıyor.
 
 #### 5.2.7 Welsh-Powell Renklendirme Ekranı
 
-Aşağıda Welsh-Powell renklendirme algoritmasının sonuçlarını gösteriyorum:
+Aşağıda Welsh-Powell renklendirme algoritmasının sonuçları gösterilmiştir:
 
 ```
-[Buraya renklendirme ekran görüntüsü eklenecek]
+![](screenshots/5.2.7.jpeg)
+
 ```
 
 **Açıklama:** Renklendirme algoritması çalıştırıldığında, komşu düğümler farklı renklere sahip oluyor ve renklendirme tablosu gösteriliyor.
 
 #### 5.2.8 Dinamik Ağırlık Hesaplama Ekranı
 
-Aşağıda dinamik ağırlık hesaplama işlemini gösteriyorum:
+Aşağıda dinamik ağırlık hesaplama işlemi gösterilmiştir:
 
 ```
-[Buraya dinamik ağırlık hesaplama ekran görüntüsü eklenecek]
+![](screenshots/5.2.8.jpeg)
+
 ```
 
-**Açıklama:** "Dinamik" butonuna tıklandığında, tüm kenarların ağırlıkları düğüm özelliklerine göre yeniden hesaplanıyor ve güncelleniyor.
+**Açıklama:** "Dinamik" butonuna tıklandığında, tüm kenarların ağırlıkları düğüm özelliklerine göre yeniden hesaplanır ve güncellenir.
 
 ### 5.3 Test Senaryoları
 

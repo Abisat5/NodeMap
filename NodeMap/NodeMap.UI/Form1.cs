@@ -8,6 +8,7 @@ using System.Windows.Forms.VisualStyles;
 using NodeMap.Core.IO;
 using NodeMap.Core.Utils;
 using NodeMap.Core.Interfaces;
+using NodeMap.Core.Coloring;
 
 
 
@@ -24,6 +25,8 @@ namespace NodeMap.UI
         private Dictionary<Node, int> _centrality = new();
         private List<Node> _topCentralNodes = new();
         private Dictionary<Node, double> _centralityValues = new();
+        private Dictionary<Node, int> _coloringResult = new();
+        private List<List<Node>> _connectedComponents = new();
 
         private float _zoom = 1.0f;
         private bool _drawEdges = true;
@@ -600,13 +603,13 @@ namespace NodeMap.UI
             // ==================================================
             if (e.Button == MouseButtons.Left && node != null)
             {
-                // 🔥 GLOW İÇİN SEÇİLEN NODE
+
                 _selectedNode = node;
 
-                // 🔹 Node info paneli doldur
+
                 FillNodeInfo(node);
 
-                // 🔹 Edge tamamlama
+
                 if (_edgeStartNode != null && _edgeStartNode != node)
                 {
                     _graph.Edges.Add(new Edge
@@ -789,21 +792,41 @@ namespace NodeMap.UI
             var result = calc.CalculateDegreeCentrality(_graph);
             sw.Stop();
 
-            _topCentralNodes = result
+            var top5 = result
                 .OrderByDescending(x => x.Degree)
                 .Take(5)
-                .Select(x => x.Node)
                 .ToList();
+
+            _topCentralNodes = top5.Select(x => x.Node).ToList();
 
             _activeNodes.Clear();
             _shortestPath.Clear();
 
             _activeAlgorithm = "CENTRALITY";
             _lastAlgorithmTimeMs = sw.Elapsed.TotalMilliseconds;
-            ;
 
-            MessageBox.Show($"Degree Centrality süresi: {_lastAlgorithmTimeMs} ms");
+            // DataGridView'e veri ekle
+            dgvDegreeCentrality.Rows.Clear();
+            foreach (var item in top5)
+            {
+                dgvDegreeCentrality.Rows.Add(item.Node.Id, item.Node.Name, item.Degree);
+            }
+            dgvDegreeCentrality.Visible = true;
+            dgvWelshPowell.Visible = false;
+            btnCloseDegreeCentrality.Visible = true;
+            btnCloseWelshPowell.Visible = false;
+            
+            // Butonu en üste getir
+            btnCloseDegreeCentrality.BringToFront();
+
+            MessageBox.Show($"Degree Centrality süresi: {_lastAlgorithmTimeMs} ms\n\nEn yüksek dereceli 5 düğüm tabloda gösteriliyor.");
             Invalidate();
+        }
+
+        private void BtnCloseDegreeCentrality_Click(object sender, EventArgs e)
+        {
+            dgvDegreeCentrality.Visible = false;
+            btnCloseDegreeCentrality.Visible = false;
         }
 
 
@@ -892,11 +915,30 @@ namespace NodeMap.UI
                     fillColor = Color.LightGreen;
                     borderPen = new Pen(Color.DarkGreen, 3);
                 }
+                else if (_activeAlgorithm == "WELSH-POWELL" &&
+                         _coloringResult.ContainsKey(node))
+                {
+                    // Renklendirme sonuçlarına göre renk atama
+                    int colorNum = _coloringResult[node];
+                    fillColor = GetColorForNumber(colorNum);
+                }
                 else if (_activeAlgorithm == "CENTRALITY" &&
                          _topCentralNodes.Contains(node))
                 {
                     fillColor = Color.IndianRed;
                     borderPen = new Pen(Color.DarkRed, 3);
+                }
+                else if (_activeAlgorithm == "CONNECTED_COMPONENTS")
+                {
+                    // Bileşenlere göre renk atama
+                    for (int i = 0; i < _connectedComponents.Count; i++)
+                    {
+                        if (_connectedComponents[i].Contains(node))
+                        {
+                            fillColor = GetColorForComponent(i);
+                            break;
+                        }
+                    }
                 }
 
                 // Glow
@@ -1404,6 +1446,151 @@ namespace NodeMap.UI
 
             MessageBox.Show($"Tüm edge ağırlıkları güncellendi! (Toplam {_graph.Edges.Count} edge)");
             Invalidate(); // Ekranı yenile
+        }
+
+        private Color GetColorForNumber(int colorNum)
+        {
+            // Farklı renkler için bir palet
+            Color[] colors = new Color[]
+            {
+                Color.LightBlue,
+                Color.LightCoral,
+                Color.LightGreen,
+                Color.LightYellow,
+                Color.LightPink,
+                Color.LightSeaGreen,
+                Color.LightSteelBlue,
+                Color.LightSalmon,
+                Color.LightSkyBlue,
+                Color.LightGoldenrodYellow,
+                Color.Lavender,
+                Color.PeachPuff,
+                Color.PowderBlue,
+                Color.MistyRose,
+                Color.Honeydew
+            };
+            return colors[(colorNum - 1) % colors.Length];
+        }
+
+        private void btnWelshPowell_Click(object sender, EventArgs e)
+        {
+            if (_graph == null || _graph.Nodes.Count == 0)
+            {
+                MessageBox.Show("Graf yok veya düğüm bulunamadı!");
+                return;
+            }
+
+            var sw = Stopwatch.StartNew();
+            var coloring = new WelshPowellColoring();
+            _coloringResult = coloring.ColorGraph(_graph);
+            sw.Stop();
+
+            _activeNodes.Clear();
+            _shortestPath.Clear();
+            _topCentralNodes.Clear();
+
+            _activeAlgorithm = "WELSH-POWELL";
+            _lastAlgorithmTimeMs = sw.Elapsed.TotalMilliseconds;
+
+            // DataGridView'e veri ekle
+            dgvWelshPowell.Rows.Clear();
+            foreach (var node in _graph.Nodes.OrderBy(n => n.Id))
+            {
+                int color = _coloringResult.ContainsKey(node) ? _coloringResult[node] : 0;
+                dgvWelshPowell.Rows.Add(node.Id, node.Name, color);
+            }
+            dgvWelshPowell.Visible = true;
+            dgvDegreeCentrality.Visible = false;
+            btnCloseWelshPowell.Visible = true;
+            btnCloseDegreeCentrality.Visible = false;
+            
+            // Butonu en üste getir
+            btnCloseWelshPowell.BringToFront();
+
+            int colorCount = _coloringResult.Values.Distinct().Count();
+            MessageBox.Show($"Welsh-Powell Renklendirme tamamlandı!\n\n" +
+                          $"Kullanılan renk sayısı: {colorCount}\n" +
+                          $"Süre: {_lastAlgorithmTimeMs:F4} ms\n\n" +
+                          $"Renklendirme tablosu gösteriliyor.");
+            Invalidate();
+        }
+
+        private void BtnCloseWelshPowell_Click(object sender, EventArgs e)
+        {
+            dgvWelshPowell.Visible = false;
+            btnCloseWelshPowell.Visible = false;
+        }
+
+        private Color GetColorForComponent(int componentIndex)
+        {
+            // Farklı bileşenler için farklı renkler
+            Color[] colors = new Color[]
+            {
+                Color.LightBlue,
+                Color.LightCoral,
+                Color.LightGreen,
+                Color.LightYellow,
+                Color.LightPink,
+                Color.LightSeaGreen,
+                Color.LightSteelBlue,
+                Color.LightSalmon,
+                Color.LightSkyBlue,
+                Color.LightGoldenrodYellow,
+                Color.Lavender,
+                Color.PeachPuff,
+                Color.PowderBlue,
+                Color.MistyRose,
+                Color.Honeydew,
+                Color.PaleTurquoise,
+                Color.PaleGreen,
+                Color.PaleGoldenrod
+            };
+            return colors[componentIndex % colors.Length];
+        }
+
+        private void btnConnectedComponents_Click(object sender, EventArgs e)
+        {
+            if (_graph == null || _graph.Nodes.Count == 0)
+            {
+                MessageBox.Show("Graf yok veya düğüm bulunamadı!");
+                return;
+            }
+
+            var sw = Stopwatch.StartNew();
+            var algorithm = new ConnectedComponentsAlgorithm();
+            _connectedComponents = algorithm.Find(_graph);
+            sw.Stop();
+
+            _activeNodes.Clear();
+            _shortestPath.Clear();
+            _topCentralNodes.Clear();
+            _coloringResult.Clear();
+
+            _activeAlgorithm = "CONNECTED_COMPONENTS";
+            _lastAlgorithmTimeMs = sw.Elapsed.TotalMilliseconds;
+
+            // Sonuçları göster
+            string resultMessage = $"Bağlı Bileşenler Analizi Tamamlandı!\n\n";
+            resultMessage += $"Toplam Bileşen Sayısı: {_connectedComponents.Count}\n";
+            resultMessage += $"Süre: {_lastAlgorithmTimeMs:F4} ms\n\n";
+            resultMessage += "Bileşen Detayları:\n";
+            
+            for (int i = 0; i < _connectedComponents.Count; i++)
+            {
+                resultMessage += $"Bileşen {i + 1}: {_connectedComponents[i].Count} düğüm";
+                if (_connectedComponents[i].Count > 0)
+                {
+                    resultMessage += $" (";
+                    resultMessage += string.Join(", ", _connectedComponents[i].Take(5).Select(n => n.Name));
+                    if (_connectedComponents[i].Count > 5)
+                        resultMessage += $", ... (+{_connectedComponents[i].Count - 5} daha)";
+                    resultMessage += ")";
+                }
+                resultMessage += "\n";
+            }
+
+            MessageBox.Show(resultMessage);
+            Invalidate();
         }
     }
 }

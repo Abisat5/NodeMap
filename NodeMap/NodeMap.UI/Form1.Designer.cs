@@ -54,6 +54,20 @@
             button20 = new Button();
             button21 = new Button();
             button19 = new Button();
+            dgvDegreeCentrality = new DataGridView();
+            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
+            dgvWelshPowell = new DataGridView();
+            dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
+            button22 = new Button();
+            button23 = new Button();
+            btnCloseDegreeCentrality = new Button();
+            btnCloseWelshPowell = new Button();
+            ((System.ComponentModel.ISupportInitialize)dgvDegreeCentrality).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvWelshPowell).BeginInit();
             SuspendLayout();
             // 
             // btnTest
@@ -333,13 +347,127 @@
             // button19
             // 
             button19.BackColor = SystemColors.ActiveCaption;
-            button19.Location = new Point(1085, 434);
+            button19.Location = new Point(1082, 434);
             button19.Name = "button19";
             button19.Size = new Size(103, 40);
             button19.TabIndex = 26;
             button19.Text = " Dinamik Ağırlık Hesaplama ";
             button19.UseVisualStyleBackColor = false;
             button19.Click += Dinamik_Click;
+            // 
+            // dgvDegreeCentrality
+            // 
+            dgvDegreeCentrality.AllowUserToAddRows = false;
+            dgvDegreeCentrality.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvDegreeCentrality.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3 });
+            dgvDegreeCentrality.Location = new Point(805, 252);
+            dgvDegreeCentrality.Name = "dgvDegreeCentrality";
+            dgvDegreeCentrality.ReadOnly = true;
+            dgvDegreeCentrality.Size = new Size(274, 203);
+            dgvDegreeCentrality.TabIndex = 27;
+            dgvDegreeCentrality.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            dataGridViewTextBoxColumn1.HeaderText = "Düğüm ID";
+            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            dataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            dataGridViewTextBoxColumn2.HeaderText = "Düğüm Adı";
+            dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            dataGridViewTextBoxColumn2.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            dataGridViewTextBoxColumn3.HeaderText = "Derece";
+            dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            dataGridViewTextBoxColumn3.ReadOnly = true;
+            // 
+            // dgvWelshPowell
+            // 
+            dgvWelshPowell.AllowUserToAddRows = false;
+            dgvWelshPowell.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvWelshPowell.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn6 });
+            dgvWelshPowell.Location = new Point(805, 461);
+            dgvWelshPowell.Name = "dgvWelshPowell";
+            dgvWelshPowell.ReadOnly = true;
+            dgvWelshPowell.Size = new Size(274, 182);
+            dgvWelshPowell.TabIndex = 28;
+            dgvWelshPowell.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            dataGridViewTextBoxColumn4.HeaderText = "Düğüm ID";
+            dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            dataGridViewTextBoxColumn4.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn5
+            // 
+            dataGridViewTextBoxColumn5.HeaderText = "Düğüm Adı";
+            dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            dataGridViewTextBoxColumn5.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn6
+            // 
+            dataGridViewTextBoxColumn6.HeaderText = "Renk Numarası";
+            dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+            dataGridViewTextBoxColumn6.ReadOnly = true;
+            // 
+            // button22
+            // 
+            button22.BackColor = SystemColors.ActiveCaption;
+            button22.Location = new Point(1194, 434);
+            button22.Name = "button22";
+            button22.Size = new Size(106, 40);
+            button22.TabIndex = 27;
+            button22.Text = "Welsh-Powell Renklendirme";
+            button22.UseVisualStyleBackColor = false;
+            button22.Click += btnWelshPowell_Click;
+            // 
+            // button23
+            // 
+            button23.BackColor = SystemColors.ActiveCaption;
+            button23.Location = new Point(1316, 434);
+            button23.Name = "button23";
+            button23.Size = new Size(106, 40);
+            button23.TabIndex = 29;
+            button23.Text = "Bağlı Bileşenler";
+            button23.UseVisualStyleBackColor = false;
+            button23.Click += btnConnectedComponents_Click;
+            // 
+            // btnCloseDegreeCentrality
+            // 
+            btnCloseDegreeCentrality.BackColor = Color.Red;
+            btnCloseDegreeCentrality.FlatAppearance.BorderSize = 0;
+            btnCloseDegreeCentrality.FlatStyle = FlatStyle.Flat;
+            btnCloseDegreeCentrality.Font = new Font("Arial", 10F, FontStyle.Bold);
+            btnCloseDegreeCentrality.ForeColor = Color.White;
+            btnCloseDegreeCentrality.Location = new Point(1054, 252);
+            btnCloseDegreeCentrality.Name = "btnCloseDegreeCentrality";
+            btnCloseDegreeCentrality.Size = new Size(25, 25);
+            btnCloseDegreeCentrality.TabIndex = 30;
+            btnCloseDegreeCentrality.Text = "✕";
+            btnCloseDegreeCentrality.UseVisualStyleBackColor = false;
+            btnCloseDegreeCentrality.Visible = false;
+            btnCloseDegreeCentrality.Click += BtnCloseDegreeCentrality_Click;
+            // 
+            // btnCloseWelshPowell
+            // 
+            btnCloseWelshPowell.BackColor = Color.Red;
+            btnCloseWelshPowell.FlatAppearance.BorderSize = 0;
+            btnCloseWelshPowell.FlatStyle = FlatStyle.Flat;
+            btnCloseWelshPowell.Font = new Font("Arial", 10F, FontStyle.Bold);
+            btnCloseWelshPowell.ForeColor = Color.White;
+            btnCloseWelshPowell.Location = new Point(1054, 461);
+            btnCloseWelshPowell.Name = "btnCloseWelshPowell";
+            btnCloseWelshPowell.Size = new Size(25, 25);
+            btnCloseWelshPowell.TabIndex = 31;
+            btnCloseWelshPowell.Text = "✕";
+            btnCloseWelshPowell.UseVisualStyleBackColor = false;
+            btnCloseWelshPowell.Visible = false;
+            btnCloseWelshPowell.Click += BtnCloseWelshPowell_Click;
             // 
             // Form1
             // 
@@ -373,10 +501,18 @@
             Controls.Add(txtNodeName);
             Controls.Add(txtEdgeFrom);
             Controls.Add(txtEdgeTo);
+            Controls.Add(button22);
+            Controls.Add(button23);
+            Controls.Add(dgvDegreeCentrality);
+            Controls.Add(dgvWelshPowell);
+            Controls.Add(btnCloseDegreeCentrality);
+            Controls.Add(btnCloseWelshPowell);
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;
             Paint += Form1_Paint;
+            ((System.ComponentModel.ISupportInitialize)dgvDegreeCentrality).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvWelshPowell).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -410,6 +546,18 @@
         private Button button20;
         private Button button21;
         private Button button19;
+        private Button button22;
+        private Button button23;
+        private DataGridView dgvDegreeCentrality;
+        private DataGridView dgvWelshPowell;
+        private Button btnCloseDegreeCentrality;
+        private Button btnCloseWelshPowell;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
     }
 
 

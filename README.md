@@ -17,7 +17,9 @@
 **IDE:** Visual Studio
 
 **Teslim Tarih:** 01.01.2026
-
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.1.png" alt="Ana Ekran">
+</p>
 ## 2-) Proje Tanımı ve Amaç
 
 ### 2.1 Problemin Tanımı

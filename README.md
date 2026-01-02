@@ -17,9 +17,7 @@
 **IDE:** Visual Studio
 
 **Teslim Tarih:** 01.01.2026
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.1.png" alt="Ana Ekran">
-</p>
+
 ## 2-) Proje Tanımı ve Amaç
 
 ### 2.1 Problemin Tanımı
@@ -3394,7 +3392,9 @@ Uygulama Windows Forms teknolojisi kullanarak geliştirilmiştir. Ana form (Form
 Aşağıda uygulamanın başlangıç ekranı gösterilmiştir:
 
 ```
-![Ana Ekran](https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.1.png?raw=true)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.1.png" alt=>
+</p>
 
 ```
 
@@ -3406,7 +3406,9 @@ Aşağıda uygulamanın başlangıç ekranı gösterilmiştir:
 Aşağıda JSON formatında graf yükleme işlemi gösterilmiştir:
 
 ```
-![JSON GRAPH](/screenshots/5.2.2.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.2.png" alt=>
+</p>
 
 ```
 
@@ -3417,7 +3419,9 @@ Aşağıda JSON formatında graf yükleme işlemi gösterilmiştir:
 Aşağıda yüklenen grafın görselleştirilmiş hali gösterilmiştir:
 
 ```
-![GRAPH](/screenshots/5.2.3.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.3.png" alt=>
+</p>
 
 ```
 
@@ -3428,7 +3432,9 @@ Aşağıda yüklenen grafın görselleştirilmiş hali gösterilmiştir:
 Aşağıda A* algoritmasının çalıştırılması ve sonuçları gösterilmiştir:
 
 ```
-![A* ALGORITHM](/screenshots/5.2.4.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.4.png" alt=>
+</p>
 
 ```
 
@@ -3439,8 +3445,9 @@ Aşağıda A* algoritmasının çalıştırılması ve sonuçları gösterilmiş
 Aşağıda BFS veya DFS algoritmasının sonuçları gösterilmiştir:
 
 ```
-![BF-DFS](/screenshots/5.2.5.png)
-
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.5.png" alt=>
+</p>
 ```
 
 **Açıklama:** BFS ve DFS algoritmaları çalıştırıldığında, ziyaret edilen düğümler mavi/mor tonlarında vurgulanıyor. Ziyaret sırası görsel olarak gösteriliyor.
@@ -3450,7 +3457,9 @@ Aşağıda BFS veya DFS algoritmasının sonuçları gösterilmiştir:
 Aşağıda merkeziyet analizi sonuçlarını tablo formatında gösterilmiştir:
 
 ```
-![CENTRALITY](/screenshots/5.2.6.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.6.png" alt=>
+</p>
 
 ```
 
@@ -3461,7 +3470,9 @@ Aşağıda merkeziyet analizi sonuçlarını tablo formatında gösterilmiştir:
 Aşağıda Welsh-Powell renklendirme algoritmasının sonuçları gösterilmiştir:
 
 ```
-![WELSH-POWELL](/screenshots/5.2.7.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.7.png" alt=>
+</p>
 
 ```
 
@@ -3472,7 +3483,9 @@ Aşağıda Welsh-Powell renklendirme algoritmasının sonuçları gösterilmişt
 Aşağıda dinamik ağırlık hesaplama işlemi gösterilmiştir:
 
 ```
-![WEIGHT](/screenshots/5.2.8.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.8.png" alt=>
+</p>
 
 ```
 

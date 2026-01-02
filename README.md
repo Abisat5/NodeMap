@@ -3392,7 +3392,7 @@ Uygulama Windows Forms teknolojisi kullanarak geliştirilmiştir. Ana form (Form
 Aşağıda uygulamanın başlangıç ekranı gösterilmiştir:
 
 ```
-![](screenshots/5.2.1.jpeg)
+![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.1.png?raw=true)
 
 ```
 
@@ -3404,7 +3404,7 @@ Aşağıda uygulamanın başlangıç ekranı gösterilmiştir:
 Aşağıda JSON formatında graf yükleme işlemi gösterilmiştir:
 
 ```
-![](screenshots/5.2.2.jpeg)
+![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.2.png?raw=true)
 
 ```
 
@@ -3415,7 +3415,7 @@ Aşağıda JSON formatında graf yükleme işlemi gösterilmiştir:
 Aşağıda yüklenen grafın görselleştirilmiş hali gösterilmiştir:
 
 ```
-![](screenshots/5.2.3.jpeg)
+![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.3.png?raw=true)
 
 ```
 
@@ -3426,7 +3426,7 @@ Aşağıda yüklenen grafın görselleştirilmiş hali gösterilmiştir:
 Aşağıda A* algoritmasının çalıştırılması ve sonuçları gösterilmiştir:
 
 ```
-![](screenshots/5.2.4.jpeg)
+![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.4.png?raw=true)
 
 ```
 
@@ -3437,7 +3437,7 @@ Aşağıda A* algoritmasının çalıştırılması ve sonuçları gösterilmiş
 Aşağıda BFS veya DFS algoritmasının sonuçları gösterilmiştir:
 
 ```
-![](screenshots/5.2.5.jpeg)
+![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.5.png?raw=true)
 
 ```
 
@@ -3448,7 +3448,7 @@ Aşağıda BFS veya DFS algoritmasının sonuçları gösterilmiştir:
 Aşağıda merkeziyet analizi sonuçlarını tablo formatında gösterilmiştir:
 
 ```
-![](screenshots/5.2.6.jpeg)
+![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.6.png?raw=true)
 
 ```
 
@@ -3459,7 +3459,7 @@ Aşağıda merkeziyet analizi sonuçlarını tablo formatında gösterilmiştir:
 Aşağıda Welsh-Powell renklendirme algoritmasının sonuçları gösterilmiştir:
 
 ```
-![](screenshots/5.2.7.jpeg)
+![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.7.png?raw=true)
 
 ```
 
@@ -3470,7 +3470,7 @@ Aşağıda Welsh-Powell renklendirme algoritmasının sonuçları gösterilmişt
 Aşağıda dinamik ağırlık hesaplama işlemi gösterilmiştir:
 
 ```
-![](screenshots/5.2.8.jpeg)
+![](https://github.com/Abisat5/NodeMap/blob/main/screenshots/5.2.8.png?raw=true)
 
 ```
 

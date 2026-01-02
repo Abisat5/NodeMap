@@ -2510,13 +2510,13 @@ flowchart TD
     NodeProps1 --> DiffCalc[➖ Fark Hesaplama<br/>aktiflikFark<br/>etkilesimFark<br/>baglantiFark]
     NodeProps2 --> DiffCalc
     
-    DiffCalc --> SquareCalc[🔢 Kare Hesaplama<br/>aktiflikFark²<br/>etkilesimFark²<br/>baglantiFark²]
+    DiffCalc --> SquareCalc[🔢 Kare Hesaplama<br/>aktiflikFark kare<br/>etkilesimFark kare<br/>baglantiFark kare]
     
     SquareCalc --> SumCalc[➕ Toplama<br/>karelerToplami]
     
-    SumCalc --> SqrtCalc[√ Karekök<br/>√karelerToplami]
+    SumCalc --> SqrtCalc[Karekök Hesaplama<br/>karelerToplami karekök]
     
-    SqrtCalc --> WeightCalc[⚖️ Ağırlık Hesaplama<br/>1 / (1 + √karelerToplami)]
+    SqrtCalc --> WeightCalc[⚖️ Ağırlık Hesaplama<br/>1 bölü 1 artı karekök]
     
     WeightCalc --> WeightUpdate[💾 Ağırlık Güncelleme<br/>Edge.Weight = yeniAgirlik]
     
@@ -2558,9 +2558,9 @@ flowchart TD
     
     ClosenessCalc --> DijkstraDist[🗺️ Dijkstra Mesafe<br/>Tüm düğümlere mesafe]
     DijkstraDist --> DistanceSum[➕ Mesafe Toplama<br/>Σ distances]
-    DistanceSum --> ClosenessScore[📈 Closeness Score<br/>(n-1) / sum]
+    DistanceSum --> ClosenessScore[📈 Closeness Score<br/>n-1 bölü toplam]
     
-    BetweennessCalc --> PairIter[🔄 Düğüm Çifti Döngüsü<br/>Her (source, target) için]
+    BetweennessCalc --> PairIter[🔄 Düğüm Çifti Döngüsü<br/>Her source-target çifti için]
     PairIter --> PathFind[🛤️ En Kısa Yol Bulma<br/>Dijkstra Path]
     PathFind --> PathAnalysis[🔍 Yol Analizi<br/>Ara düğümleri say]
     PathAnalysis --> BetweennessScore[📈 Betweenness Score<br/>Dictionary~Node, double~]
@@ -3392,7 +3392,8 @@ Uygulamayı Windows Forms teknolojisi kullanarak geliştirdim. Ana form (Form1) 
 Aşağıda uygulamanın başlangıç ekranını gösteriyorum:
 
 ```
-[Buraya ana ekran görüntüsü eklenecek]
+
+
 ```
 
 **Açıklama:** Uygulama başlatıldığında, kullanıcı graf yükleme, rastgele graf üretme veya manuel graf oluşturma seçeneklerine sahip.

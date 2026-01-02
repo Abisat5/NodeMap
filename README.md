@@ -3391,12 +3391,12 @@ Uygulama Windows Forms teknolojisi kullanarak geliştirilmiştir. Ana form (Form
 
 Aşağıda uygulamanın başlangıç ekranı gösterilmiştir:
 
-```
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.1.png" alt=>
 </p>
 
-```
+
 
 
 **Açıklama:** Uygulama başlatıldığında, kullanıcı graf yükleme, rastgele graf üretme veya manuel graf oluşturma seçeneklerine sahip.
@@ -3405,12 +3405,12 @@ Aşağıda uygulamanın başlangıç ekranı gösterilmiştir:
 
 Aşağıda JSON formatında graf yükleme işlemi gösterilmiştir:
 
-```
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.2.png" alt=>
 </p>
 
-```
+
 
 **Açıklama:** Kullanıcı "Graf Yükle" butonuna tıklayarak JSON veya CSV formatındaki dosyalardan graf verilerini yükleyebiliyor.
 
@@ -3418,12 +3418,12 @@ Aşağıda JSON formatında graf yükleme işlemi gösterilmiştir:
 
 Aşağıda yüklenen grafın görselleştirilmiş hali gösterilmiştir:
 
-```
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.3.png" alt=>
 </p>
 
-```
+
 
 **Açıklama:** Graf yüklendikten sonra, düğümler ve kenarlar canvas üzerinde görselleştiriliyor. Kullanıcı düğümlere tıklayarak bilgilerini görebiliyor, sürükleyerek konumlarını değiştirebiliyor.
 
@@ -3431,12 +3431,12 @@ Aşağıda yüklenen grafın görselleştirilmiş hali gösterilmiştir:
 
 Aşağıda A* algoritmasının çalıştırılması ve sonuçları gösterilmiştir:
 
-```
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.4.png" alt=>
 </p>
 
-```
+
 
 **Açıklama:** A* algoritması çalıştırıldığında, en kısa yol yeşil renkle vurgulanıyor ve yol üzerindeki düğümler özel olarak işaretleniyor. Sonuçlar MessageBox ve görsel olarak gösteriliyor.
 
@@ -3444,11 +3444,11 @@ Aşağıda A* algoritmasının çalıştırılması ve sonuçları gösterilmiş
 
 Aşağıda BFS veya DFS algoritmasının sonuçları gösterilmiştir:
 
-```
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.5.png" alt=>
 </p>
-```
+
 
 **Açıklama:** BFS ve DFS algoritmaları çalıştırıldığında, ziyaret edilen düğümler mavi/mor tonlarında vurgulanıyor. Ziyaret sırası görsel olarak gösteriliyor.
 
@@ -3456,12 +3456,12 @@ Aşağıda BFS veya DFS algoritmasının sonuçları gösterilmiştir:
 
 Aşağıda merkeziyet analizi sonuçlarını tablo formatında gösterilmiştir:
 
-```
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.6.png" alt=>
 </p>
 
-```
+
 
 **Açıklama:** Merkeziyet analizi çalıştırıldığında, en yüksek skorlu 5 düğüm tablo formatında gösteriliyor ve görsel olarak kırmızı renkle vurgulanıyor.
 
@@ -3469,12 +3469,12 @@ Aşağıda merkeziyet analizi sonuçlarını tablo formatında gösterilmiştir:
 
 Aşağıda Welsh-Powell renklendirme algoritmasının sonuçları gösterilmiştir:
 
-```
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.7.png" alt=>
 </p>
 
-```
+
 
 **Açıklama:** Renklendirme algoritması çalıştırıldığında, komşu düğümler farklı renklere sahip oluyor ve renklendirme tablosu gösteriliyor.
 
@@ -3482,12 +3482,12 @@ Aşağıda Welsh-Powell renklendirme algoritmasının sonuçları gösterilmişt
 
 Aşağıda dinamik ağırlık hesaplama işlemi gösterilmiştir:
 
-```
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/Abisat5/NodeMap/main/screenshots/5.2.8.png" alt=>
 </p>
 
-```
+
 
 **Açıklama:** "Dinamik" butonuna tıklandığında, tüm kenarların ağırlıkları düğüm özelliklerine göre yeniden hesaplanır ve güncellenir.
 
